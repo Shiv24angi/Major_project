@@ -507,99 +507,27 @@ REPOSITORY CONTEXT:
         # ========================================================
 
         return {
-
             "final_analysis": final_analysis,
-
             "findings": findings,
-
             "agent6_output": agent6_output,
-
             "analysis_metadata": analysis_metadata
         }
 
     except Exception as e:
-
-        print(
-            "\n========== AGENT 6 PARSE ERROR =========="
-        )
-
-        print(
-            str(e)
-        )
-
-        print(
-            "\n========== RAW LLM RESPONSE =========="
-        )
-
-        print(
-            result
-        )
-
-        return {
-
-            "error": str(e),
-
-            "raw_analysis": result,
-
-            "findings": []
-        }
-
-    # --------------------------------------------------------
-    # Call LLM
-    # --------------------------------------------------------
-
-    result = ask_llm(prompt)
-
-    # --------------------------------------------------------
-    # Parse response
-    # --------------------------------------------------------
-
-    try:
-
-        parsed = json.loads(result)
-
-        analysis = RepositoryAnalysis.model_validate(
-            parsed
-        )
-
-        print(
-            "\n========== AGENT 6 ANALYSIS =========="
-        )
-
-        print(
-            json.dumps(
-                analysis.model_dump(),
-                indent=2
-            )
-        )
-
-        return {
-            "final_analysis": analysis.model_dump(),
-            "findings": analysis.findings,
-        }
-
-    except Exception as e:
-
-        print(
-            "\n========== AGENT 6 PARSE ERROR =========="
-        )
-
+        print("\n========== AGENT 6 PARSE ERROR ==========")
         print(str(e))
-
-        print(
-            "\n========== RAW LLM RESPONSE =========="
-        )
-
+        print("\n========== RAW LLM RESPONSE ==========")
         print(result)
 
         return {
             "error": str(e),
             "raw_analysis": result,
-            "findings": [],
-        }   
+            "findings": []
+        }
+
 
 # ============================================================
-# 7. VALIDATE EVIDENCE
+# 7. VALIDATE EVIDENCE & PERSIST FOR AGENT 2
 # ============================================================
 
 def validate_evidence(state):
@@ -607,6 +535,7 @@ def validate_evidence(state):
     from services.agent6.evidence_validator import (
         validate_findings
     )
+    from services.agent6.storage import storage
 
     findings = state.get(
         "findings",
@@ -616,6 +545,21 @@ def validate_evidence(state):
     files = state.get(
         "files",
         []
+    )
+
+    repository = state.get(
+        "repository",
+        {"owner": "unknown", "name": "unknown"}
+    )
+
+    analysis_metadata = state.get(
+        "analysis_metadata",
+        {}
+    )
+
+    github_url = state.get(
+        "github_url",
+        ""
     )
 
     validated_findings = validate_findings(
@@ -636,26 +580,38 @@ def validate_evidence(state):
     )
 
     for finding in validated_findings:
-
         print(
             "\nClaim:",
             finding.get("claim", "")
         )
-
         print(
             "Status:",
             finding.get("status", "unknown")
         )
-
         print(
             "Evidence:",
             finding.get("evidence", [])
         )
 
+    # Persist the validated output to storage for Agent 2 consumption
+    save_result = storage.save_agent6_output(
+        repository=repository,
+        findings=validated_findings,
+        analysis_metadata=analysis_metadata,
+        raw_analysis=state.get("final_analysis", {}),
+        github_url=github_url
+    )
+
+    agent6_output = save_result["payload"]
+    run_id = save_result["run_id"]
+    file_path = save_result["file_path"]
+
     return {
         "findings": validated_findings,
-
         "final_analysis": {
             "findings": validated_findings
-        }
-    }
+        },
+        "agent6_output": agent6_output,
+        "stored_file_path": file_path,
+        "run_id": run_id
+    }

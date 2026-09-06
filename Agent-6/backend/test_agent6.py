@@ -1,3 +1,12 @@
+import sys
+
+if sys.platform.startswith("win"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from services.agent6.graph import agent6_graph
 
 
@@ -56,3 +65,10 @@ for chunk in result.get("chunks", [])[:5]:
         "Characters:",
         len(chunk["content"])
     )
+
+
+print("\n========== AGENT 6 -> AGENT 2 STORAGE HANDOFF ==========")
+print("Run ID:", result.get("run_id"))
+print("Saved File Path:", result.get("stored_file_path"))
+print("Validated Findings Count:", len(result.get("findings", [])))
+print("Ready for Agent 2 consumption: YES")

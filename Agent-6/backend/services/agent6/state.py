@@ -89,6 +89,8 @@ class Agent6State(TypedDict, total=False):
     # We are only making the handoff explicit.
 
     agent6_output: Dict[str, Any]
+    stored_file_path: str
+    run_id: str
 
     # ============================================================
     # ANALYSIS METADATA
