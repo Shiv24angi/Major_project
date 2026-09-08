@@ -14,17 +14,17 @@ export default function WalletSection() {
           data-editable
           data-preset-text="wallet-headline"
         >
-          Connect your wallet
+          Access Startup Intelligence
         </h2>
         <p
           className="mx-auto mb-8 max-w-md text-base text-black/60"
           data-editable
           data-preset-text="wallet-body"
         >
-          Link a compatible wallet to hold USD Halo, view rewards, and move funds on-chain.
+          Upload startup documentation and generate multi-agent due diligence evaluations.
         </p>
-        <PillButton size="base" route="wallet" presetText="wallet-cta">
-          Open Wallet
+        <PillButton size="base" section="how-it-works" presetText="wallet-cta">
+          Start Analysis
         </PillButton>
       </div>
     </section>

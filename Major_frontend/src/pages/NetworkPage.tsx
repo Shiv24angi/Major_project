@@ -16,15 +16,14 @@ export default function NetworkPage() {
             data-editable
             data-preset-text="network-headline"
           >
-            Halo network
+            VentureLens Intelligence Network
           </h2>
           <p
             className="mt-6 max-w-2xl text-xl text-black/70"
             data-editable
             data-preset-text="network-body"
           >
-            Institutional validators, seamless DeFi connectivity, and reward-earning dollars—USD Halo stays
-            pegged while your wealth works across the network.
+            Specialized multi-agent analysis, grounded RAG verification, and institutional benchmarks—VentureLens delivers structured, evidence-backed evaluation across every startup dimension.
           </p>
         </div>
       </section>
