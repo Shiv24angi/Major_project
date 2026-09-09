@@ -3,7 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.github import router as github_router
 from services.llm_service import ask_llm
 
-print("🚀 MAIN.PY LOADED")
+import sys
+
+if sys.platform.startswith("win"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
+print("[AGENT-6] MAIN.PY LOADED")
 
 app = FastAPI(title="VentureLens Agent 6 API")
 
