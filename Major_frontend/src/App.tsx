@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import { PresetHashRouter } from './shared/components/PresetHashRouter';
-import { applyPresetHashOnLoad } from './shared/preset-site-routing';
+import { applyPresetHashOnLoad, getPresetRoutePath } from './shared/preset-site-routing';
 import EcosystemPage from './pages/EcosystemPage';
 import HelpPage from './pages/HelpPage';
 import HomePage from './pages/HomePage';
@@ -10,6 +10,11 @@ import NetworkPage from './pages/NetworkPage';
 import NewsPage from './pages/NewsPage';
 import RewardsPage from './pages/RewardsPage';
 import WalletPage from './pages/WalletPage';
+import NewAnalysisModePage from './pages/NewAnalysisModePage';
+import StartupInputPage from './pages/StartupInputPage';
+import ProjectInputPage from './pages/ProjectInputPage';
+import ProcessingPage from './pages/ProcessingPage';
+import DashboardPage from './pages/DashboardPage';
 
 export default function App() {
   useEffect(() => {
@@ -42,6 +47,7 @@ export default function App() {
       if (anchor) {
         const href = anchor.getAttribute('href');
         if (href && href.startsWith('#') && href !== '#') {
+          // If anchor matches an on-page ID element, scroll to it
           const targetEl = document.querySelector<HTMLElement>(href);
           if (targetEl) {
             e.preventDefault();
@@ -51,11 +57,23 @@ export default function App() {
       }
     };
 
+    // Scroll to top on page route navigation
+    const handleHashChange = () => {
+      const path = getPresetRoutePath();
+      // If it's a page route and not an anchor
+      if (['new-analysis', 'analyze-startup', 'analyze-project', 'processing', 'dashboard', 'my-analyses', 'documents', 'reports'].includes(path)) {
+        window.scrollTo(0, 0);
+        lenis.scrollTo(0, { immediate: true });
+      }
+    };
+
     document.addEventListener('click', handleAnchorClick);
+    window.addEventListener('hashchange', handleHashChange);
 
     return () => {
       cancelAnimationFrame(rafId);
       document.removeEventListener('click', handleAnchorClick);
+      window.removeEventListener('hashchange', handleHashChange);
       lenis.destroy();
     };
   }, []);
@@ -65,6 +83,14 @@ export default function App() {
       <PresetHashRouter
         routes={{
           '': <HomePage />,
+          'new-analysis': <NewAnalysisModePage />,
+          'analyze-startup': <StartupInputPage />,
+          'analyze-project': <ProjectInputPage />,
+          'processing': <ProcessingPage />,
+          'dashboard': <DashboardPage />,
+          'my-analyses': <DashboardPage />,
+          'documents': <DashboardPage />,
+          'reports': <DashboardPage />,
           network: <NetworkPage />,
           ecosystem: <EcosystemPage />,
           rewards: <RewardsPage />,

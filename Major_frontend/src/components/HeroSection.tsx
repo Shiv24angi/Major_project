@@ -46,7 +46,7 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-wrap items-center gap-4">
-            <PillButton section="how-it-works" presetText="hero-cta">
+            <PillButton route="new-analysis" presetText="hero-cta">
               Start Analysis
             </PillButton>
             <PresetNavLink

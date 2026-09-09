@@ -34,7 +34,7 @@ export default function CtaSection() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <PillButton size="lg" section="how-it-works" presetText="final-primary-cta">
+          <PillButton size="lg" route="new-analysis" presetText="final-primary-cta">
             Start Analysis
           </PillButton>
           <PresetNavLink

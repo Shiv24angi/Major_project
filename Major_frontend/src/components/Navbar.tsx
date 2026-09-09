@@ -38,12 +38,18 @@ export default function Navbar() {
               {link.label}
             </PresetNavLink>
           ))}
+          <PresetNavLink
+            target={{ kind: 'route', path: 'dashboard' }}
+            className="text-base font-medium text-gray-700 transition-colors duration-200 hover:text-black"
+          >
+            Dashboard
+          </PresetNavLink>
         </div>
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
           <PresetNavLink
-            target={{ kind: 'section', id: 'how-it-works' }}
+            target={{ kind: 'route', path: 'new-analysis' }}
             className="rounded-full bg-black px-7 py-2.5 text-base font-medium text-white transition-colors duration-200 hover:bg-gray-800"
             data-editable
             data-preset-text="nav-start-analysis"
@@ -77,9 +83,16 @@ export default function Navbar() {
                 {link.label}
               </PresetNavLink>
             ))}
+            <PresetNavLink
+              target={{ kind: 'route', path: 'dashboard' }}
+              onClick={() => setMobileOpen(false)}
+              className="text-lg font-medium text-gray-800 transition-colors hover:text-black"
+            >
+              Dashboard
+            </PresetNavLink>
             <div className="pt-2">
               <PresetNavLink
-                target={{ kind: 'section', id: 'how-it-works' }}
+                target={{ kind: 'route', path: 'new-analysis' }}
                 onClick={() => setMobileOpen(false)}
                 className="block text-center rounded-full bg-black py-3 text-base font-medium text-white"
               >
