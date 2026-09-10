@@ -4,9 +4,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/preset-sites/halo-usd/',
+  base: '/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
   },
 });
+

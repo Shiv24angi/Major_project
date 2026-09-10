@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node -e \"require('fs').copyFileSync('index.source.html', 'index.html')\" && vite",
-    "build": "node -e \"require('fs').copyFileSync('index.source.html', 'index.html')\" && vite build && node scripts/copy-dist.mjs",
+    "dev": "vite",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
