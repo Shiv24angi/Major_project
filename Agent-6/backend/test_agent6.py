@@ -11,7 +11,7 @@ from services.agent6.graph import agent6_graph
 
 
 result = agent6_graph.invoke({
-    "github_url": "https://github.com/Shiv24angi/EcoVerse"
+    "github_url": "https://github.com/vanshaggarwal27/EN2H_assignment"
 })
 
 
@@ -71,4 +71,4 @@ print("\n========== AGENT 6 -> AGENT 2 STORAGE HANDOFF ==========")
 print("Run ID:", result.get("run_id"))
 print("Saved File Path:", result.get("stored_file_path"))
 print("Validated Findings Count:", len(result.get("findings", [])))
-print("Ready for Agent 2 consumption: YES")
+print("Ready for Agent 2 consumption: YES")

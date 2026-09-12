@@ -1,72 +1,113 @@
 {
   "version": "1.0",
-  "run_id": "Shiv24angi_EcoVerse_20260905_214323",
-  "timestamp": "2026-09-05T16:13:23.417647Z",
+  "run_id": "vanshaggarwal27_EN2H_assignment_20260906_213738",
+  "timestamp": "2026-09-06T16:07:38.998830Z",
   "source_agent": "agent_6_project_code",
   "target_agent": "agent_2_data_normalization",
-  "github_url": "https://github.com/Shiv24angi/EcoVerse",
+  "github_url": "https://github.com/vanshaggarwal27/EN2H_assignment",
   "repository": {
-    "owner": "Shiv24angi",
-    "name": "EcoVerse",
-    "full_name": "Shiv24angi/EcoVerse"
+    "owner": "vanshaggarwal27",
+    "name": "EN2H_assignment",
+    "full_name": "vanshaggarwal27/EN2H_assignment"
   },
   "findings_summary": {
     "total_findings": 12,
-    "supported_count": 12,
-    "inferred_count": 0,
+    "supported_count": 11,
+    "inferred_count": 1,
     "unknown_count": 0
   },
   "findings": [
     {
       "category": "project",
-      "claim": "EcoVerse is a sustainability-focused web application offering product barcode scanning, carbon footprint tracking, recyclability insights, eco-points, and community leaderboards.",
+      "claim": "The project is a RESTful Booking API platform named en2h-booking-api built for service management and service booking.",
+      "status": "supported",
+      "evidence": [
+        "package.json",
+        "README.md",
+        "src/main.ts"
+      ]
+    },
+    {
+      "category": "problem",
+      "claim": "The project provides a backend solution allowing authenticated users to manage service listings while allowing public customers to create bookings with duplicate prevention.",
       "status": "supported",
       "evidence": [
         "README.md"
       ]
     },
     {
-      "category": "problem",
-      "claim": "The project addresses consumer difficulty in understanding the environmental impact and disposal guidance of everyday consumer products.",
+      "category": "technology",
+      "claim": "The stack uses NestJS v11 framework, Prisma v7.8.0 ORM with PostgreSQL using the @prisma/adapter-pg driver adapter, Passport JWT, class-validator, and Docker.",
       "status": "supported",
       "evidence": [
+        "package.json",
+        "src/prisma.service.ts",
+        "Dockerfile",
+        "README.md"
+      ]
+    },
+    {
+      "category": "architecture",
+      "claim": "The application follows NestJS modular architecture, organizing business logic into core modules including PrismaModule, AuthModule, ServicesModule, and BookingsModule.",
+      "status": "supported",
+      "evidence": [
+        "src/app.module.ts"
+      ]
+    },
+    {
+      "category": "feature",
+      "claim": "Authentication features endpoints for user registration, user login, and access token refreshing using JWT.",
+      "status": "supported",
+      "evidence": [
+        "src/auth/auth.controller.ts",
+        "src/auth/auth.module.ts"
+      ]
+    },
+    {
+      "category": "feature",
+      "claim": "Interactive OpenAPI documentation is configured via Swagger and served at /api/docs.",
+      "status": "supported",
+      "evidence": [
+        "src/main.ts",
         "README.md"
       ]
     },
     {
       "category": "feature",
-      "claim": "Features include real-time barcode scanning via ZXing and html5-qrcode, carbon emission estimation, recyclability analysis, gamified eco-points and badge rewards, and user leaderboards.",
+      "claim": "Global exception handling maps Prisma error codes P2002 to 409 HTTP Conflict and P2025 to 404 HTTP Not Found.",
       "status": "supported",
       "evidence": [
-        "README.md",
-        "package.json",
-        "ai_services/main.py"
+        "src/prisma-client-exception.filter.ts",
+        "src/main.ts"
       ]
     },
     {
-      "category": "technology",
-      "claim": "The technical stack consists of Next.js 15 (App Router), TypeScript 5, Tailwind CSS, Radix UI, Firebase Auth, MongoDB/Mongoose, and a secondary Python FastAPI service with SQLAlchemy and SQLite.",
+      "category": "technical",
+      "claim": "PrismaService configures PostgreSQL connectivity using pg.Pool adapter wrapped inside PrismaPg adapter.",
       "status": "supported",
       "evidence": [
-        "README.md",
-        "package.json",
-        "ai_services/main.py",
-        "ai_services/database.py"
+        "src/prisma.service.ts"
       ]
     },
     {
-      "category": "architecture",
-      "claim": "The application architecture pairs Next.js middleware-protected frontend and API routes with a separate stateful Python FastAPI service (`ai_services/main.py`) for backend carbon analytics and leaderboard computations.",
+      "category": "technical",
+      "claim": "Database seed script creates a default admin user with plain-text password 'password123' and two initial services.",
       "status": "supported",
       "evidence": [
-        "README.md",
-        "middleware.ts",
-        "ai_services/main.py"
+        "prisma/seed.ts"
       ]
     },
     {
-      "category": "architecture",
-      "claim": "The repository provides containerization using a multi-stage Dockerfile based on `node:20-alpine` with non-root runtime execution and built-in health checking.",
+      "category": "technical",
+      "claim": "AuthModule includes a fallback string 'super-secret' if JWT_SECRET environment variable is not defined.",
+      "status": "supported",
+      "evidence": [
+        "src/auth/auth.module.ts"
+      ]
+    },
+    {
+      "category": "technical",
+      "claim": "The Dockerfile employs a two-stage Alpine build process that executes Prisma migrations on container deployment.",
       "status": "supported",
       "evidence": [
         "Dockerfile"
@@ -74,54 +115,11 @@
     },
     {
       "category": "technical",
-      "claim": "Next.js middleware and next.config.ts enforce strict security headers, including Content-Security-Policy (CSP), Permissions-Policy, X-Frame-Options, and X-Content-Type-Options, backed by Jest unit tests in middleware.csp.test.ts.",
-      "status": "supported",
+      "claim": "Complete implementation source code for AuthService, ServicesModule controllers/services, and BookingsModule controllers/services is missing from the supplied file context.",
+      "status": "inferred",
       "evidence": [
-        "middleware.ts",
-        "next.config.ts",
-        "middleware.csp.test.ts"
-      ]
-    },
-    {
-      "category": "technical",
-      "claim": "The Python FastAPI service file `ai_services/main.py` contains incomplete placeholder slots (`___`) in `get_user_profile`, which would cause syntax errors if executed.",
-      "status": "supported",
-      "evidence": [
-        "ai_services/main.py"
-      ]
-    },
-    {
-      "category": "technical",
-      "claim": "The package name in `package.json` is set to 'my-v0-project', indicating project generation from a v0 boilerplate.",
-      "status": "supported",
-      "evidence": [
-        "package.json"
-      ]
-    },
-    {
-      "category": "technical",
-      "claim": "The application exhibits database architecture fragmentation, utilizing MongoDB with Mongoose on the Node.js side and SQLite with SQLAlchemy in the Python AI services directory.",
-      "status": "supported",
-      "evidence": [
-        "package.json",
-        "README.md",
-        "ai_services/database.py"
-      ]
-    },
-    {
-      "category": "technical",
-      "claim": "A custom utility script `fix.js` is included to run regex modifications across source code files for console logs, TypeScript type annotations, and Tailwind configuration imports.",
-      "status": "supported",
-      "evidence": [
-        "fix.js"
-      ]
-    },
-    {
-      "category": "technical",
-      "claim": "Complete React component implementation source files under `app/` and `components/` are omitted from the supplied context.",
-      "status": "supported",
-      "evidence": [
-        "README.md"
+        "src/app.module.ts",
+        "src/auth/auth.controller.ts"
       ]
     }
   ],
@@ -129,54 +127,95 @@
     "findings": [
       {
         "category": "project",
-        "claim": "EcoVerse is a sustainability-focused web application offering product barcode scanning, carbon footprint tracking, recyclability insights, eco-points, and community leaderboards.",
+        "claim": "The project is a RESTful Booking API platform named en2h-booking-api built for service management and service booking.",
+        "status": "supported",
+        "evidence": [
+          "package.json",
+          "README.md",
+          "src/main.ts"
+        ]
+      },
+      {
+        "category": "problem",
+        "claim": "The project provides a backend solution allowing authenticated users to manage service listings while allowing public customers to create bookings with duplicate prevention.",
         "status": "supported",
         "evidence": [
           "README.md"
         ]
       },
       {
-        "category": "problem",
-        "claim": "The project addresses consumer difficulty in understanding the environmental impact and disposal guidance of everyday consumer products.",
+        "category": "technology",
+        "claim": "The stack uses NestJS v11 framework, Prisma v7.8.0 ORM with PostgreSQL using the @prisma/adapter-pg driver adapter, Passport JWT, class-validator, and Docker.",
         "status": "supported",
         "evidence": [
+          "package.json",
+          "src/prisma.service.ts",
+          "Dockerfile",
+          "README.md"
+        ]
+      },
+      {
+        "category": "architecture",
+        "claim": "The application follows NestJS modular architecture, organizing business logic into core modules including PrismaModule, AuthModule, ServicesModule, and BookingsModule.",
+        "status": "supported",
+        "evidence": [
+          "src/app.module.ts"
+        ]
+      },
+      {
+        "category": "feature",
+        "claim": "Authentication features endpoints for user registration, user login, and access token refreshing using JWT.",
+        "status": "supported",
+        "evidence": [
+          "src/auth/auth.controller.ts",
+          "src/auth/auth.module.ts"
+        ]
+      },
+      {
+        "category": "feature",
+        "claim": "Interactive OpenAPI documentation is configured via Swagger and served at /api/docs.",
+        "status": "supported",
+        "evidence": [
+          "src/main.ts",
           "README.md"
         ]
       },
       {
         "category": "feature",
-        "claim": "Features include real-time barcode scanning via ZXing and html5-qrcode, carbon emission estimation, recyclability analysis, gamified eco-points and badge rewards, and user leaderboards.",
+        "claim": "Global exception handling maps Prisma error codes P2002 to 409 HTTP Conflict and P2025 to 404 HTTP Not Found.",
         "status": "supported",
         "evidence": [
-          "README.md",
-          "package.json",
-          "ai_services/main.py"
+          "src/prisma-client-exception.filter.ts",
+          "src/main.ts"
         ]
       },
       {
-        "category": "technology",
-        "claim": "The technical stack consists of Next.js 15 (App Router), TypeScript 5, Tailwind CSS, Radix UI, Firebase Auth, MongoDB/Mongoose, and a secondary Python FastAPI service with SQLAlchemy and SQLite.",
+        "category": "technical",
+        "claim": "PrismaService configures PostgreSQL connectivity using pg.Pool adapter wrapped inside PrismaPg adapter.",
         "status": "supported",
         "evidence": [
-          "README.md",
-          "package.json",
-          "ai_services/main.py",
-          "ai_services/database.py"
+          "src/prisma.service.ts"
         ]
       },
       {
-        "category": "architecture",
-        "claim": "The application architecture pairs Next.js middleware-protected frontend and API routes with a separate stateful Python FastAPI service (`ai_services/main.py`) for backend carbon analytics and leaderboard computations.",
+        "category": "technical",
+        "claim": "Database seed script creates a default admin user with plain-text password 'password123' and two initial services.",
         "status": "supported",
         "evidence": [
-          "README.md",
-          "middleware.ts",
-          "ai_services/main.py"
+          "prisma/seed.ts"
         ]
       },
       {
-        "category": "architecture",
-        "claim": "The repository provides containerization using a multi-stage Dockerfile based on `node:20-alpine` with non-root runtime execution and built-in health checking.",
+        "category": "technical",
+        "claim": "AuthModule includes a fallback string 'super-secret' if JWT_SECRET environment variable is not defined.",
+        "status": "supported",
+        "evidence": [
+          "src/auth/auth.module.ts"
+        ]
+      },
+      {
+        "category": "technical",
+        "claim": "The Dockerfile employs a two-stage Alpine build process that executes Prisma migrations on container deployment.",
         "status": "supported",
         "evidence": [
           "Dockerfile"
@@ -184,64 +223,21 @@
       },
       {
         "category": "technical",
-        "claim": "Next.js middleware and next.config.ts enforce strict security headers, including Content-Security-Policy (CSP), Permissions-Policy, X-Frame-Options, and X-Content-Type-Options, backed by Jest unit tests in middleware.csp.test.ts.",
-        "status": "supported",
+        "claim": "Complete implementation source code for AuthService, ServicesModule controllers/services, and BookingsModule controllers/services is missing from the supplied file context.",
+        "status": "inferred",
         "evidence": [
-          "middleware.ts",
-          "next.config.ts",
-          "middleware.csp.test.ts"
-        ]
-      },
-      {
-        "category": "technical",
-        "claim": "The Python FastAPI service file `ai_services/main.py` contains incomplete placeholder slots (`___`) in `get_user_profile`, which would cause syntax errors if executed.",
-        "status": "supported",
-        "evidence": [
-          "ai_services/main.py"
-        ]
-      },
-      {
-        "category": "technical",
-        "claim": "The package name in `package.json` is set to 'my-v0-project', indicating project generation from a v0 boilerplate.",
-        "status": "supported",
-        "evidence": [
-          "package.json"
-        ]
-      },
-      {
-        "category": "technical",
-        "claim": "The application exhibits database architecture fragmentation, utilizing MongoDB with Mongoose on the Node.js side and SQLite with SQLAlchemy in the Python AI services directory.",
-        "status": "supported",
-        "evidence": [
-          "package.json",
-          "README.md",
-          "ai_services/database.py"
-        ]
-      },
-      {
-        "category": "technical",
-        "claim": "A custom utility script `fix.js` is included to run regex modifications across source code files for console logs, TypeScript type annotations, and Tailwind configuration imports.",
-        "status": "supported",
-        "evidence": [
-          "fix.js"
-        ]
-      },
-      {
-        "category": "technical",
-        "claim": "Complete React component implementation source files under `app/` and `components/` are omitted from the supplied context.",
-        "status": "supported",
-        "evidence": [
-          "README.md"
+          "src/app.module.ts",
+          "src/auth/auth.controller.ts"
         ]
       }
     ]
   },
   "metadata": {
-    "files_discovered": 31936,
+    "files_discovered": 58,
     "files_selected": 15,
     "files_read": 15,
-    "chunks_created": 16,
-    "saved_at": "2026-09-05T16:13:23.417647Z",
+    "chunks_created": 15,
+    "saved_at": "2026-09-06T16:07:38.998830Z",
     "storage_type": "file_json"
   }
 }

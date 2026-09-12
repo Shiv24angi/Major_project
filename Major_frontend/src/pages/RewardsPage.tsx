@@ -15,37 +15,37 @@ export default function RewardsPage() {
             data-editable
             data-preset-text="rewards-headline"
           >
-            Meet USD Halo rewards
+            VentureLens Evaluation Intelligence
           </h2>
           <p
             className="max-w-2xl text-2xl leading-relaxed text-black/70 md:text-3xl"
             data-editable
             data-preset-text="rewards-body"
           >
-            USD Halo is a reward-earning dollar coin that lets your savings grow while remaining tied to the
-            U.S. dollar—always fluid, always pegged, fully automated in the background.
+            Turn raw startup documentation into verifiable investment conviction—evidence-grounded,
+            cross-checked, and structured for accelerated due diligence.
           </p>
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
             <article className="rounded-2xl bg-[#2B2644] p-7 text-white">
               <h3 className="text-2xl font-semibold" data-editable data-preset-text="rewards-yield-title">
-                Passive yield
+                Grounded Verification
               </h3>
               <p className="mt-4 text-white/60" data-editable data-preset-text="rewards-yield-body">
-                Top-performing DeFi strategies routed automatically.
+                Cross-reference founder pitch assertions against primary financial docs and public data.
               </p>
             </article>
             <article className="rounded-2xl bg-[#2B2644] p-7 text-white">
               <h3 className="text-2xl font-semibold" data-editable data-preset-text="rewards-lockups-title">
-                No lockups
+                Structured Scoring
               </h3>
               <p className="mt-4 text-white/60" data-editable data-preset-text="rewards-lockups-body">
-                On-demand access with dollar anchoring intact.
+                Explainable ratings across 10 core dimensions culminating in clear investment recommendations.
               </p>
             </article>
           </div>
           <div className="mt-10">
-            <PillButton size="base" route="wallet" presetText="rewards-cta">
-              Open Wallet
+            <PillButton size="base" section="how-it-works" presetText="rewards-cta">
+              Start Analysis
             </PillButton>
           </div>
         </div>
