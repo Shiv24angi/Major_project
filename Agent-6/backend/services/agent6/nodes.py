@@ -259,7 +259,8 @@ def analyze_repository(state):
     import json
 
     from services.agent6.analyzers import validate_analysis
-    from services.agent6.llm import ask_llm
+    from services.llm_service import ask_llm
+
 
     repository = state.get("repository", {})
     readme = state.get("readme", "")
