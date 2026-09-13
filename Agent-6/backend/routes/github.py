@@ -34,6 +34,11 @@ def analyze_repository(request: GitHubRequest):
     saves structured output into persistent storage for Agent 2,
     and returns findings with handoff references.
     """
+    import time
+    start_time = time.time()
+
+    print(f"\n[AGENT-6] >>> Received Analysis Request: {request.github_url}", flush=True)
+
     parts = request.github_url.rstrip("/").split("/")
     if len(parts) < 2:
         raise HTTPException(status_code=400, detail="Invalid GitHub URL format")
@@ -41,76 +46,101 @@ def analyze_repository(request: GitHubRequest):
     owner = parts[-2]
     repo_name = parts[-1]
 
-    repo = get_repository(f"{owner}/{repo_name}")
-    readme = get_readme(repo)
-    structure = get_repository_structure(repo)
-    selected_files = select_important_files(structure)
+    try:
+        t0 = time.time()
+        print(f"[AGENT-6] 1/5 Connecting to GitHub repository '{owner}/{repo_name}'...", flush=True)
+        repo = get_repository(f"{owner}/{repo_name}")
+        readme = get_readme(repo)
 
-    file_contents = {}
-    for file_path in selected_files:
-        try:
-            file_contents[file_path] = get_file_content(repo, file_path)
-        except Exception as e:
-            file_contents[file_path] = f"Could not read file: {str(e)}"
+        t1 = time.time()
+        print(f"[AGENT-6] 2/5 Discovering repository structure via Git Trees API...", flush=True)
+        structure = get_repository_structure(repo)
+        print(f"[AGENT-6]     Found {len(structure)} repository entries in {time.time() - t1:.2f}s", flush=True)
 
-    agent6_context = {
-        "repository": {
+        t2 = time.time()
+        selected_files = select_important_files(structure)
+        print(f"[AGENT-6] 3/5 Selected {len(selected_files)} architectural files. Reading contents...", flush=True)
+
+        file_contents = {}
+        for file_path in selected_files:
+            try:
+                file_contents[file_path] = get_file_content(repo, file_path)
+            except Exception as e:
+                file_contents[file_path] = f"Could not read file: {str(e)}"
+        print(f"[AGENT-6]     Files ingested in {time.time() - t2:.2f}s", flush=True)
+
+        agent6_context = {
+            "repository": {
+                "owner": repo.owner.login,
+                "name": repo.name
+            },
+            "readme": readme,
+            "repository_structure": structure,
+            "selected_files": selected_files,
+            "file_contents": file_contents
+        }
+
+        t3 = time.time()
+        print(f"[AGENT-6] 4/5 Evaluating codebase with Agent 6 Intelligence Engine...", flush=True)
+        analysis = analyze_codebase(agent6_context)
+        print(f"[AGENT-6]     Codebase evaluated in {time.time() - t3:.2f}s", flush=True)
+
+        investigation = create_investigation_plan(analysis)
+
+        # Format findings from analysis
+        findings = []
+        if isinstance(analysis, dict):
+            if "findings" in analysis and isinstance(analysis["findings"], list):
+                findings = analysis["findings"]
+            else:
+                # Flatten sectioned analysis into finding records
+                for cat in ["features", "technology_stack", "technical_components", "technical_strengths", "technical_weaknesses", "startup_signals"]:
+                    items = analysis.get(cat, [])
+                    if isinstance(items, list):
+                        for item in items:
+                            if isinstance(item, dict):
+                                findings.append({
+                                    "category": cat,
+                                    "claim": item.get("feature") or item.get("technology") or item.get("component") or item.get("claim") or item.get("signal") or "",
+                                    "status": item.get("status", "inferred"),
+                                    "evidence": item.get("evidence", [])
+                                })
+
+        metadata = {
+            "files_discovered": len(structure),
+            "files_selected": len(selected_files),
+            "files_read": len(file_contents),
+            "chunks_created": len(file_contents),
+            "duration_seconds": round(time.time() - start_time, 2)
+        }
+
+        t4 = time.time()
+        # Persist output to storage for Agent 2
+        save_result = storage.save_agent6_output(
+            repository={"owner": repo.owner.login, "name": repo.name},
+            findings=findings,
+            analysis_metadata=metadata,
+            raw_analysis=analysis,
+            github_url=request.github_url
+        )
+
+        total_elapsed = time.time() - start_time
+        print(f"[AGENT-6] 5/5 Handoff saved! Run ID: {save_result['run_id']} ({len(findings)} findings)")
+        print(f"[AGENT-6] <<< Analysis successfully completed in {total_elapsed:.2f}s!\n", flush=True)
+
+        return {
             "owner": repo.owner.login,
-            "name": repo.name
-        },
-        "readme": readme,
-        "repository_structure": structure,
-        "selected_files": selected_files,
-        "file_contents": file_contents
-    }
+            "repository": repo.name,
+            "run_id": save_result["run_id"],
+            "stored_file_path": save_result["file_path"],
+            "agent6_analysis": analysis,
+            "investigation": investigation,
+            "agent6_output_for_agent2": save_result["payload"]
+        }
+    except Exception as err:
+        print(f"[AGENT-6] ERROR during repository analysis: {err}", flush=True)
+        raise HTTPException(status_code=500, detail=f"Agent 6 analysis failed: {str(err)}")
 
-    analysis = analyze_codebase(agent6_context)
-    investigation = create_investigation_plan(analysis)
-
-    # Format findings from analysis
-    findings = []
-    if isinstance(analysis, dict):
-        if "findings" in analysis and isinstance(analysis["findings"], list):
-            findings = analysis["findings"]
-        else:
-            # Flatten sectioned analysis into finding records
-            for cat in ["features", "technology_stack", "technical_components", "technical_strengths", "technical_weaknesses", "startup_signals"]:
-                items = analysis.get(cat, [])
-                if isinstance(items, list):
-                    for item in items:
-                        if isinstance(item, dict):
-                            findings.append({
-                                "category": cat,
-                                "claim": item.get("feature") or item.get("technology") or item.get("component") or item.get("claim") or item.get("signal") or "",
-                                "status": item.get("status", "inferred"),
-                                "evidence": item.get("evidence", [])
-                            })
-
-    metadata = {
-        "files_discovered": len(structure),
-        "files_selected": len(selected_files),
-        "files_read": len(file_contents),
-        "chunks_created": len(file_contents)
-    }
-
-    # Persist output to storage for Agent 2
-    save_result = storage.save_agent6_output(
-        repository={"owner": repo.owner.login, "name": repo.name},
-        findings=findings,
-        analysis_metadata=metadata,
-        raw_analysis=analysis,
-        github_url=request.github_url
-    )
-
-    return {
-        "owner": repo.owner.login,
-        "repository": repo.name,
-        "run_id": save_result["run_id"],
-        "stored_file_path": save_result["file_path"],
-        "agent6_analysis": analysis,
-        "investigation": investigation,
-        "agent6_output_for_agent2": save_result["payload"]
-    }
 
 
 @router.post("/analyze-graph")

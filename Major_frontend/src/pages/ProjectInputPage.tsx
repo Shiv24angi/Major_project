@@ -15,6 +15,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { navigateTo } from '../shared/preset-site-routing';
 import { addAnalysis, type AnalysisRecord, type AnalysisDocument } from '../services/analysisStorage';
+import { analyzeGithubRepo, convertAgent6PayloadToAnalysisRecord } from '../services/agent6Service';
 
 interface UploadedFileItem {
   id: string;
@@ -63,7 +64,10 @@ export default function ProjectInputPage() {
     setFiles((prev) => prev.filter((f) => f.id !== id));
   };
 
-  const validateAndSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('');
+
+  const validateAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: string[] = [];
 
@@ -90,8 +94,31 @@ export default function ProjectInputPage() {
     }
 
     setErrors([]);
+    setIsSubmitting(true);
+    setSubmitStatus('Dispatching repository to Agent 6 engine...');
 
-    // Extract repository name from GitHub URL
+    // Attempt live Agent 6 FastAPI call first
+    try {
+      setSubmitStatus('Agent 6 AST parsing & evaluating codebase on port 8000...');
+      const liveRes = await analyzeGithubRepo(trimmedGithub);
+
+      if (liveRes.success && liveRes.payload) {
+        const liveRecord = convertAgent6PayloadToAnalysisRecord(
+          liveRes.payload,
+          projectName.trim(),
+          projectDescription.trim()
+        );
+        addAnalysis(liveRecord);
+        navigateTo('processing', { id: liveRecord.id, mode: 'project' });
+        return;
+      }
+    } catch (apiErr) {
+      console.warn('[ProjectInputPage] Agent 6 live analysis call error:', apiErr);
+    } finally {
+      setIsSubmitting(false);
+    }
+
+    // Extract repository name from GitHub URL for fallback
     const repoParts = trimmedGithub.replace(/\/$/, '').split('/');
     const repoOwner = repoParts[repoParts.length - 2];
     const repoName = repoParts[repoParts.length - 1];
@@ -486,9 +513,10 @@ export default function ProjectInputPage() {
             <div className="pt-4">
               <button
                 type="submit"
-                className="group flex w-full items-center justify-between rounded-full bg-[#1F2438] px-8 py-5 text-lg font-semibold text-white transition-all hover:bg-black shadow-xl cursor-pointer"
+                disabled={isSubmitting}
+                className="group flex w-full items-center justify-between rounded-full bg-[#1F2438] px-8 py-5 text-lg font-semibold text-white transition-all hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed shadow-xl cursor-pointer"
               >
-                <span>Analyze Project</span>
+                <span>{isSubmitting ? submitStatus : 'Analyze Project with Agent 6'}</span>
                 <span className="rounded-full bg-cyan-400 p-2.5 text-black transition-transform group-hover:translate-x-1">
                   <ArrowRight className="h-5 w-5" />
                 </span>

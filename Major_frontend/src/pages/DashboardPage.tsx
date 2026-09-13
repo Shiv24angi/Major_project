@@ -32,6 +32,8 @@ import {
   Menu,
   Sparkles,
   Download,
+  GitBranch,
+  Zap,
 } from 'lucide-react';
 import {
   getStoredAnalyses,
@@ -41,6 +43,8 @@ import {
   type AnalysisRecord,
 } from '../services/analysisStorage';
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
+import Agent6DiligenceView from '../components/Agent6DiligenceView';
+import { checkAgent6Health } from '../services/agent6Service';
 
 // VentureLens Aperture Facet Logo
 function VentureLensLogo({ className = 'w-7 h-7' }: { className?: string }) {
@@ -86,6 +90,7 @@ export default function DashboardPage() {
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisRecord | null>(null);
   const [currentTab, setCurrentTab] = useState<
     | 'dashboard'
+    | 'agent6'
     | 'my-analyses'
     | 'documents'
     | 'gmail'
@@ -95,6 +100,9 @@ export default function DashboardPage() {
     | 'questions'
     | 'reports'
   >('dashboard');
+
+  // Agent 6 backend connectivity status
+  const [agent6Online, setAgent6Online] = useState(false);
 
   // Interactive AI chat input
   const [chatInput, setChatInput] = useState('');
@@ -111,6 +119,12 @@ export default function DashboardPage() {
     const loaded = getStoredAnalyses();
     setAnalyses(loaded);
 
+    // Initial check and periodic polling of Agent 6 backend on port 8000
+    checkAgent6Health().then((res) => setAgent6Online(res.online));
+    const healthInterval = setInterval(() => {
+      checkAgent6Health().then((res) => setAgent6Online(res.online));
+    }, 8000);
+
     const params = getRouteParams();
     if (params.id) {
       const found = loaded.find((a) => a.id === params.id);
@@ -125,6 +139,8 @@ export default function DashboardPage() {
       const active = getActiveAnalysis();
       setActiveAnalysis(active);
     }
+
+    return () => clearInterval(healthInterval);
   }, []);
 
   const selectAnalysis = (item: AnalysisRecord) => {
@@ -248,6 +264,7 @@ export default function DashboardPage() {
           <nav className="space-y-1">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+              { id: 'agent6', label: 'Agent 6 Code Diligence', icon: Code2, badge: agent6Online ? 'Online' : 'Ready' },
               { id: 'new-analysis', label: 'New Analysis', icon: PlusCircle, isAction: true },
               { id: 'my-analyses', label: 'My Analyses', icon: Folder },
               { id: 'documents', label: 'Documents', icon: FileText },
@@ -272,18 +289,31 @@ export default function DashboardPage() {
                     }
                     setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-[#EEECFC] text-[#5028E0] font-semibold'
                       : 'text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E]'
                   }`}
                 >
-                  <Icon
-                    className={`w-4.5 h-4.5 shrink-0 ${
-                      isActive ? 'text-[#5028E0]' : 'text-[#64748B]'
-                    }`}
-                  />
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-3 truncate">
+                    <Icon
+                      className={`w-4.5 h-4.5 shrink-0 ${
+                        isActive ? 'text-[#5028E0]' : 'text-[#64748B]'
+                      }`}
+                    />
+                    <span className="truncate">{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                        item.badge === 'Online'
+                          ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+                          : 'bg-[#F1F2F6] text-[#64748B]'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -388,7 +418,34 @@ export default function DashboardPage() {
           </div>
 
           {/* User Profile & Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Agent 6 Backend Status Indicator */}
+            <button
+              type="button"
+              onClick={() => setCurrentTab('agent6')}
+              title="Agent 6 Code Diligence Engine Status (Click to inspect)"
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                agent6Online
+                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
+                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E] hover:bg-[#FEF3C7]'
+              }`}
+            >
+              <span className="relative flex h-2 w-2">
+                {agent6Online && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    agent6Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
+                  }`}
+                />
+              </span>
+              <span className="hidden sm:inline">
+                Agent 6: <strong className="font-bold">{agent6Online ? 'Online (8000)' : 'Standby'}</strong>
+              </span>
+              <span className="sm:hidden font-bold">A6</span>
+            </button>
+
             {/* Notification Bell */}
             <button
               type="button"
@@ -553,27 +610,66 @@ export default function DashboardPage() {
                 {/* Company Header Row */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
                   <div className="flex items-center gap-3.5">
-                    {/* Brand Icon (Red rounded icon) */}
-                    <div className="w-12 h-12 rounded-xl bg-[#FF5A5F] flex items-center justify-center text-white shadow-2xs shrink-0">
-                      <AirbnbIcon className="w-6 h-6" />
-                    </div>
+                    {/* Brand Icon */}
+                    {activeAnalysis.mode === 'project' || activeAnalysis.codeDetails ? (
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5028E0] to-[#7C3AED] flex items-center justify-center text-white shadow-2xs shrink-0">
+                        <Code2 className="w-6 h-6" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-[#FF5A5F] flex items-center justify-center text-white shadow-2xs shrink-0">
+                        <AirbnbIcon className="w-6 h-6" />
+                      </div>
+                    )}
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-xl font-bold text-[#1E1B2E] leading-tight">
                           {activeAnalysis.title}
                         </h2>
-                        <span className="rounded-full bg-[#EEF4FF] text-[#3538CD] border border-[#D1E0FF] px-2.5 py-0.5 text-[11px] font-semibold">
-                          Startup Evaluation
-                        </span>
-                        <span className="rounded-full bg-[#F4F3FF] text-[#5925DC] border border-[#DDD6FE] px-2.5 py-0.5 text-[11px] font-semibold">
-                          Illustrative Analysis
-                        </span>
+                        {activeAnalysis.mode === 'project' ? (
+                          <>
+                            <span className="rounded-full bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0] px-2.5 py-0.5 text-[11px] font-semibold">
+                              Mode B • Project → Startup
+                            </span>
+                            <span className="rounded-full bg-[#EEECFC] text-[#5028E0] border border-[#DDD6FE] px-2.5 py-0.5 text-[11px] font-semibold flex items-center gap-1">
+                              <Zap className="w-3 h-3 text-[#5028E0]" />
+                              <span>Agent 6 Verified</span>
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="rounded-full bg-[#EEF4FF] text-[#3538CD] border border-[#D1E0FF] px-2.5 py-0.5 text-[11px] font-semibold">
+                              Startup Evaluation
+                            </span>
+                            <span className="rounded-full bg-[#F4F3FF] text-[#5925DC] border border-[#DDD6FE] px-2.5 py-0.5 text-[11px] font-semibold">
+                              Illustrative Analysis
+                            </span>
+                          </>
+                        )}
+                        {activeAnalysis.codeDetails?.githubUrl && (
+                          <a
+                            href={activeAnalysis.codeDetails.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-[#5028E0] hover:underline bg-[#F8F9FE] px-2 py-0.5 rounded border border-[#E2E8F0]"
+                          >
+                            <GitBranch className="w-3 h-3" />
+                            <span>{activeAnalysis.codeDetails.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, '')}</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
                       </div>
                       <p className="text-xs text-[#64748B] mt-0.5">{activeAnalysis.tagline}</p>
                     </div>
                   </div>
                   <span className="text-xs text-[#94A3B8] font-normal shrink-0">
-                    Analyzed on Sep 6, 2025
+                    Analyzed on{' '}
+                    {activeAnalysis.createdAt
+                      ? new Date(activeAnalysis.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })
+                      : 'Sep 6, 2025'}
                   </span>
                 </div>
 
@@ -695,23 +791,36 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 font-bold text-sm text-[#1E1B2E]">
                       <Sparkles className="w-4 h-4 text-[#5028E0]" />
-                      <span>Analysis Pipeline (Startup Evaluation)</span>
+                      <span>
+                        {activeAnalysis.mode === 'project'
+                          ? 'Analysis Pipeline (Agent 6 Code Diligence → Agent 2)'
+                          : 'Analysis Pipeline (Startup Evaluation)'}
+                      </span>
                     </div>
                     <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[11px] font-medium text-[#059669]">
                       <Clock className="w-3 h-3" />
-                      <span>Completed in 6.5 min</span>
+                      <span>Completed in {activeAnalysis.mode === 'project' ? '4.2 min' : '6.5 min'}</span>
                     </span>
                   </div>
 
                   {/* 5 Sequential Agent Steps with Arrows */}
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
-                    {[
-                      { step: 'Document Analysis', agent: 'Agent 1' },
-                      { step: 'Data Normalization', agent: 'Agent 2' },
-                      { step: 'Scoring Engine', agent: 'Agent 3' },
-                      { step: 'Insights & Recommendation', agent: 'Agent 4' },
-                      { step: 'Report Generation', agent: 'Agent 5' },
-                    ].map((item, idx, arr) => (
+                    {(activeAnalysis.mode === 'project'
+                      ? [
+                          { step: 'Repo AST Parsing', agent: 'Agent 6 — Stage 1' },
+                          { step: 'Codebase Analysis', agent: 'Agent 6 — Stage 2' },
+                          { step: 'Technical Claims', agent: 'Agent 6 — Stage 3' },
+                          { step: 'Data Normalization', agent: 'Agent 6 → Agent 2' },
+                          { step: 'Venture Diligence', agent: 'Agent 5' },
+                        ]
+                      : [
+                          { step: 'Document Analysis', agent: 'Agent 1' },
+                          { step: 'Data Normalization', agent: 'Agent 2' },
+                          { step: 'Scoring Engine', agent: 'Agent 3' },
+                          { step: 'Insights & Recommendation', agent: 'Agent 4' },
+                          { step: 'Report Generation', agent: 'Agent 5' },
+                        ]
+                    ).map((item, idx, arr) => (
                       <React.Fragment key={item.step}>
                         <div className="flex flex-col items-center text-center">
                           <div className="w-7 h-7 rounded-full bg-[#10B981] text-white flex items-center justify-center mb-1.5 shadow-2xs">
@@ -791,6 +900,52 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+
+              {/* AGENT 6 CODE DILIGENCE HIGHLIGHT BANNER (PROJECT MODE) */}
+              {(activeAnalysis.mode === 'project' || activeAnalysis.codeDetails) && (
+                <div className="rounded-2xl border border-[#DDD6FE] bg-gradient-to-r from-[#F4F1FD] via-white to-[#F8F9FE] p-6 shadow-2xs">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#5028E0] text-white flex items-center gap-1.5 shadow-2xs">
+                          <Code2 className="w-3.5 h-3.5" />
+                          <span>Agent 6 Code Intelligence Active</span>
+                        </span>
+                        <span className="text-xs text-[#64748B] font-mono">
+                          {activeAnalysis.codeDetails?.filesDiscovered || 58} Files Discovered • {activeAnalysis.codeDetails?.filesRead || 15} Files Audited
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-bold text-[#1E1B2E]">
+                        Codebase Verified: {activeAnalysis.title}
+                      </h3>
+                      <p className="text-xs text-[#64748B] max-w-3xl">
+                        Agent 6 audited the repository AST and extracted verified architectural claims, evidence-backed capabilities, and security posture for venture due diligence.
+                      </p>
+                      {/* Tech Stack Chips */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        {(activeAnalysis.codeDetails?.techStack || ['TypeScript', 'Node.js', 'Docker']).map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2 py-0.5 rounded-md bg-white border border-[#CBD5E1] text-[11px] font-semibold text-[#1E1B2E]"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTab('agent6')}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#5028E0] hover:bg-[#4320BD] text-white text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0"
+                    >
+                      <Zap className="w-4 h-4" />
+                      <span>Open Agent 6 Inspector</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* LOWER 4-CARD GRID */}
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -1209,6 +1364,18 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* TAB: AGENT 6 CODE DILIGENCE CONTROL CENTER */}
+          {currentTab === 'agent6' && activeAnalysis && (
+            <Agent6DiligenceView
+              activeAnalysis={activeAnalysis}
+              onAnalysisChange={(updated) => {
+                setActiveAnalysis(updated);
+                setAnalyses(getStoredAnalyses());
+              }}
+              onNavigateToDashboard={() => setCurrentTab('dashboard')}
+            />
           )}
 
           {/* TAB 2: MY ANALYSES VIEW */}
