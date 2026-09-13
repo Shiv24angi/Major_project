@@ -1,0 +1,1110 @@
+{
+  "file_path": "uploads/00b8aac6-d5b9-42d6-be45-81d8f8cfcd2a.docx",
+  "document_type": "docx",
+  "document_text": "--- PARAGRAPH 2 ---\nKāinga Ora Adaptive Smart Utility System (KASUS)\n\n--- PARAGRAPH 3 ---\nA Context-Aware Ubiquitous Computing Proposal for New Zealand Social Housing\n\n--- PARAGRAPH 4 ---\nIT8106 – Ubiquitous Computing\n\n--- PARAGRAPH 5 ---\nAssessment 1: Research and Requirements\n\n--- PARAGRAPH 6 ---\nPrepared for: Senior Management Team (SMT)\n\n--- PARAGRAPH 8 ---\nPrepared by: [Name]\n\n--- PARAGRAPH 9 ---\nStudent ID: [ID]\n\n--- PARAGRAPH 10 ---\nWhitecliffe College\n\n--- PARAGRAPH 11 ---\n2026\n\n--- PARAGRAPH 12 ---\nDeclaration\n\n--- PARAGRAPH 13 ---\n\"The work presented in this assessment is to the best of my knowledge original, except as acknowledged in the text, and the material has not already been submitted, either in whole or in part, for any academic award at this or any other tertiary institution. I promise not to share this assessment in part or whole with any other student at Whitecliffe or outside this campus.\"\n\n--- PARAGRAPH 69 ---\nTable of Contents\n\n--- PARAGRAPH 70 ---\n1. Introduction\n\n--- PARAGRAPH 71 ---\n1.1 Project Background\n\n--- PARAGRAPH 72 ---\n1.2 Purpose and Scope\n\n--- PARAGRAPH 73 ---\n1.3 Proposed Smart Utility System\n\n--- PARAGRAPH 74 ---\n2. Task 1: User Case Scenarios\n\n--- PARAGRAPH 75 ---\n2.1 Use Case 1 – Healthy Home Climate Management\n\n--- PARAGRAPH 76 ---\n2.2 Use Case 2 – Adaptive Energy and Peak-Demand Management\n\n--- PARAGRAPH 77 ---\n2.3 Use Case 3 – Utility Anomaly and Leak Detection\n\n--- PARAGRAPH 78 ---\n2.4 Unified System Requirements\n\n--- PARAGRAPH 79 ---\n3. Task 2: Characteristics of the Ubiquitous Computing System\n\n--- PARAGRAPH 80 ---\n3.1 Unified KASUS Architecture\n\n--- PARAGRAPH 81 ---\n3.2 Five Core UbiCom Properties\n\n--- PARAGRAPH 82 ---\n3.3 Application Across the Three Use Cases\n\n--- PARAGRAPH 83 ---\n3.4 Social Housing and Real-World Context\n\n--- PARAGRAPH 84 ---\n3.5 Autonomy and Resident Control\n\n--- PARAGRAPH 85 ---\n3.6 Unified System Justification\n\n--- PARAGRAPH 86 ---\n4. Task 3: Research and Evaluation of Utility Technologies\n\n--- PARAGRAPH 87 ---\n4.1 Environmental and Occupancy Sensing\n\n--- PARAGRAPH 88 ---\n4.2 Smart Electricity and Demand Management\n\n--- PARAGRAPH 89 ---\n4.3 Water and Anomaly Detection Technologies\n\n--- PARAGRAPH 90 ---\n4.4 Communication Technologies\n\n--- PARAGRAPH 91 ---\n4.5 Edge vs Cloud Processing\n\n--- PARAGRAPH 92 ---\n4.6 Human–Computer Interaction Technologies\n\n--- PARAGRAPH 93 ---\n4.7 Comparative Evaluation\n\n--- PARAGRAPH 94 ---\n5. Task 4: Recommendations\n\n--- PARAGRAPH 95 ---\n5.1 Recommended System Architecture\n\n--- PARAGRAPH 96 ---\n5.2 Recommended Sensors and Technologies\n\n--- PARAGRAPH 97 ---\n5.3 Recommended Interaction Model\n\n--- PARAGRAPH 98 ---\n5.4 Recommendation to Senior Management Team\n\n--- PARAGRAPH 99 ---\n6. Conclusion\n\n--- PARAGRAPH 100 ---\nReferences\n\n--- PARAGRAPH 107 ---\n1. Introduction\n\n--- PARAGRAPH 108 ---\n1.1 Project Background\n\n--- PARAGRAPH 109 ---\nSmart technologies have become increasingly adopted in homes, aided by the increasing demand for sustainable housing and the rapid urban development. In the era of ubiquitous computing, connected devices, sensors and intelligent services are making everything around us a part of the monitor.Today, in the age of ubiquitous computing, anything can be connected, can be sensed and can be intelligent and respond automatically (Sun & Li, 2021; Abdelnaby et al., 2025). These technologies are used to enhance energy efficiency, lower operating expenses and promote healthier lifestyles without requiring much effort from the user.\n\n--- PARAGRAPH 110 ---\nThe New Zealand Government organisation for social housing, Kāinga Ora, has engaged SmartBuild to build a Smart Utility System for new housing developments in the Wellington Region. The company has already introduced intelligent electricity and gas meters, real-time monitoring of resources, demand-response systems, autonomous systems and applications that enhance energy management (Abdelnaby et al., 2025).\n\n--- PARAGRAPH 111 ---\nWhile all these developments have been made in the utility efficiency of social housing, social housing still faces challenges. There are a diversity of residents with different lifestyles, varying levels of digital literacy, accessibility requirements, and differing patterns of resources consumption. Thus, a smart utility system should be dependable, secure, user-friendly and should work without taking away the residents' decision making.\n\n--- PARAGRAPH 112 ---\nThis report suggests a single ubiquitous computing system solution – the Kāinga Ora Adaptive Smart Utility System (KASUS) – to overcome these challenges that encompasses the integration of environmental monitoring, energy management and utility anomaly detection on a single context-aware platform for New Zealand social housing (Smart Systems: A Review of Theory, Applications, and Recent Advances, 2025).\n\n--- PARAGRAPH 113 ---\n1.2 Purpose and Scope\n\n--- PARAGRAPH 114 ---\nThis report aims to develop and test a single Smart Utility System to use ubiquitous computing concepts to enhance the management of utilities in Kāinga Ora social housing. The intended Kāinga Ora Adaptive Smart Utility System (KASUS) will be designed to increase comfort in the home, optimise the use of resources and facilitate proactive maintenance, while still maintaining the resident's control over their home.\n\n--- PARAGRAPH 115 ---\nThe report has four assessment tasks. It starts with the creation of three related user case scenarios to determine user requirements and the functional and non-functional requirement of the system. It then considers KASUS in terms of the fundamental properties of ubiquitous computing, and its ability to enable context-aware and adaptive behaviour in a real-world social housing context.\n\n--- PARAGRAPH 116 ---\nFinally, the most suitable technologies for KASUS are identified by comparing the different sensing technologies, communication methods, processing architectures and interaction models. The results are then consolidated into actionable recommendations that will give a clear direction to the future of the proposed Smart Utility System for SmartBuild and the Senior Management Team.Finally, the most suitable technologies for KASUS are identified by comparing the different sensing technologies, communication methods, processing architectures and interaction models. The results are then consolidated into actionable recommendations that will give a clear direction to the future of the proposed Smart Utility System for SmartBuild and the Senior Management Team.\n\n--- PARAGRAPH 117 ---\n1.3 Proposed Smart Utility System\n\n--- PARAGRAPH 118 ---\nKāinga Ora Adaptive Smart Utility System (KASUS) is an integrated ubiquitous computing system that aims to enhance the management of utility use in Kāinga Ora social housing. However, traditional smart home solutions are standalone and are not coordinated (Sun & Li, 2021). This allows for different utility functions to communicate and provide for varying household situations.\n\n--- PARAGRAPH 119 ---\nThe central element of KASUS is a Context Engine that is constantly fed data by environmental, occupancy, electricity and water sensors. The Context Engine combines multiple data sources to come to understand the context of the household as a whole and make decisions accordingly instead of responding to data from individual sensors. This context-aware approach is able to differentiate between normal house activities and situations that need intervention.\n\n--- PARAGRAPH 120 ---\nThe three integrated functions of KASUS are: Healthy Home Climate Management, which monitors temperature, humidity and occupancy; Adaptive Energy and Peak-Demand Management, which reduces electricity wasting due to unexpected use and prevents excess usage at peak demand; Utility Anomaly and Leak Detection, which detects unexpected electricity and/or water usage before it becomes a problem.\n\n--- PARAGRAPH 121 ---\nHuman-centred automation (Adaptation in Smart Home Automation Systems, 2025) is one of the most important design aspects of KASUS. The system can be used to automatically carry out low risk activities, but residents will be notified of any action and will have the ability to make changes or override automatic actions. By balancing the intelligent automation with operator control, it ensures the system is functional, reliable and appropriate for the varied needs of Kāinga Ora households.\n\n--- PARAGRAPH 124 ---\nFigure 1. KASUS Unified System Concept — the Context Engine coordinating four functional domains.\n\n--- PARAGRAPH 126 ---\n2. Task 1: User Case Scenarios\n\n--- PARAGRAPH 127 ---\nThe proposed Kāinga Ora Adaptive Smart Utility System (KASUS) is examined in three interconnected user case scenarios which address typical utility-management problems within social housing. The scenarios discussed explore how residents can interact with the pervasive computing environment, and the functional and non-functional requirements that will enable the design of reliable, context-aware services. Each of the use cases deals with a different utility domain, but they share sensing, communication and decision-making abilities and are integrated into the same architecture. These scenarios illustrate how “ubiquitous computing” can enhance the wellbeing of the home, optimize resource usage and enable proactive maintenance, while maintaining the autonomy and control of the residents.\n\n--- PARAGRAPH 128 ---\n2.1 Use Case 1 – Healthy Home Climate Management\n\n--- PARAGRAPH 129 ---\nScenario Overview\n\n--- PARAGRAPH 130 ---\nResidents of Kāinga Ora social housing, especially children, older people and anyone with health conditions who are more likely to be affected by cold, high humidity and poor air quality, need a healthy indoor environment. The traditional heating and ventilation method involves the people adjusting the system by hand, which can lead to excess energy consumption or poor indoor air quality in the event of the environmental changes being unnoticed.\n\n--- PARAGRAPH 131 ---\nKASUS tackles this challenge by constantly measuring temperature, humidity and occupancy with distributed environmental sensors, namely the Healthy Home Climate Management module (Elkhoukhi et al., 2025). The Sensor data is transmitted to the KASUS Context Engine where the overall context of the household is analyzed instead of each sensor reading. For instance, when a room full of people cools down below comfort temperature, with a rise in humidity, the system checks if intervention is necessary or not. It can suggest or self-regulate ventilation and heating within the limits of approval, according to the preferences of the residents.\n\n--- PARAGRAPH 132 ---\nThe main goal is to provide a TSA that enhances thermal comfort without using excessive energy. KASUS responds to the actual household situation rather than relying on predefined heating schedules, leading to only heating and ventilation when required. Clear explanations about recommended or completed actions are displayed or on a \"dashboard\" for residents and they can override or change system decisions at any time.\n\n--- PARAGRAPH 133 ---\nThe integration of the different aspects of KASUS—environmental sensing, contextual analysis and human-centred automation—gives the opportunity for living a healthier life without sacrificing resident autonomy (Adaptation in Smart Home Automation Systems, 2025). This is a way of making it comfortable, energy-efficient and user-controlled, all in the same ubiquitous computing system.\n\n--- PARAGRAPH 134 ---\nPrimary User\n\n--- PARAGRAPH 135 ---\nKāinga Ora residents\n\n--- PARAGRAPH 136 ---\nSecondary user\n\n--- PARAGRAPH 137 ---\nKāinga Ora maintenance team (where authorised for long-term environmental monitoring)\n\n--- PARAGRAPH 138 ---\nFunctional Requirements\n\n--- PARAGRAPH 139 ---\nMonitor indoor temperature, humidity and occupancy in real time.\n\n--- PARAGRAPH 140 ---\nAnalyse environmental conditions using the KASUS Context Engine.\n\n--- PARAGRAPH 141 ---\nRecommend or automatically adjust heating and ventilation within resident-defined limits.\n\n--- PARAGRAPH 142 ---\nNotify residents of significant environmental changes and system actions.\n\n--- PARAGRAPH 143 ---\nAllow manual override or modification of automated decisions.\n\n--- PARAGRAPH 144 ---\nNon-Functional Requirements\n\n--- PARAGRAPH 145 ---\nReliable continuous environmental monitoring.\n\n--- PARAGRAPH 146 ---\nLow response time for context-aware decisions.\n\n--- PARAGRAPH 147 ---\nSecure handling of household sensor data.\n\n--- PARAGRAPH 148 ---\nSimple, accessible interface for users with varying digital literacy.\n\n--- PARAGRAPH 149 ---\nEnergy-efficient operation of sensors and connected devices.\n\n--- PARAGRAPH 150 ---\nHigh system availability with minimal maintenance.\n\n--- PARAGRAPH 151 ---\nExpected Outcome\n\n--- PARAGRAPH 152 ---\nThe Healthy Home Climate Management module continuously adapts to changing household conditions, improving resident comfort while reducing unnecessary energy consumption. Context-aware automation enables intelligent environmental control, while manual override ensures residents remain in control of their home. The result is a healthier, more energy-efficient and user-centred living environment aligned with the objectives of Kāinga Ora social housing.\n\n--- PARAGRAPH 154 ---\nFigure 2. Workflow of the Healthy Home Climate Management module\n\n--- PARAGRAPH 155 ---\n2.2 Use Case 2 – Adaptive Energy and Peak-Demand Management\n\n--- PARAGRAPH 156 ---\nScenario Overview\n\n--- PARAGRAPH 157 ---\nElectricity consumption in residential buildings varies throughout the day, with peak demand periods placing pressure on both electricity networks and household energy costs (6G Internet-of-Things Assisted Smart Homes and Buildings, 2025). Traditional electricity meters record total energy usage but do not help residents identify inefficient consumption or ways to reduce it. This is particularly important in social housing, where affordable utility costs directly affect household wellbeing.\n\n--- PARAGRAPH 158 ---\nThe Adaptive Energy and Peak-Demand Management module within KASUS addresses this challenge by combining smart electricity metering, occupancy information and real-time energy monitoring. Instead of only recording usage, the system analyses consumption patterns alongside household context. When high demand is detected, the KASUS Context Engine (Abdelnaby et al., 2025) determines whether non-essential appliances, such as washing machines or dishwashers, can be delayed without affecting resident comfort. If energy optimisation has been enabled, KASUS temporarily postpones selected appliances; otherwise, it provides recommendations, allowing residents to decide whether to reduce or delay energy use.\n\n--- PARAGRAPH 159 ---\nUnlike conventional demand-response systems, KASUS keeps residents at the centre of decision-making. Automated actions are displayed through an in-home display or mobile application, allowing users to monitor electricity consumption, understand recommendations and manually override system decisions whenever required. This approach improves trust while ensuring automation supports rather than restricts household needs.\n\n--- PARAGRAPH 160 ---\nBy integrating smart metering with context-aware decision-making, KASUS reduces unnecessary electricity consumption, improves appliance efficiency and promotes informed energy management while preserving resident autonomy.\n\n--- PARAGRAPH 161 ---\nPrimary User\n\n--- PARAGRAPH 162 ---\nKāinga Ora residents\n\n--- PARAGRAPH 163 ---\nSecondary user\n\n--- PARAGRAPH 164 ---\nKāinga Ora maintenance team (long term environmental monitoring authorised) Functional Requirements\n\n--- PARAGRAPH 165 ---\nFunctional Requirements\n\n--- PARAGRAPH 166 ---\nReal-time indoor temperature, humidity and occupancy monitoring.\n\n--- PARAGRAPH 167 ---\nAnalyse environmental conditions with KASUS Context Engine.\n\n--- PARAGRAPH 168 ---\nSuggest or automatically control heating and ventilation within set limits for the residents.\n\n--- PARAGRAPH 169 ---\nALERT residents to major environmental changes and system actions.\n\n--- PARAGRAPH 170 ---\nMake possible to override or modify automatic decisions.\n\n--- PARAGRAPH 171 ---\nNon-Functional Requirements\n\n--- PARAGRAPH 172 ---\nContinuous environmental monitoring – reliable.\n\n--- PARAGRAPH 173 ---\nSlow decision making for context awareness.\n\n--- PARAGRAPH 174 ---\nHandling of household sensor data is ensured.\n\n--- PARAGRAPH 175 ---\nSimple and accessible user interface for users with differing digital literacy.\n\n--- PARAGRAPH 176 ---\nReducing energy consumption for sensor and connected devices.\n\n--- PARAGRAPH 177 ---\nHigh system availability and low maintenance.\n\n--- PARAGRAPH 179 ---\nExpected Outcome\n\n--- PARAGRAPH 180 ---\nThe Healthy Home Climate Management module is continually adjusted to meet the changing needs of the household, increasing the comfort of the residents, while minimizing needless energy use. Combined with manual override, context-aware automation allows for intelligent home environment control, allowing the resident to stay in control of their home. This generates a healthier, more energy-efficient and user-friendly living environment that is in line with the goals of Kāinga Ora social housing.\n\n--- PARAGRAPH 182 ---\nFigure 3. Workflow of the Adaptive Energy and Peak-Demand Management\n\n--- PARAGRAPH 185 ---\n2.3 Use Case 3 – Utility Anomaly and Leak Detection\n\n--- PARAGRAPH 186 ---\nScenario Overview\n\n--- PARAGRAPH 187 ---\nSome problems which cause property damage are water leaking, which leads to additional utility expenses and maintenance demands in residential buildings, and unusual electricity use. These issues are not always detected until there is considerable damage done as existing utility systems only measure consumption but do not provide information on whether the observed behaviour is abnormal. It is therefore crucial that anomalies are identified early to safeguard housing assets and residents.\n\n--- PARAGRAPH 188 ---\nKASUS' Utility Anomaly and Leak Detection module constantly monitors water flow data, electricity consumption and occupancy data and identifies any unusual patterns of use. The Context Engine evaluates multiple data sources at the same time instead of a single sensor. If, for instance, water is being used continuously while the home should not be in use, the system knows it is not normal household activity and will be flagged as a potential leak. Likewise, if the electricity use is abnormal for the lack of occupancy, it could be a result of an appliance accidentally being left on or due to a fault.\n\n--- PARAGRAPH 189 ---\nIf a problem is identified, KASUS notifies residents immediately via the in-home display or mobile application, explains the identified problem and recommended steps. Where maintenance notifications are authorized by residents (6G Internet-of-Things Assisted Smart Homes and Buildings, 2025), large and/or repeated anomalies can also be sent to the Kāinga Ora maintenance services for further investigation. This proactive approach helps maintenance staff to act before minor issues grow to costly repair work and informs residents of the work being done in a timely manner.\n\n--- PARAGRAPH 190 ---\nThe essence of the idea behind KASUS is to differentiate between actual faults and the normal behaviors of households by continuously monitoring and using contextual reasoning. This minimizes false alarms and enhances increased confidence in the system. The residents are kept fully informed of all events which are detected, and they maintain control on the notification preferences and maintenance permissions, which are always kept in the center of system operations, based on privacy and transparency (Systematic Review of Smart Home IoT Security, 2025).\n\n--- PARAGRAPH 191 ---\nPrimary User\n\n--- PARAGRAPH 192 ---\nKāinga Ora residents\n\n--- PARAGRAPH 193 ---\nSecondary user\n\n--- PARAGRAPH 194 ---\nKāinga Ora maintenance team (with residents' permission)\n\n--- PARAGRAPH 195 ---\nFunctional Requirements\n\n--- PARAGRAPH 196 ---\nContinuously monitor water and electricity consumption.\n\n--- PARAGRAPH 197 ---\nUse context-aware analysis to detect abnormal usage of utilities.\n\n--- PARAGRAPH 198 ---\nDistinguish between normal and abnormal household activity.\n\n--- PARAGRAPH 199 ---\nMake real-time alerts for residents.\n\n--- PARAGRAPH 200 ---\nIf anomalies persist or are critical, escalate to authorised maintenance.\n\n--- PARAGRAPH 201 ---\nGive residents the option to set up how they want to be notified and what maintenance they can grant.\n\n--- PARAGRAPH 202 ---\nNon-Functional Requirements\n\n--- PARAGRAPH 203 ---\nLow false alarm and high detection accuracy.\n\n--- PARAGRAPH 204 ---\nReal-time monitoring and alert generation that is reliable.\n\n--- PARAGRAPH 205 ---\nSecure management of utility and occupancy data.\n\n--- PARAGRAPH 206 ---\n24 hours running time.\n\n--- PARAGRAPH 207 ---\nEasy-to-understand notifications suitable for all residents.\n\n--- PARAGRAPH 208 ---\nScalable architecture which can support multiple households.\n\n--- PARAGRAPH 209 ---\nExpected Outcome\n\n--- PARAGRAPH 210 ---\nThe Utility Anomaly and Leak Detection module enables early identification of water leaks and abnormal electricity usage before significant property damage or unnecessary utility costs occur. By combining multiple sensor inputs with contextual analysis, KASUS improves maintenance efficiency while reducing false alarms. Residents receive timely information and remain in control of notification preferences, creating a practical balance between intelligent automation, privacy and proactive asset management.\n\n--- PARAGRAPH 212 ---\nFigure 4. Workflow of the Utility Anomaly and Leak Detection module\n\n--- PARAGRAPH 213 ---\n2.4 Unified System Requirements\n\n--- PARAGRAPH 214 ---\nTable 1. Comparison of functional and non-functional requirements across the three use cases.\n\n--- PARAGRAPH 216 ---\n3. Task 2: Characteristics of the Ubiquitous Computing System\n\n--- PARAGRAPH 217 ---\nThe Kāinga Ora Adaptive Smart Utility System (KASUS) is not a standalone solution of smart devices, but rather an integrated ubiquitous computing system. The environmental sensors, intelligent software components and utility meters form a communication network to provide context-aware services and enhance comfort, safety and resource efficiency. The system gathers contextual information, analyses household situations and acts based on pre-defined rules and resident's preferences, rather than constantly engaging with human interaction.\n\n--- PARAGRAPH 218 ---\nIn contrast to traditional utility monitoring, which only measures electricity or water use, KASUS combines environmental sensing, context-awareness, and adaptive decision-making to enable three critical functions—maintaining a healthy indoor environment, optimizing energy usage, and detecting abnormal utility use. These functions can be made into a single ubiquitous computing system by sharing a common sensing infrastructure and a common Context Engine.\n\n--- PARAGRAPH 219 ---\nThis section assesses the KASUS with respect to the five main features of ubiquitous computing: Distributed, Implicit Human–Computer Interaction (iHCI), Context-Aware, Autonomous, and Intelligent. Each characteristic is evaluated with regard to the proposed use cases, with practical considerations of the Kāinga Ora social housing, including accessibility, affordability, privacy and resident control (Adaptation in Smart Home Automation Systems, 2025).\n\n--- PARAGRAPH 220 ---\n3.1 Unified KASUS Architecture\n\n--- PARAGRAPH 221 ---\nThe proposed KASUS architecture is designed with an efficient local decision making system and secure system for long term storage of data, using a hybrid edge–cloud model. The household data collected by environmental, occupancy and smart utility sensors are constantly transmitted to a Local Home Gateway, which is connected to the KASUS Context Engine to process the data in real-time and generate the current household context information.\n\n--- PARAGRAPH 222 ---\nLocal Processing allows actions to be taken directly, such as heat settings, abnormal utility usage detection and resident notification without the need to always be online. This will not only reduce the amount of sensitive house information being unnecessarily shared with cloud services, it will also improve response time and reliability.\n\n--- PARAGRAPH 223 ---\nThe cloud part enables non-time sensitive services such as long term analytics, software updates, consolidated reporting, and authorised maintenance information. Only essential data necessary for these services is sent, enhancing privacy while retaining system performance.\n\n--- PARAGRAPH 224 ---\nWith real-time edge processing, and cloud-based analytics, KASUS strikes the right balance in terms of responsiveness, scalability and data protection. The architecture also is designed to be expandable so that more sensors and smart utility functions can be added to the system without causing major changes throughout it (Firouzi et al., 2021).\n\n--- PARAGRAPH 226 ---\nTable 2. Comparison of edge and cloud processing supporting the KASUS hybrid architecture.\n\n--- PARAGRAPH 227 ---\n3.2 Five Core UbiCom Properties\n\n--- PARAGRAPH 228 ---\nThe value and effectiveness of Kāinga Ora Adaptive Smart Utility System (KASUS) is dependent on how well it implements the principles of ubiquitous computing in a social housing setting. The features these technologies bring afford an intelligent, context-aware service and seamless integration into everyday life with the help of computing technologies. But some attributes need to be implemented to a higher degree than others. Some are vital, others need to be weighed against resident privacy, accessibility and control (Baccour et al., 2021).\n\n--- PARAGRAPH 229 ---\n3.2.1 Distributed Computing\n\n--- PARAGRAPH 230 ---\nDistributed computing: Sensors, devices and software services work together as a whole rather than as independent entities. The Local Home Gateway provides sensor connectivity between the temperature, humidity, occupancy, electricity and water sensors, enabling the sharing of contextual information between the utility functions and to support decision making.\n\n--- PARAGRAPH 231 ---\nIn the case of Healthy Home Climate Management, for instance, it combines occupancy and environmental data to optimize heating; and, in the case of Utility Anomaly Detection, it uses the occupancy and utility data to differentiate between real faults and regular household activity. If there was no distributed communication, the context understanding would be greatly diminished.\n\n--- PARAGRAPH 232 ---\nDistributed computing is therefore crucial, and the groundwork is laid for all three KASUS use cases (Systematic Analysis of Smart Homes, 2024).\n\n--- PARAGRAPH 233 ---\n3.2.2 Implicit Human–Computer Interaction (iHCI)\n\n--- PARAGRAPH 234 ---\nImplicit Human–Computer Interaction allows KASUS to react to the home environment without explicit manual intervention. Residents get automatic suggestions or ticking the boxes, instead of manually adjusting heating or checking on utilities all the time.\n\n--- PARAGRAPH 235 ---\nFor instance, the system can recognise an uncomfortable indoor condition and make or take recommendations for heating adjustments, or the Energy Management module can recognise peak-demand and suggest energy-saving measures. Yet the residents are still kept in the loop, and have the option to intervene at any moment should they want to, so that technology helps them, but doesn't take the place of them.\n\n--- PARAGRAPH 237 ---\n3.2.3 Context-Aware Computing\n\n--- PARAGRAPH 238 ---\nContext Awareness is the fundamental feature of KASUS. The system does not just react to individual sensor data, it analyses the context of the environment, of occupancy, of energy usage and the preferences of the residents, to understand what is going on in the household.\n\n--- PARAGRAPH 239 ---\nThis will allow KASUS to differentiate between normal and abnormal conditions. For instance, high electricity bills in the building during the tenure of its occupants may be normal while the same consumption in the absence of the occupants for a long time may signal a problem with an appliance. Similarly, if a home is left empty and has a constant stream of water, this may indicate a possible leak. Context awareness, thus, enhances the accuracy of the decision-making process and minimizes the number of false alarms and increases system reliability.\n\n--- PARAGRAPH 240 ---\n3.2.4 Autonomous Operation\n\n--- PARAGRAPH 241 ---\nAutonomous operation allows KASUS to perform routine actions, such as generating notifications, adjusting environmental controls and detecting utility anomalies without continuous user input. This will decrease the effort of residents and increase the speed of response to varying conditions.\n\n--- PARAGRAPH 242 ---\nBut autonomy is not appropriate for Kāinga Ora social housing. In order to keep the trust and transparency, KASUS applies the controlled autonomy manner, allowing the residents to adjust the preferences and/or to make a manual override of the automatic decisions when necessary.\n\n--- PARAGRAPH 243 ---\n3.2.5 Intelligent Computing\n\n--- PARAGRAPH 244 ---\nWith the help of intelligent computing, KASUS can transform the data gathered by the sensors into useful decisions. The Context Engine processes several inputs, matches them against a set of predefined rules and then outputs the appropriate response based on the conditions in the household.\n\n--- PARAGRAPH 245 ---\nConventional monitoring systems only report utility data, KASUS offers recommendations for actions, recognizes maintenance problems and adjusts its behaviour to adapt to changing conditions. The other aspects of ubiquitous computing are complemented by this intelligence, ensuring the usefulness and practical value of distributed sensing, contextual analysis and automation.\n\n--- PARAGRAPH 246 ---\nKey Finding\n\n--- PARAGRAPH 247 ---\nFrom the analysis, it is seen that the technological basis of KASUS is Context Awareness, Distributed Computing and Intelligent Computing. The former, Implicit Human–Computer Interaction makes it easier to use, the latter, Autonomous Operation, is deliberately restricted in order to maintain the trust of residents, transparency and control. This is a good mix of practical and ethical needs of Kāinga Ora social housing and aligns KASUS to these needs.\n\n--- PARAGRAPH 248 ---\n3.3 Application Across the Three Use Cases\n\n--- PARAGRAPH 249 ---\nWhile KASUS is a single ubiquitous computing system, for each use case, the core ubiquitous computing characteristics are implemented in a unique way. Healthy Home Climate Management applies environmental sensing and contextual reasoning to control the indoor climate and provide thermal comfort, Adaptive Energy and Peak-Demand Management optimises energy use intelligently without the residents being able to control it, while Utility Anomaly and Leak Detection monitors the energy use continuously and applies contextual reasoning to detect abnormal energy use and provide alerts on timely maintenance.\n\n--- PARAGRAPH 250 ---\nAccording to the analysis, the two core technologies of Context-Aware and Distributed Computing are essential in all use cases; because all functions rely on the data from an interconnected set of sensors. The Context Engine can \"understand\" this data and respond appropriately using Intelligent Computing. Implicit Human–Computer Interaction makes it more usable by eliminating manual effort, whereas Autonomous Operation is applied to actions that are low risk and acceptable to the resident.\n\n--- PARAGRAPH 251 ---\nTherefore, KASUS focuses on intelligent support rather than complete automation, taking into account adaptive system behavior, awareness of the people and manual overrides. This method will improve the wellbeing of households without compromising trust and control of the users.\n\n--- PARAGRAPH 252 ---\nTable 3. Relevance of the five UbiCom properties across the three use cases.\n\n--- PARAGRAPH 253 ---\n3.4 Social Housing and Real-World Context\n\n--- PARAGRAPH 254 ---\nKASUS is unique from many commercial smart home systems as it is specifically tailored to meet the needs of Kāinga Ora social housing, with residents who have varied lifestyles and household structures and differing digital confidence. Older adults, children and/or individuals with accessibility needs may be part of some households. Thus, the system should be simple, reliable and use knowledge skills.\n\n--- PARAGRAPH 255 ---\nAnother important factor to take into account is the cost. The cost of sensor networks, communication technologies and maintenance should be cost effective to be deployed in large scales in housing developments. Moreover, essential functions with context awareness need to be still functional during temporary internet outages using local processing.\n\n--- PARAGRAPH 256 ---\nConfidentiality and trust are also paramount. Residents must be aware of the information that is gathered and how it will be utilized. KASUS's architecture is local-first, meaning that data is not unnecessarily sent far from its source, while residents can set their preferences, alerts and automation. This way, privacy is enhanced without sacrificing usability.\n\n--- PARAGRAPH 257 ---\n3.5 Autonomy and Resident Control\n\n--- PARAGRAPH 258 ---\nOne of the major features of ubiquitous computing is that it should be autonomous, but the increased autonomy may not be the best user experience. In social housing, the residents should be the key players and technology is a smart helper. KASUS therefore takes a human-in-the-loop approach, keeping the automated actions transparent, and letting residents change their preferences or override system decisions.\n\n--- PARAGRAPH 259 ---\nSimple tasks, like notifications or pre-defined heating adjustments, energy-saving recommendations, can be automated. Actions that impact upon household comfort and/or resource use, however, need to be approved by the residents or are limited under authorization. This balance is for creating trust, user acceptance and alignment with the preferences of individual households.\n\n--- PARAGRAPH 260 ---\n3.6 Unified System Justification\n\n--- PARAGRAPH 261 ---\nThe evaluation proves that KASUS is useful as a whole ubiquitous computing system than as stand-alone smart utility solutions. This enables the sharing of information between sensors and utility functions via a common Context Engine, which reduces duplicated infrastructure and makes decision making easier and more effective.\n\n--- PARAGRAPH 262 ---\nThe proposed hybrid edge–cloud architecture caters for responsiveness and scalability. Local processing is used for time-sensitive applications like climate control and anomaly detection, whereas cloud services are used for long-term analytics, software updates and authorised maintenance analysis. This enhances reliability and mitigates the need to be connected to the internet 24 hours a day.\n\n--- PARAGRAPH 263 ---\nMost importantly, KASUS is built around human-centred ubiquitous computing, fusing the distributed sensing, context awareness, intelligent reasoning and controlled autonomy, to enhance household wellbeing while informing and empowering the residents. The balanced approach renders the architecture deployable to Kāinga Ora social housing developments.\n\n--- PARAGRAPH 265 ---\nFigure 5. Human-centred decision-making within KASUS, balancing intelligent automation with resident control.\n\n--- PARAGRAPH 266 ---\n4. Task 3: Research and Evaluation of Utility Technologies\n\n--- PARAGRAPH 267 ---\nFor the successful implementation of the Kāinga Ora Adaptive Smart Utility System (KASUS), appropriate technologies need to be selected. For smart homes the technologies in the field of sensing, communication and processing are numerous but not all of them are appropriate in the social housing. The selection of technology should take into account the accuracy, reliability, cost of the technology, scalability, privacy and ease of maintenance while considering functional requirements identified in Task 1.\n\n--- PARAGRAPH 268 ---\nThis section reviews critical technologies for KASUS such as environmental and occupancy sensing technologies, smart utility monitoring, communication networks, processing architectures and human–computer interaction methods. The analysis does not see each technology as a separate technology, but compares alternative technologies in order to understand their strengths and weaknesses, and suitability to Kāinga Ora social housing. The recommendations in Task 4 are based on the findings.\n\n--- PARAGRAPH 269 ---\n4.1 Environmental and Occupancy Sensing\n\n--- PARAGRAPH 270 ---\nThe core of KASUS is the environmental and occupancy sensing, as all context-aware decisions are based on the accurate household information. There are temperature sensors and humidity sensors that are always active indoors and occupancy sensing that helps identify occupied/unoccupied areas before making any heating recommendations and interpreting utility usage.\n\n--- PARAGRAPH 271 ---\nPassive Infrared (PIR) sensor, millimetre-wave (mmWave) radar sensor (Zhang et al., 2023) and sensor fusion approaches (Zeng et al., 2025) are the three main methods for detecting occupancy. PIR sensors are inexpensive, low-power and popular, but only sense motion and not true presence, meaning they may not recognize when someone is still in the room. mmWave sensors, on the other hand, are more expensive and consume more power, but they can detect tiny motions, making them more precise for the presence detection application. The benefit of sensor fusion is that it is more reliable because it uses various types of sensors, but the downside is that it makes the system much more complex and costly.\n\n--- PARAGRAPH 272 ---\nA mixed sensing approach is recommended for Kāinga Ora social housing. The combination of PIR-based occupancy detection with temperature and humidity sensors should be used in most areas, helping to keep costs down, while mmWave sensors can be used in areas where accurate presence detection is more important. This would be a fit between cost, reliability, and practicability of deployment (Elkhoukhi et al., 2025).\n\n--- PARAGRAPH 273 ---\nTable 4. Comparison of Occupancy Sensing Technologies\n\n--- PARAGRAPH 274 ---\n4.2 Smart Electricity and Demand Management\n\n--- PARAGRAPH 275 ---\nSmart electricity meters are the main tool for measuring the energy consumption in the household in KASUS. They continuously log the energy consumption and facilitate real-time communication, allowing KASUS to determine when the energy is being consumed in its peak and analyse its pattern to offer intelligent suggestions for efficient utilisation of energy consumption.\n\n--- PARAGRAPH 276 ---\nEfficiency is also assisted by demand-response technologies that enable flexibility in household loads to be shifted during high-demand periods. Unlike automatic control of all appliances, KASUS takes a resident-centred approach and optimisation is only made within user-defined preferences, thus ensuring energy efficiency and resident control.\n\n--- PARAGRAPH 277 ---\nSmart metering with the optional demand-response functionality has achieved the most balance between energy saving, affordability, scalability and resident acceptance for Kāinga Ora social housing.\n\n--- PARAGRAPH 278 ---\n4.3 Water and Anomaly Detection Technologies\n\n--- PARAGRAPH 279 ---\nHowever, water monitoring is a key element to safeguard the residents and housing assets. Smart water monitoring constantly checks water usage to detect leaks, burst pipes, and unneeded water usage, unlike conventional meters which just record total usage.\n\n--- PARAGRAPH 280 ---\nKASUS does this through smart water flow meters, leak detection sensors and context-aware analysis. Real-time consumption information is provided by smart meters and leak sensors in high-risk areas trigger an alert immediately. Normal water flow and occupancy, and previous water use, are also compared to distinguish between normal activities and possible failures in the system.\n\n--- PARAGRAPH 281 ---\nIt is recommended that a combination of monitoring is used. Smart water meters enable continuous monitoring, leak sensors can sense leaks in a specific area, and the Context Engine enhances accuracy reporting with occupancy data before alerting. This helps to minimize false alarms and allows for quicker maintenance intervention (Smart Systems: A Review of Theory, Applications, and Recent Advances, 2025).\n\n--- PARAGRAPH 282 ---\n4.4 Communication Technologies\n\n--- PARAGRAPH 283 ---\nThe communication of sensors, smart meters and intelligent control systems in KASUS is required to be reliable. For large-scale home use, communication technologies should be reliable, energy efficient, and scalable.\n\n--- PARAGRAPH 284 ---\nWi-Fi is high bandwidth, widely available and uses a lot of power and may be congested. Zigbee has low power mesh networking for battery powered devices, and usually uses a special hub (Madadi-Barough, 2025). Thread is interoperable with the Matter standard and offers secure low-power mesh networking, enhanced scalability and cross-platform support.\n\n--- PARAGRAPH 285 ---\nWith Kāinga Ora's long-term needs in mind, it was recommended that support should be given to Thread with Matter (Matter on the Wire) in the future for interoperability, and Zigbee was a viable option for cost-sensitive deployments.\n\n--- PARAGRAPH 286 ---\nTable 5. Wi-Fi vs Zigbee vs Thread/Matter — home network communication.\n\n--- PARAGRAPH 287 ---\n4.5 Edge vs Cloud Processing\n\n--- PARAGRAPH 288 ---\nThe architecture of the processing system has a significant impact on the performance, privacy and reliability of the system. Cloud-only solutions offer scalability and centralised analytics, but require constant Internet access. Edge computing, on the other hand, works on a local basis, which means that data is processed locally, minimizing latency and the flow of sensitive household data.\n\n--- PARAGRAPH 289 ---\nTime-critical functions like the heating adjustments, occupancy interpretation and anomaly detection should be handled at the Local Home Gateway, and the cloud services will process the long-term analytics, software updates and maintenance reporting.\n\n--- PARAGRAPH 290 ---\nThus, it is recommended to use a hybrid edge–cloud system, which is made up by fast decision making at the edges and scalable and analytical power at the cloud.\n\n--- PARAGRAPH 292 ---\nTable 6. Edge vs Cloud vs Hybrid — data processing location.\n\n--- PARAGRAPH 293 ---\n4.6 Human–Computer Interaction Technologies\n\n--- PARAGRAPH 294 ---\nGood interaction design means that KASUS is easy to understand and operate no matter how technically adept or inexperienced the resident is. The homes in Kāinga Ora have different levels of digital fluency and interfaces need to be simple and accessible.\n\n--- PARAGRAPH 295 ---\nA mobile app offers remote access and a wealth of system data, and there's an in-home display that gives an instant \"look\" at house conditions without having to hand over personal devices. Manual switches and override buttons continue to play a vital role in emergencies and in normal conditions of operation.\n\n--- PARAGRAPH 296 ---\nKASUS therefore works with a multi-modal interaction approach, which integrates all three forms of interaction, to make the system more accessible and to cater for the different preferences of the users.\n\n--- PARAGRAPH 299 ---\nTable 7. Mobile App vs In-Home Display vs Physical/Manual Controls — resident interaction.\n\n--- PARAGRAPH 301 ---\n4.7 Comparative Evaluation\n\n--- PARAGRAPH 302 ---\nThe evaluation reveals that none of the technologies is suitable for all parts of the KASUS concept. Rather, it works best when an integrated system is put in place that takes advantage of complementary technologies that are relevant to Kāinga Ora social housing.\n\n--- PARAGRAPH 303 ---\nEnvironmental sensors and a smart utility meter along with context-aware analysis are more reliable than individual technologies when it comes to sensing. Thread with Matter provides the best long-term interoperability options for communication; Zigbee is an economical option.\n\n--- PARAGRAPH 304 ---\nThe evaluation also verifies that hybrid edge–cloud processing offers the optimal privacy, responsiveness and scalability. Local processing provides in-house decision making and cloud processing allows for analytics and maintenance. Together with a multi-modal interaction approach they offer a practical and scalable ubiquitous computing system that is user-centred for Kāinga Ora social housing.\n\n--- PARAGRAPH 306 ---\n5. Task 4: Recommendations\n\n--- PARAGRAPH 307 ---\n5.1 Recommended System Architecture\n\n--- PARAGRAPH 308 ---\nKASUS is recommended to use a hybrid edge–cloud architecture. The sensors in the environment, the occupancy sensors, the electricity meters and the water monitoring sensors are connected via the Local Home Gateway, where the KASUS Context Engine gets the data and makes decisions in real-time. Having critical events processed locally decreases latency, enhances reliability and enables critical services to operate in the event of temporary outages in the internet.\n\n--- PARAGRAPH 309 ---\nCloud services enable long term analytics, software updates, aggregated reporting and authorised maintenance instead of live household monitoring. This design will offer scalability and reduce the sharing of critical information about residents.\n\n--- PARAGRAPH 310 ---\n5.2 Recommended Sensors and Technologies\n\n--- PARAGRAPH 311 ---\nKASUS should incorporate environmental sensors, smart utility meters and occupancy detection technologies, based on the comparative evaluation, for context-aware decision making. The temperature and humidity sensors complement Healthy Home Climate Management, and the smart electricity and water meters provide a continuous monitoring of the utilities. Most areas should use PIR occupancy sensors because they are cheaper and they perform well in that application; a mmWave sensor should be installed in areas where more precise presence detection is needed.\n\n--- PARAGRAPH 312 ---\nCommunication: Thread with Matter is recommended as the long-term networking solution of choice due to its interoperability, scalability and low power consumption. However, Zigbee is still a viable solution when budget or infrastructure would otherwise be an issue. An edge–cloud architecture should be used to deliver fast edge processing and secure cloud-based analytics and support.\n\n--- PARAGRAPH 313 ---\n5.3 Recommended Interaction Model\n\n--- PARAGRAPH 314 ---\nThe multi-modal interaction model should be used by KASUS that takes into consideration the diversity of digital accessibility and digital literacy of residents. An in-home display should show the condition of the household, what utilities are being used, and what systems are suggested; a “mobile” application should provide a view of the data and let the resident change the preferences from the comfort of their own home. Physical controls must also be maintained for critical functions as well as manual override, so that residents can always communicate with the system, it doesn't matter what their technical abilities are.\n\n--- PARAGRAPH 315 ---\nThis way, transparency is kept and automation is not a threatening force in resident decision making.\n\n--- PARAGRAPH 316 ---\n5.4 Recommendation to Senior Management Team\n\n--- PARAGRAPH 317 ---\nThis report concludes that, for the development of the Kāinga Ora Adaptive Smart Utility System (KASUS), a hybrid edge–cloud system with a distributed computing and resident-centred interaction model should be continued.\n\n--- PARAGRAPH 318 ---\nThe proposed system shows a possible implementation of ubiquitous computing to enhance the indoor environment, optimise the use of the utilities and facilitate proactive maintenance without compromising user independence. KASUS integrates a range of mature sensing technologies, intelligent context analysis and clear communication with the user to offer a practical, scalable and future-proof solution to this challenge of Kāinga Ora social housing.\n\n--- PARAGRAPH 319 ---\nThe recommended architecture is also scalable, as future technologies for smart housing (sensors, renewable energy, predictive maintenance etc.) can be added on without any modifications.\n\n--- PARAGRAPH 321 ---\n6. Conclusion\n\n--- PARAGRAPH 322 ---\nThis report suggested that the Kāinga Ora Adaptive Smart Utility System (KASUS) is one solution for ubiquitous computing in Kāinga Ora social housing. It illustrated how the three use cases can complement each other in a single contextual platform that can support for better household wellbeing and resource efficiency.\n\n--- PARAGRAPH 323 ---\nThe evaluation revealed that the technology base of KASUS consists of distributed sensing, context awareness and intelligent computing, whereas controlled autonomy and implicit human–computer interaction increases the usability of the system without compromising the control of the residents. The technology comparison also pinpointed a hybrid edge–cloud architecture, relying on interoperable communication technologies and a number of interaction modes, as the most appropriate solution for performance, privacy, scalability and accessibility.\n\n--- PARAGRAPH 324 ---\nIn sum, KASUS illustrates the potential for pervasive computing to go beyond simple monitoring to provide intelligent and human-centred services. The proposed system will be a practical basis for future smart social housing developments throughout the Wellington Region by using reliable technologies and clear automation and resident involvement.\n\n--- PARAGRAPH 325 ---\nReferences\n\n--- PARAGRAPH 327 ---\nAbdelnaby, K. M., Al-Husainy, M. A. F., Alhawarat, M. O., Rohaim, M. A., Assar, K. M., & Elshafey, K. A. (2026). The intelligent home: A systematic review of technological pillars, emerging paradigms, and future directions. Symmetry, 18(5), 718.\n\n--- PARAGRAPH 328 ---\nhttps://doi.org/10.3390/sym18050718\n\n--- PARAGRAPH 330 ---\nSun, Y., & Li, S. (2021). A systematic review of the research framework and evolution of smart homes based on the Internet of Things. Telecommunication Systems, 77(3), 411–428. https://doi.org/10.1007/s11235-021-00787-w\n\n--- PARAGRAPH 333 ---\nMadadi-Barough, S., Ruiz-Blanco, P., Lin, J., Vidal Ferré, R., & Gómez, C. (2024). Matter: IoT interoperability for smart homes. IEEE Communications Magazine, 63(4), 106–112. https://doi.org/10.1109/MCOM.001.2400274\n\n--- PARAGRAPH 336 ---\nYar, H., Imran, A. S., Khan, Z. A., Sajjad, M., & Kastrati, Z. (2021). Towards smart home automation using IoT-enabled edge-computing paradigm. Sensors, 21(14), 4932. https://doi.org/10.3390/s21144932\n\n--- PARAGRAPH 339 ---\nBaccour, E., Mhaisen, N., Abdellatif, A. A., Erbad, A., Mohamed, A., Hamdi, M., & Guizani, M. (2021). Pervasive AI for IoT applications: A survey on resource-efficient distributed artificial intelligence. IEEE Access (Preprint/arXiv). https://arxiv.org/abs/2104.07914\n\n--- PARAGRAPH 342 ---\nZhang, J., Wang, H., Yang, Z., & Shi, L. (2023). A survey of mmWave-based human sensing: Technology, platform and applications. arXiv. https://arxiv.org/abs/2308.03149\n\n--- PARAGRAPH 345 ---\nZeng, R., Zhang, J., Mao, Y., Yang, Z., & Shi, L. (2025). mmMotion: A real-time human motion detection smart home system based on mmWave radar. IEEE Internet of Things Journal. https://researchportal.hkust.edu.hk/en/publications/mmmotion-a-real-time-human-motion-detection-smart-home-system-bas\n\n--- PARAGRAPH 348 ---\nElkhoukhi, H., Bakhouya, M., Elmouatamid, A., El Ouadghiri, D., & Gaber, J. (2025). A review of occupancy sensing technologies and approaches in smart buildings. Journal of Reliable Intelligent Environments. https://journals.sagepub.com/doi/10.3233/RFT-240006\n\n--- PARAGRAPH 351 ---\nApthorpe, N., Shvartzshnaider, Y., Mathur, A., Reisman, D., & Feamster, N. (2018). Discovering smart home Internet of Things privacy norms using contextual integrity. Proceedings on Privacy Enhancing Technologies. https://arxiv.org/abs/1805.06031\n\n--- PARAGRAPH 354 ---\nAl Mutawa, R. F., & Eassa, F. A. (2020). A smart home system based on Internet of Things. arXiv. https://arxiv.org/abs/2009.05328\n\n--- PARAGRAPH 357 ---\nKhan, L. U., Yaqoob, I., Tran, N. H., Kazmi, S. M. A., Dang, T. N., & Hong, C. S. (2019). Edge-computing-enabled smart cities: A comprehensive survey. IEEE Internet of Things Journal (Preprint). https://arxiv.org/abs/1909.08747\n\n--- PARAGRAPH 360 ---\nCrawford, C. (2024). Protocol power: Matter, IoT interoperability, and a critique of industry self-regulation. Internet Policy Review, 13(2). https://doi.org/10.14763/2024.2.1776\n\n--- PARAGRAPH 363 ---\nAlfakhri, Y., Alawadi, S., Aloul, F., & Al-Ali, A. (2021). Smart home research themes: An analysis and taxonomy. Procedia Computer Science, 185, 91–100. https://doi.org/10.1016/j.procs.2021.05.010\n\n--- PARAGRAPH 366 ---\nKhan, H. U., Alomari, M. K., Khan, S., Nazir, S., Gill, A. Q., & Al-Maadid, A. A. (2021). Systematic analysis of safety and security risks in smart homes. Computers, Materials & Continua, 68(1), 1409–1428. https://doi.org/10.32604/cmc.2021.016058\n\n--- PARAGRAPH 369 ---\nMitzner, T. L., et al. (2025). (Re)Defining smart home through an HCI perspective: A systematic review of over two decades of smart home conceptualization and research. International Journal of Human–Computer Interaction. https://doi.org/10.1080/10447318.2024.2437112",
+  "metadata": {
+    "paragraph_count": 259,
+    "paragraphs": [
+      {
+        "paragraph_number": 2,
+        "text": "Kāinga Ora Adaptive Smart Utility System (KASUS)"
+      },
+      {
+        "paragraph_number": 3,
+        "text": "A Context-Aware Ubiquitous Computing Proposal for New Zealand Social Housing"
+      },
+      {
+        "paragraph_number": 4,
+        "text": "IT8106 – Ubiquitous Computing"
+      },
+      {
+        "paragraph_number": 5,
+        "text": "Assessment 1: Research and Requirements"
+      },
+      {
+        "paragraph_number": 6,
+        "text": "Prepared for: Senior Management Team (SMT)"
+      },
+      {
+        "paragraph_number": 8,
+        "text": "Prepared by: [Name]"
+      },
+      {
+        "paragraph_number": 9,
+        "text": "Student ID: [ID]"
+      },
+      {
+        "paragraph_number": 10,
+        "text": "Whitecliffe College"
+      },
+      {
+        "paragraph_number": 11,
+        "text": "2026"
+      },
+      {
+        "paragraph_number": 12,
+        "text": "Declaration"
+      },
+      {
+        "paragraph_number": 13,
+        "text": "\"The work presented in this assessment is to the best of my knowledge original, except as acknowledged in the text, and the material has not already been submitted, either in whole or in part, for any academic award at this or any other tertiary institution. I promise not to share this assessment in part or whole with any other student at Whitecliffe or outside this campus.\""
+      },
+      {
+        "paragraph_number": 69,
+        "text": "Table of Contents"
+      },
+      {
+        "paragraph_number": 70,
+        "text": "1. Introduction"
+      },
+      {
+        "paragraph_number": 71,
+        "text": "1.1 Project Background"
+      },
+      {
+        "paragraph_number": 72,
+        "text": "1.2 Purpose and Scope"
+      },
+      {
+        "paragraph_number": 73,
+        "text": "1.3 Proposed Smart Utility System"
+      },
+      {
+        "paragraph_number": 74,
+        "text": "2. Task 1: User Case Scenarios"
+      },
+      {
+        "paragraph_number": 75,
+        "text": "2.1 Use Case 1 – Healthy Home Climate Management"
+      },
+      {
+        "paragraph_number": 76,
+        "text": "2.2 Use Case 2 – Adaptive Energy and Peak-Demand Management"
+      },
+      {
+        "paragraph_number": 77,
+        "text": "2.3 Use Case 3 – Utility Anomaly and Leak Detection"
+      },
+      {
+        "paragraph_number": 78,
+        "text": "2.4 Unified System Requirements"
+      },
+      {
+        "paragraph_number": 79,
+        "text": "3. Task 2: Characteristics of the Ubiquitous Computing System"
+      },
+      {
+        "paragraph_number": 80,
+        "text": "3.1 Unified KASUS Architecture"
+      },
+      {
+        "paragraph_number": 81,
+        "text": "3.2 Five Core UbiCom Properties"
+      },
+      {
+        "paragraph_number": 82,
+        "text": "3.3 Application Across the Three Use Cases"
+      },
+      {
+        "paragraph_number": 83,
+        "text": "3.4 Social Housing and Real-World Context"
+      },
+      {
+        "paragraph_number": 84,
+        "text": "3.5 Autonomy and Resident Control"
+      },
+      {
+        "paragraph_number": 85,
+        "text": "3.6 Unified System Justification"
+      },
+      {
+        "paragraph_number": 86,
+        "text": "4. Task 3: Research and Evaluation of Utility Technologies"
+      },
+      {
+        "paragraph_number": 87,
+        "text": "4.1 Environmental and Occupancy Sensing"
+      },
+      {
+        "paragraph_number": 88,
+        "text": "4.2 Smart Electricity and Demand Management"
+      },
+      {
+        "paragraph_number": 89,
+        "text": "4.3 Water and Anomaly Detection Technologies"
+      },
+      {
+        "paragraph_number": 90,
+        "text": "4.4 Communication Technologies"
+      },
+      {
+        "paragraph_number": 91,
+        "text": "4.5 Edge vs Cloud Processing"
+      },
+      {
+        "paragraph_number": 92,
+        "text": "4.6 Human–Computer Interaction Technologies"
+      },
+      {
+        "paragraph_number": 93,
+        "text": "4.7 Comparative Evaluation"
+      },
+      {
+        "paragraph_number": 94,
+        "text": "5. Task 4: Recommendations"
+      },
+      {
+        "paragraph_number": 95,
+        "text": "5.1 Recommended System Architecture"
+      },
+      {
+        "paragraph_number": 96,
+        "text": "5.2 Recommended Sensors and Technologies"
+      },
+      {
+        "paragraph_number": 97,
+        "text": "5.3 Recommended Interaction Model"
+      },
+      {
+        "paragraph_number": 98,
+        "text": "5.4 Recommendation to Senior Management Team"
+      },
+      {
+        "paragraph_number": 99,
+        "text": "6. Conclusion"
+      },
+      {
+        "paragraph_number": 100,
+        "text": "References"
+      },
+      {
+        "paragraph_number": 107,
+        "text": "1. Introduction"
+      },
+      {
+        "paragraph_number": 108,
+        "text": "1.1 Project Background"
+      },
+      {
+        "paragraph_number": 109,
+        "text": "Smart technologies have become increasingly adopted in homes, aided by the increasing demand for sustainable housing and the rapid urban development. In the era of ubiquitous computing, connected devices, sensors and intelligent services are making everything around us a part of the monitor.Today, in the age of ubiquitous computing, anything can be connected, can be sensed and can be intelligent and respond automatically (Sun & Li, 2021; Abdelnaby et al., 2025). These technologies are used to enhance energy efficiency, lower operating expenses and promote healthier lifestyles without requiring much effort from the user."
+      },
+      {
+        "paragraph_number": 110,
+        "text": "The New Zealand Government organisation for social housing, Kāinga Ora, has engaged SmartBuild to build a Smart Utility System for new housing developments in the Wellington Region. The company has already introduced intelligent electricity and gas meters, real-time monitoring of resources, demand-response systems, autonomous systems and applications that enhance energy management (Abdelnaby et al., 2025)."
+      },
+      {
+        "paragraph_number": 111,
+        "text": "While all these developments have been made in the utility efficiency of social housing, social housing still faces challenges. There are a diversity of residents with different lifestyles, varying levels of digital literacy, accessibility requirements, and differing patterns of resources consumption. Thus, a smart utility system should be dependable, secure, user-friendly and should work without taking away the residents' decision making."
+      },
+      {
+        "paragraph_number": 112,
+        "text": "This report suggests a single ubiquitous computing system solution – the Kāinga Ora Adaptive Smart Utility System (KASUS) – to overcome these challenges that encompasses the integration of environmental monitoring, energy management and utility anomaly detection on a single context-aware platform for New Zealand social housing (Smart Systems: A Review of Theory, Applications, and Recent Advances, 2025)."
+      },
+      {
+        "paragraph_number": 113,
+        "text": "1.2 Purpose and Scope"
+      },
+      {
+        "paragraph_number": 114,
+        "text": "This report aims to develop and test a single Smart Utility System to use ubiquitous computing concepts to enhance the management of utilities in Kāinga Ora social housing. The intended Kāinga Ora Adaptive Smart Utility System (KASUS) will be designed to increase comfort in the home, optimise the use of resources and facilitate proactive maintenance, while still maintaining the resident's control over their home."
+      },
+      {
+        "paragraph_number": 115,
+        "text": "The report has four assessment tasks. It starts with the creation of three related user case scenarios to determine user requirements and the functional and non-functional requirement of the system. It then considers KASUS in terms of the fundamental properties of ubiquitous computing, and its ability to enable context-aware and adaptive behaviour in a real-world social housing context."
+      },
+      {
+        "paragraph_number": 116,
+        "text": "Finally, the most suitable technologies for KASUS are identified by comparing the different sensing technologies, communication methods, processing architectures and interaction models. The results are then consolidated into actionable recommendations that will give a clear direction to the future of the proposed Smart Utility System for SmartBuild and the Senior Management Team.Finally, the most suitable technologies for KASUS are identified by comparing the different sensing technologies, communication methods, processing architectures and interaction models. The results are then consolidated into actionable recommendations that will give a clear direction to the future of the proposed Smart Utility System for SmartBuild and the Senior Management Team."
+      },
+      {
+        "paragraph_number": 117,
+        "text": "1.3 Proposed Smart Utility System"
+      },
+      {
+        "paragraph_number": 118,
+        "text": "Kāinga Ora Adaptive Smart Utility System (KASUS) is an integrated ubiquitous computing system that aims to enhance the management of utility use in Kāinga Ora social housing. However, traditional smart home solutions are standalone and are not coordinated (Sun & Li, 2021). This allows for different utility functions to communicate and provide for varying household situations."
+      },
+      {
+        "paragraph_number": 119,
+        "text": "The central element of KASUS is a Context Engine that is constantly fed data by environmental, occupancy, electricity and water sensors. The Context Engine combines multiple data sources to come to understand the context of the household as a whole and make decisions accordingly instead of responding to data from individual sensors. This context-aware approach is able to differentiate between normal house activities and situations that need intervention."
+      },
+      {
+        "paragraph_number": 120,
+        "text": "The three integrated functions of KASUS are: Healthy Home Climate Management, which monitors temperature, humidity and occupancy; Adaptive Energy and Peak-Demand Management, which reduces electricity wasting due to unexpected use and prevents excess usage at peak demand; Utility Anomaly and Leak Detection, which detects unexpected electricity and/or water usage before it becomes a problem."
+      },
+      {
+        "paragraph_number": 121,
+        "text": "Human-centred automation (Adaptation in Smart Home Automation Systems, 2025) is one of the most important design aspects of KASUS. The system can be used to automatically carry out low risk activities, but residents will be notified of any action and will have the ability to make changes or override automatic actions. By balancing the intelligent automation with operator control, it ensures the system is functional, reliable and appropriate for the varied needs of Kāinga Ora households."
+      },
+      {
+        "paragraph_number": 124,
+        "text": "Figure 1. KASUS Unified System Concept — the Context Engine coordinating four functional domains."
+      },
+      {
+        "paragraph_number": 126,
+        "text": "2. Task 1: User Case Scenarios"
+      },
+      {
+        "paragraph_number": 127,
+        "text": "The proposed Kāinga Ora Adaptive Smart Utility System (KASUS) is examined in three interconnected user case scenarios which address typical utility-management problems within social housing. The scenarios discussed explore how residents can interact with the pervasive computing environment, and the functional and non-functional requirements that will enable the design of reliable, context-aware services. Each of the use cases deals with a different utility domain, but they share sensing, communication and decision-making abilities and are integrated into the same architecture. These scenarios illustrate how “ubiquitous computing” can enhance the wellbeing of the home, optimize resource usage and enable proactive maintenance, while maintaining the autonomy and control of the residents."
+      },
+      {
+        "paragraph_number": 128,
+        "text": "2.1 Use Case 1 – Healthy Home Climate Management"
+      },
+      {
+        "paragraph_number": 129,
+        "text": "Scenario Overview"
+      },
+      {
+        "paragraph_number": 130,
+        "text": "Residents of Kāinga Ora social housing, especially children, older people and anyone with health conditions who are more likely to be affected by cold, high humidity and poor air quality, need a healthy indoor environment. The traditional heating and ventilation method involves the people adjusting the system by hand, which can lead to excess energy consumption or poor indoor air quality in the event of the environmental changes being unnoticed."
+      },
+      {
+        "paragraph_number": 131,
+        "text": "KASUS tackles this challenge by constantly measuring temperature, humidity and occupancy with distributed environmental sensors, namely the Healthy Home Climate Management module (Elkhoukhi et al., 2025). The Sensor data is transmitted to the KASUS Context Engine where the overall context of the household is analyzed instead of each sensor reading. For instance, when a room full of people cools down below comfort temperature, with a rise in humidity, the system checks if intervention is necessary or not. It can suggest or self-regulate ventilation and heating within the limits of approval, according to the preferences of the residents."
+      },
+      {
+        "paragraph_number": 132,
+        "text": "The main goal is to provide a TSA that enhances thermal comfort without using excessive energy. KASUS responds to the actual household situation rather than relying on predefined heating schedules, leading to only heating and ventilation when required. Clear explanations about recommended or completed actions are displayed or on a \"dashboard\" for residents and they can override or change system decisions at any time."
+      },
+      {
+        "paragraph_number": 133,
+        "text": "The integration of the different aspects of KASUS—environmental sensing, contextual analysis and human-centred automation—gives the opportunity for living a healthier life without sacrificing resident autonomy (Adaptation in Smart Home Automation Systems, 2025). This is a way of making it comfortable, energy-efficient and user-controlled, all in the same ubiquitous computing system."
+      },
+      {
+        "paragraph_number": 134,
+        "text": "Primary User"
+      },
+      {
+        "paragraph_number": 135,
+        "text": "Kāinga Ora residents"
+      },
+      {
+        "paragraph_number": 136,
+        "text": "Secondary user"
+      },
+      {
+        "paragraph_number": 137,
+        "text": "Kāinga Ora maintenance team (where authorised for long-term environmental monitoring)"
+      },
+      {
+        "paragraph_number": 138,
+        "text": "Functional Requirements"
+      },
+      {
+        "paragraph_number": 139,
+        "text": "Monitor indoor temperature, humidity and occupancy in real time."
+      },
+      {
+        "paragraph_number": 140,
+        "text": "Analyse environmental conditions using the KASUS Context Engine."
+      },
+      {
+        "paragraph_number": 141,
+        "text": "Recommend or automatically adjust heating and ventilation within resident-defined limits."
+      },
+      {
+        "paragraph_number": 142,
+        "text": "Notify residents of significant environmental changes and system actions."
+      },
+      {
+        "paragraph_number": 143,
+        "text": "Allow manual override or modification of automated decisions."
+      },
+      {
+        "paragraph_number": 144,
+        "text": "Non-Functional Requirements"
+      },
+      {
+        "paragraph_number": 145,
+        "text": "Reliable continuous environmental monitoring."
+      },
+      {
+        "paragraph_number": 146,
+        "text": "Low response time for context-aware decisions."
+      },
+      {
+        "paragraph_number": 147,
+        "text": "Secure handling of household sensor data."
+      },
+      {
+        "paragraph_number": 148,
+        "text": "Simple, accessible interface for users with varying digital literacy."
+      },
+      {
+        "paragraph_number": 149,
+        "text": "Energy-efficient operation of sensors and connected devices."
+      },
+      {
+        "paragraph_number": 150,
+        "text": "High system availability with minimal maintenance."
+      },
+      {
+        "paragraph_number": 151,
+        "text": "Expected Outcome"
+      },
+      {
+        "paragraph_number": 152,
+        "text": "The Healthy Home Climate Management module continuously adapts to changing household conditions, improving resident comfort while reducing unnecessary energy consumption. Context-aware automation enables intelligent environmental control, while manual override ensures residents remain in control of their home. The result is a healthier, more energy-efficient and user-centred living environment aligned with the objectives of Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 154,
+        "text": "Figure 2. Workflow of the Healthy Home Climate Management module"
+      },
+      {
+        "paragraph_number": 155,
+        "text": "2.2 Use Case 2 – Adaptive Energy and Peak-Demand Management"
+      },
+      {
+        "paragraph_number": 156,
+        "text": "Scenario Overview"
+      },
+      {
+        "paragraph_number": 157,
+        "text": "Electricity consumption in residential buildings varies throughout the day, with peak demand periods placing pressure on both electricity networks and household energy costs (6G Internet-of-Things Assisted Smart Homes and Buildings, 2025). Traditional electricity meters record total energy usage but do not help residents identify inefficient consumption or ways to reduce it. This is particularly important in social housing, where affordable utility costs directly affect household wellbeing."
+      },
+      {
+        "paragraph_number": 158,
+        "text": "The Adaptive Energy and Peak-Demand Management module within KASUS addresses this challenge by combining smart electricity metering, occupancy information and real-time energy monitoring. Instead of only recording usage, the system analyses consumption patterns alongside household context. When high demand is detected, the KASUS Context Engine (Abdelnaby et al., 2025) determines whether non-essential appliances, such as washing machines or dishwashers, can be delayed without affecting resident comfort. If energy optimisation has been enabled, KASUS temporarily postpones selected appliances; otherwise, it provides recommendations, allowing residents to decide whether to reduce or delay energy use."
+      },
+      {
+        "paragraph_number": 159,
+        "text": "Unlike conventional demand-response systems, KASUS keeps residents at the centre of decision-making. Automated actions are displayed through an in-home display or mobile application, allowing users to monitor electricity consumption, understand recommendations and manually override system decisions whenever required. This approach improves trust while ensuring automation supports rather than restricts household needs."
+      },
+      {
+        "paragraph_number": 160,
+        "text": "By integrating smart metering with context-aware decision-making, KASUS reduces unnecessary electricity consumption, improves appliance efficiency and promotes informed energy management while preserving resident autonomy."
+      },
+      {
+        "paragraph_number": 161,
+        "text": "Primary User"
+      },
+      {
+        "paragraph_number": 162,
+        "text": "Kāinga Ora residents"
+      },
+      {
+        "paragraph_number": 163,
+        "text": "Secondary user"
+      },
+      {
+        "paragraph_number": 164,
+        "text": "Kāinga Ora maintenance team (long term environmental monitoring authorised) Functional Requirements"
+      },
+      {
+        "paragraph_number": 165,
+        "text": "Functional Requirements"
+      },
+      {
+        "paragraph_number": 166,
+        "text": "Real-time indoor temperature, humidity and occupancy monitoring."
+      },
+      {
+        "paragraph_number": 167,
+        "text": "Analyse environmental conditions with KASUS Context Engine."
+      },
+      {
+        "paragraph_number": 168,
+        "text": "Suggest or automatically control heating and ventilation within set limits for the residents."
+      },
+      {
+        "paragraph_number": 169,
+        "text": "ALERT residents to major environmental changes and system actions."
+      },
+      {
+        "paragraph_number": 170,
+        "text": "Make possible to override or modify automatic decisions."
+      },
+      {
+        "paragraph_number": 171,
+        "text": "Non-Functional Requirements"
+      },
+      {
+        "paragraph_number": 172,
+        "text": "Continuous environmental monitoring – reliable."
+      },
+      {
+        "paragraph_number": 173,
+        "text": "Slow decision making for context awareness."
+      },
+      {
+        "paragraph_number": 174,
+        "text": "Handling of household sensor data is ensured."
+      },
+      {
+        "paragraph_number": 175,
+        "text": "Simple and accessible user interface for users with differing digital literacy."
+      },
+      {
+        "paragraph_number": 176,
+        "text": "Reducing energy consumption for sensor and connected devices."
+      },
+      {
+        "paragraph_number": 177,
+        "text": "High system availability and low maintenance."
+      },
+      {
+        "paragraph_number": 179,
+        "text": "Expected Outcome"
+      },
+      {
+        "paragraph_number": 180,
+        "text": "The Healthy Home Climate Management module is continually adjusted to meet the changing needs of the household, increasing the comfort of the residents, while minimizing needless energy use. Combined with manual override, context-aware automation allows for intelligent home environment control, allowing the resident to stay in control of their home. This generates a healthier, more energy-efficient and user-friendly living environment that is in line with the goals of Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 182,
+        "text": "Figure 3. Workflow of the Adaptive Energy and Peak-Demand Management"
+      },
+      {
+        "paragraph_number": 185,
+        "text": "2.3 Use Case 3 – Utility Anomaly and Leak Detection"
+      },
+      {
+        "paragraph_number": 186,
+        "text": "Scenario Overview"
+      },
+      {
+        "paragraph_number": 187,
+        "text": "Some problems which cause property damage are water leaking, which leads to additional utility expenses and maintenance demands in residential buildings, and unusual electricity use. These issues are not always detected until there is considerable damage done as existing utility systems only measure consumption but do not provide information on whether the observed behaviour is abnormal. It is therefore crucial that anomalies are identified early to safeguard housing assets and residents."
+      },
+      {
+        "paragraph_number": 188,
+        "text": "KASUS' Utility Anomaly and Leak Detection module constantly monitors water flow data, electricity consumption and occupancy data and identifies any unusual patterns of use. The Context Engine evaluates multiple data sources at the same time instead of a single sensor. If, for instance, water is being used continuously while the home should not be in use, the system knows it is not normal household activity and will be flagged as a potential leak. Likewise, if the electricity use is abnormal for the lack of occupancy, it could be a result of an appliance accidentally being left on or due to a fault."
+      },
+      {
+        "paragraph_number": 189,
+        "text": "If a problem is identified, KASUS notifies residents immediately via the in-home display or mobile application, explains the identified problem and recommended steps. Where maintenance notifications are authorized by residents (6G Internet-of-Things Assisted Smart Homes and Buildings, 2025), large and/or repeated anomalies can also be sent to the Kāinga Ora maintenance services for further investigation. This proactive approach helps maintenance staff to act before minor issues grow to costly repair work and informs residents of the work being done in a timely manner."
+      },
+      {
+        "paragraph_number": 190,
+        "text": "The essence of the idea behind KASUS is to differentiate between actual faults and the normal behaviors of households by continuously monitoring and using contextual reasoning. This minimizes false alarms and enhances increased confidence in the system. The residents are kept fully informed of all events which are detected, and they maintain control on the notification preferences and maintenance permissions, which are always kept in the center of system operations, based on privacy and transparency (Systematic Review of Smart Home IoT Security, 2025)."
+      },
+      {
+        "paragraph_number": 191,
+        "text": "Primary User"
+      },
+      {
+        "paragraph_number": 192,
+        "text": "Kāinga Ora residents"
+      },
+      {
+        "paragraph_number": 193,
+        "text": "Secondary user"
+      },
+      {
+        "paragraph_number": 194,
+        "text": "Kāinga Ora maintenance team (with residents' permission)"
+      },
+      {
+        "paragraph_number": 195,
+        "text": "Functional Requirements"
+      },
+      {
+        "paragraph_number": 196,
+        "text": "Continuously monitor water and electricity consumption."
+      },
+      {
+        "paragraph_number": 197,
+        "text": "Use context-aware analysis to detect abnormal usage of utilities."
+      },
+      {
+        "paragraph_number": 198,
+        "text": "Distinguish between normal and abnormal household activity."
+      },
+      {
+        "paragraph_number": 199,
+        "text": "Make real-time alerts for residents."
+      },
+      {
+        "paragraph_number": 200,
+        "text": "If anomalies persist or are critical, escalate to authorised maintenance."
+      },
+      {
+        "paragraph_number": 201,
+        "text": "Give residents the option to set up how they want to be notified and what maintenance they can grant."
+      },
+      {
+        "paragraph_number": 202,
+        "text": "Non-Functional Requirements"
+      },
+      {
+        "paragraph_number": 203,
+        "text": "Low false alarm and high detection accuracy."
+      },
+      {
+        "paragraph_number": 204,
+        "text": "Real-time monitoring and alert generation that is reliable."
+      },
+      {
+        "paragraph_number": 205,
+        "text": "Secure management of utility and occupancy data."
+      },
+      {
+        "paragraph_number": 206,
+        "text": "24 hours running time."
+      },
+      {
+        "paragraph_number": 207,
+        "text": "Easy-to-understand notifications suitable for all residents."
+      },
+      {
+        "paragraph_number": 208,
+        "text": "Scalable architecture which can support multiple households."
+      },
+      {
+        "paragraph_number": 209,
+        "text": "Expected Outcome"
+      },
+      {
+        "paragraph_number": 210,
+        "text": "The Utility Anomaly and Leak Detection module enables early identification of water leaks and abnormal electricity usage before significant property damage or unnecessary utility costs occur. By combining multiple sensor inputs with contextual analysis, KASUS improves maintenance efficiency while reducing false alarms. Residents receive timely information and remain in control of notification preferences, creating a practical balance between intelligent automation, privacy and proactive asset management."
+      },
+      {
+        "paragraph_number": 212,
+        "text": "Figure 4. Workflow of the Utility Anomaly and Leak Detection module"
+      },
+      {
+        "paragraph_number": 213,
+        "text": "2.4 Unified System Requirements"
+      },
+      {
+        "paragraph_number": 214,
+        "text": "Table 1. Comparison of functional and non-functional requirements across the three use cases."
+      },
+      {
+        "paragraph_number": 216,
+        "text": "3. Task 2: Characteristics of the Ubiquitous Computing System"
+      },
+      {
+        "paragraph_number": 217,
+        "text": "The Kāinga Ora Adaptive Smart Utility System (KASUS) is not a standalone solution of smart devices, but rather an integrated ubiquitous computing system. The environmental sensors, intelligent software components and utility meters form a communication network to provide context-aware services and enhance comfort, safety and resource efficiency. The system gathers contextual information, analyses household situations and acts based on pre-defined rules and resident's preferences, rather than constantly engaging with human interaction."
+      },
+      {
+        "paragraph_number": 218,
+        "text": "In contrast to traditional utility monitoring, which only measures electricity or water use, KASUS combines environmental sensing, context-awareness, and adaptive decision-making to enable three critical functions—maintaining a healthy indoor environment, optimizing energy usage, and detecting abnormal utility use. These functions can be made into a single ubiquitous computing system by sharing a common sensing infrastructure and a common Context Engine."
+      },
+      {
+        "paragraph_number": 219,
+        "text": "This section assesses the KASUS with respect to the five main features of ubiquitous computing: Distributed, Implicit Human–Computer Interaction (iHCI), Context-Aware, Autonomous, and Intelligent. Each characteristic is evaluated with regard to the proposed use cases, with practical considerations of the Kāinga Ora social housing, including accessibility, affordability, privacy and resident control (Adaptation in Smart Home Automation Systems, 2025)."
+      },
+      {
+        "paragraph_number": 220,
+        "text": "3.1 Unified KASUS Architecture"
+      },
+      {
+        "paragraph_number": 221,
+        "text": "The proposed KASUS architecture is designed with an efficient local decision making system and secure system for long term storage of data, using a hybrid edge–cloud model. The household data collected by environmental, occupancy and smart utility sensors are constantly transmitted to a Local Home Gateway, which is connected to the KASUS Context Engine to process the data in real-time and generate the current household context information."
+      },
+      {
+        "paragraph_number": 222,
+        "text": "Local Processing allows actions to be taken directly, such as heat settings, abnormal utility usage detection and resident notification without the need to always be online. This will not only reduce the amount of sensitive house information being unnecessarily shared with cloud services, it will also improve response time and reliability."
+      },
+      {
+        "paragraph_number": 223,
+        "text": "The cloud part enables non-time sensitive services such as long term analytics, software updates, consolidated reporting, and authorised maintenance information. Only essential data necessary for these services is sent, enhancing privacy while retaining system performance."
+      },
+      {
+        "paragraph_number": 224,
+        "text": "With real-time edge processing, and cloud-based analytics, KASUS strikes the right balance in terms of responsiveness, scalability and data protection. The architecture also is designed to be expandable so that more sensors and smart utility functions can be added to the system without causing major changes throughout it (Firouzi et al., 2021)."
+      },
+      {
+        "paragraph_number": 226,
+        "text": "Table 2. Comparison of edge and cloud processing supporting the KASUS hybrid architecture."
+      },
+      {
+        "paragraph_number": 227,
+        "text": "3.2 Five Core UbiCom Properties"
+      },
+      {
+        "paragraph_number": 228,
+        "text": "The value and effectiveness of Kāinga Ora Adaptive Smart Utility System (KASUS) is dependent on how well it implements the principles of ubiquitous computing in a social housing setting. The features these technologies bring afford an intelligent, context-aware service and seamless integration into everyday life with the help of computing technologies. But some attributes need to be implemented to a higher degree than others. Some are vital, others need to be weighed against resident privacy, accessibility and control (Baccour et al., 2021)."
+      },
+      {
+        "paragraph_number": 229,
+        "text": "3.2.1 Distributed Computing"
+      },
+      {
+        "paragraph_number": 230,
+        "text": "Distributed computing: Sensors, devices and software services work together as a whole rather than as independent entities. The Local Home Gateway provides sensor connectivity between the temperature, humidity, occupancy, electricity and water sensors, enabling the sharing of contextual information between the utility functions and to support decision making."
+      },
+      {
+        "paragraph_number": 231,
+        "text": "In the case of Healthy Home Climate Management, for instance, it combines occupancy and environmental data to optimize heating; and, in the case of Utility Anomaly Detection, it uses the occupancy and utility data to differentiate between real faults and regular household activity. If there was no distributed communication, the context understanding would be greatly diminished."
+      },
+      {
+        "paragraph_number": 232,
+        "text": "Distributed computing is therefore crucial, and the groundwork is laid for all three KASUS use cases (Systematic Analysis of Smart Homes, 2024)."
+      },
+      {
+        "paragraph_number": 233,
+        "text": "3.2.2 Implicit Human–Computer Interaction (iHCI)"
+      },
+      {
+        "paragraph_number": 234,
+        "text": "Implicit Human–Computer Interaction allows KASUS to react to the home environment without explicit manual intervention. Residents get automatic suggestions or ticking the boxes, instead of manually adjusting heating or checking on utilities all the time."
+      },
+      {
+        "paragraph_number": 235,
+        "text": "For instance, the system can recognise an uncomfortable indoor condition and make or take recommendations for heating adjustments, or the Energy Management module can recognise peak-demand and suggest energy-saving measures. Yet the residents are still kept in the loop, and have the option to intervene at any moment should they want to, so that technology helps them, but doesn't take the place of them."
+      },
+      {
+        "paragraph_number": 237,
+        "text": "3.2.3 Context-Aware Computing"
+      },
+      {
+        "paragraph_number": 238,
+        "text": "Context Awareness is the fundamental feature of KASUS. The system does not just react to individual sensor data, it analyses the context of the environment, of occupancy, of energy usage and the preferences of the residents, to understand what is going on in the household."
+      },
+      {
+        "paragraph_number": 239,
+        "text": "This will allow KASUS to differentiate between normal and abnormal conditions. For instance, high electricity bills in the building during the tenure of its occupants may be normal while the same consumption in the absence of the occupants for a long time may signal a problem with an appliance. Similarly, if a home is left empty and has a constant stream of water, this may indicate a possible leak. Context awareness, thus, enhances the accuracy of the decision-making process and minimizes the number of false alarms and increases system reliability."
+      },
+      {
+        "paragraph_number": 240,
+        "text": "3.2.4 Autonomous Operation"
+      },
+      {
+        "paragraph_number": 241,
+        "text": "Autonomous operation allows KASUS to perform routine actions, such as generating notifications, adjusting environmental controls and detecting utility anomalies without continuous user input. This will decrease the effort of residents and increase the speed of response to varying conditions."
+      },
+      {
+        "paragraph_number": 242,
+        "text": "But autonomy is not appropriate for Kāinga Ora social housing. In order to keep the trust and transparency, KASUS applies the controlled autonomy manner, allowing the residents to adjust the preferences and/or to make a manual override of the automatic decisions when necessary."
+      },
+      {
+        "paragraph_number": 243,
+        "text": "3.2.5 Intelligent Computing"
+      },
+      {
+        "paragraph_number": 244,
+        "text": "With the help of intelligent computing, KASUS can transform the data gathered by the sensors into useful decisions. The Context Engine processes several inputs, matches them against a set of predefined rules and then outputs the appropriate response based on the conditions in the household."
+      },
+      {
+        "paragraph_number": 245,
+        "text": "Conventional monitoring systems only report utility data, KASUS offers recommendations for actions, recognizes maintenance problems and adjusts its behaviour to adapt to changing conditions. The other aspects of ubiquitous computing are complemented by this intelligence, ensuring the usefulness and practical value of distributed sensing, contextual analysis and automation."
+      },
+      {
+        "paragraph_number": 246,
+        "text": "Key Finding"
+      },
+      {
+        "paragraph_number": 247,
+        "text": "From the analysis, it is seen that the technological basis of KASUS is Context Awareness, Distributed Computing and Intelligent Computing. The former, Implicit Human–Computer Interaction makes it easier to use, the latter, Autonomous Operation, is deliberately restricted in order to maintain the trust of residents, transparency and control. This is a good mix of practical and ethical needs of Kāinga Ora social housing and aligns KASUS to these needs."
+      },
+      {
+        "paragraph_number": 248,
+        "text": "3.3 Application Across the Three Use Cases"
+      },
+      {
+        "paragraph_number": 249,
+        "text": "While KASUS is a single ubiquitous computing system, for each use case, the core ubiquitous computing characteristics are implemented in a unique way. Healthy Home Climate Management applies environmental sensing and contextual reasoning to control the indoor climate and provide thermal comfort, Adaptive Energy and Peak-Demand Management optimises energy use intelligently without the residents being able to control it, while Utility Anomaly and Leak Detection monitors the energy use continuously and applies contextual reasoning to detect abnormal energy use and provide alerts on timely maintenance."
+      },
+      {
+        "paragraph_number": 250,
+        "text": "According to the analysis, the two core technologies of Context-Aware and Distributed Computing are essential in all use cases; because all functions rely on the data from an interconnected set of sensors. The Context Engine can \"understand\" this data and respond appropriately using Intelligent Computing. Implicit Human–Computer Interaction makes it more usable by eliminating manual effort, whereas Autonomous Operation is applied to actions that are low risk and acceptable to the resident."
+      },
+      {
+        "paragraph_number": 251,
+        "text": "Therefore, KASUS focuses on intelligent support rather than complete automation, taking into account adaptive system behavior, awareness of the people and manual overrides. This method will improve the wellbeing of households without compromising trust and control of the users."
+      },
+      {
+        "paragraph_number": 252,
+        "text": "Table 3. Relevance of the five UbiCom properties across the three use cases."
+      },
+      {
+        "paragraph_number": 253,
+        "text": "3.4 Social Housing and Real-World Context"
+      },
+      {
+        "paragraph_number": 254,
+        "text": "KASUS is unique from many commercial smart home systems as it is specifically tailored to meet the needs of Kāinga Ora social housing, with residents who have varied lifestyles and household structures and differing digital confidence. Older adults, children and/or individuals with accessibility needs may be part of some households. Thus, the system should be simple, reliable and use knowledge skills."
+      },
+      {
+        "paragraph_number": 255,
+        "text": "Another important factor to take into account is the cost. The cost of sensor networks, communication technologies and maintenance should be cost effective to be deployed in large scales in housing developments. Moreover, essential functions with context awareness need to be still functional during temporary internet outages using local processing."
+      },
+      {
+        "paragraph_number": 256,
+        "text": "Confidentiality and trust are also paramount. Residents must be aware of the information that is gathered and how it will be utilized. KASUS's architecture is local-first, meaning that data is not unnecessarily sent far from its source, while residents can set their preferences, alerts and automation. This way, privacy is enhanced without sacrificing usability."
+      },
+      {
+        "paragraph_number": 257,
+        "text": "3.5 Autonomy and Resident Control"
+      },
+      {
+        "paragraph_number": 258,
+        "text": "One of the major features of ubiquitous computing is that it should be autonomous, but the increased autonomy may not be the best user experience. In social housing, the residents should be the key players and technology is a smart helper. KASUS therefore takes a human-in-the-loop approach, keeping the automated actions transparent, and letting residents change their preferences or override system decisions."
+      },
+      {
+        "paragraph_number": 259,
+        "text": "Simple tasks, like notifications or pre-defined heating adjustments, energy-saving recommendations, can be automated. Actions that impact upon household comfort and/or resource use, however, need to be approved by the residents or are limited under authorization. This balance is for creating trust, user acceptance and alignment with the preferences of individual households."
+      },
+      {
+        "paragraph_number": 260,
+        "text": "3.6 Unified System Justification"
+      },
+      {
+        "paragraph_number": 261,
+        "text": "The evaluation proves that KASUS is useful as a whole ubiquitous computing system than as stand-alone smart utility solutions. This enables the sharing of information between sensors and utility functions via a common Context Engine, which reduces duplicated infrastructure and makes decision making easier and more effective."
+      },
+      {
+        "paragraph_number": 262,
+        "text": "The proposed hybrid edge–cloud architecture caters for responsiveness and scalability. Local processing is used for time-sensitive applications like climate control and anomaly detection, whereas cloud services are used for long-term analytics, software updates and authorised maintenance analysis. This enhances reliability and mitigates the need to be connected to the internet 24 hours a day."
+      },
+      {
+        "paragraph_number": 263,
+        "text": "Most importantly, KASUS is built around human-centred ubiquitous computing, fusing the distributed sensing, context awareness, intelligent reasoning and controlled autonomy, to enhance household wellbeing while informing and empowering the residents. The balanced approach renders the architecture deployable to Kāinga Ora social housing developments."
+      },
+      {
+        "paragraph_number": 265,
+        "text": "Figure 5. Human-centred decision-making within KASUS, balancing intelligent automation with resident control."
+      },
+      {
+        "paragraph_number": 266,
+        "text": "4. Task 3: Research and Evaluation of Utility Technologies"
+      },
+      {
+        "paragraph_number": 267,
+        "text": "For the successful implementation of the Kāinga Ora Adaptive Smart Utility System (KASUS), appropriate technologies need to be selected. For smart homes the technologies in the field of sensing, communication and processing are numerous but not all of them are appropriate in the social housing. The selection of technology should take into account the accuracy, reliability, cost of the technology, scalability, privacy and ease of maintenance while considering functional requirements identified in Task 1."
+      },
+      {
+        "paragraph_number": 268,
+        "text": "This section reviews critical technologies for KASUS such as environmental and occupancy sensing technologies, smart utility monitoring, communication networks, processing architectures and human–computer interaction methods. The analysis does not see each technology as a separate technology, but compares alternative technologies in order to understand their strengths and weaknesses, and suitability to Kāinga Ora social housing. The recommendations in Task 4 are based on the findings."
+      },
+      {
+        "paragraph_number": 269,
+        "text": "4.1 Environmental and Occupancy Sensing"
+      },
+      {
+        "paragraph_number": 270,
+        "text": "The core of KASUS is the environmental and occupancy sensing, as all context-aware decisions are based on the accurate household information. There are temperature sensors and humidity sensors that are always active indoors and occupancy sensing that helps identify occupied/unoccupied areas before making any heating recommendations and interpreting utility usage."
+      },
+      {
+        "paragraph_number": 271,
+        "text": "Passive Infrared (PIR) sensor, millimetre-wave (mmWave) radar sensor (Zhang et al., 2023) and sensor fusion approaches (Zeng et al., 2025) are the three main methods for detecting occupancy. PIR sensors are inexpensive, low-power and popular, but only sense motion and not true presence, meaning they may not recognize when someone is still in the room. mmWave sensors, on the other hand, are more expensive and consume more power, but they can detect tiny motions, making them more precise for the presence detection application. The benefit of sensor fusion is that it is more reliable because it uses various types of sensors, but the downside is that it makes the system much more complex and costly."
+      },
+      {
+        "paragraph_number": 272,
+        "text": "A mixed sensing approach is recommended for Kāinga Ora social housing. The combination of PIR-based occupancy detection with temperature and humidity sensors should be used in most areas, helping to keep costs down, while mmWave sensors can be used in areas where accurate presence detection is more important. This would be a fit between cost, reliability, and practicability of deployment (Elkhoukhi et al., 2025)."
+      },
+      {
+        "paragraph_number": 273,
+        "text": "Table 4. Comparison of Occupancy Sensing Technologies"
+      },
+      {
+        "paragraph_number": 274,
+        "text": "4.2 Smart Electricity and Demand Management"
+      },
+      {
+        "paragraph_number": 275,
+        "text": "Smart electricity meters are the main tool for measuring the energy consumption in the household in KASUS. They continuously log the energy consumption and facilitate real-time communication, allowing KASUS to determine when the energy is being consumed in its peak and analyse its pattern to offer intelligent suggestions for efficient utilisation of energy consumption."
+      },
+      {
+        "paragraph_number": 276,
+        "text": "Efficiency is also assisted by demand-response technologies that enable flexibility in household loads to be shifted during high-demand periods. Unlike automatic control of all appliances, KASUS takes a resident-centred approach and optimisation is only made within user-defined preferences, thus ensuring energy efficiency and resident control."
+      },
+      {
+        "paragraph_number": 277,
+        "text": "Smart metering with the optional demand-response functionality has achieved the most balance between energy saving, affordability, scalability and resident acceptance for Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 278,
+        "text": "4.3 Water and Anomaly Detection Technologies"
+      },
+      {
+        "paragraph_number": 279,
+        "text": "However, water monitoring is a key element to safeguard the residents and housing assets. Smart water monitoring constantly checks water usage to detect leaks, burst pipes, and unneeded water usage, unlike conventional meters which just record total usage."
+      },
+      {
+        "paragraph_number": 280,
+        "text": "KASUS does this through smart water flow meters, leak detection sensors and context-aware analysis. Real-time consumption information is provided by smart meters and leak sensors in high-risk areas trigger an alert immediately. Normal water flow and occupancy, and previous water use, are also compared to distinguish between normal activities and possible failures in the system."
+      },
+      {
+        "paragraph_number": 281,
+        "text": "It is recommended that a combination of monitoring is used. Smart water meters enable continuous monitoring, leak sensors can sense leaks in a specific area, and the Context Engine enhances accuracy reporting with occupancy data before alerting. This helps to minimize false alarms and allows for quicker maintenance intervention (Smart Systems: A Review of Theory, Applications, and Recent Advances, 2025)."
+      },
+      {
+        "paragraph_number": 282,
+        "text": "4.4 Communication Technologies"
+      },
+      {
+        "paragraph_number": 283,
+        "text": "The communication of sensors, smart meters and intelligent control systems in KASUS is required to be reliable. For large-scale home use, communication technologies should be reliable, energy efficient, and scalable."
+      },
+      {
+        "paragraph_number": 284,
+        "text": "Wi-Fi is high bandwidth, widely available and uses a lot of power and may be congested. Zigbee has low power mesh networking for battery powered devices, and usually uses a special hub (Madadi-Barough, 2025). Thread is interoperable with the Matter standard and offers secure low-power mesh networking, enhanced scalability and cross-platform support."
+      },
+      {
+        "paragraph_number": 285,
+        "text": "With Kāinga Ora's long-term needs in mind, it was recommended that support should be given to Thread with Matter (Matter on the Wire) in the future for interoperability, and Zigbee was a viable option for cost-sensitive deployments."
+      },
+      {
+        "paragraph_number": 286,
+        "text": "Table 5. Wi-Fi vs Zigbee vs Thread/Matter — home network communication."
+      },
+      {
+        "paragraph_number": 287,
+        "text": "4.5 Edge vs Cloud Processing"
+      },
+      {
+        "paragraph_number": 288,
+        "text": "The architecture of the processing system has a significant impact on the performance, privacy and reliability of the system. Cloud-only solutions offer scalability and centralised analytics, but require constant Internet access. Edge computing, on the other hand, works on a local basis, which means that data is processed locally, minimizing latency and the flow of sensitive household data."
+      },
+      {
+        "paragraph_number": 289,
+        "text": "Time-critical functions like the heating adjustments, occupancy interpretation and anomaly detection should be handled at the Local Home Gateway, and the cloud services will process the long-term analytics, software updates and maintenance reporting."
+      },
+      {
+        "paragraph_number": 290,
+        "text": "Thus, it is recommended to use a hybrid edge–cloud system, which is made up by fast decision making at the edges and scalable and analytical power at the cloud."
+      },
+      {
+        "paragraph_number": 292,
+        "text": "Table 6. Edge vs Cloud vs Hybrid — data processing location."
+      },
+      {
+        "paragraph_number": 293,
+        "text": "4.6 Human–Computer Interaction Technologies"
+      },
+      {
+        "paragraph_number": 294,
+        "text": "Good interaction design means that KASUS is easy to understand and operate no matter how technically adept or inexperienced the resident is. The homes in Kāinga Ora have different levels of digital fluency and interfaces need to be simple and accessible."
+      },
+      {
+        "paragraph_number": 295,
+        "text": "A mobile app offers remote access and a wealth of system data, and there's an in-home display that gives an instant \"look\" at house conditions without having to hand over personal devices. Manual switches and override buttons continue to play a vital role in emergencies and in normal conditions of operation."
+      },
+      {
+        "paragraph_number": 296,
+        "text": "KASUS therefore works with a multi-modal interaction approach, which integrates all three forms of interaction, to make the system more accessible and to cater for the different preferences of the users."
+      },
+      {
+        "paragraph_number": 299,
+        "text": "Table 7. Mobile App vs In-Home Display vs Physical/Manual Controls — resident interaction."
+      },
+      {
+        "paragraph_number": 301,
+        "text": "4.7 Comparative Evaluation"
+      },
+      {
+        "paragraph_number": 302,
+        "text": "The evaluation reveals that none of the technologies is suitable for all parts of the KASUS concept. Rather, it works best when an integrated system is put in place that takes advantage of complementary technologies that are relevant to Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 303,
+        "text": "Environmental sensors and a smart utility meter along with context-aware analysis are more reliable than individual technologies when it comes to sensing. Thread with Matter provides the best long-term interoperability options for communication; Zigbee is an economical option."
+      },
+      {
+        "paragraph_number": 304,
+        "text": "The evaluation also verifies that hybrid edge–cloud processing offers the optimal privacy, responsiveness and scalability. Local processing provides in-house decision making and cloud processing allows for analytics and maintenance. Together with a multi-modal interaction approach they offer a practical and scalable ubiquitous computing system that is user-centred for Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 306,
+        "text": "5. Task 4: Recommendations"
+      },
+      {
+        "paragraph_number": 307,
+        "text": "5.1 Recommended System Architecture"
+      },
+      {
+        "paragraph_number": 308,
+        "text": "KASUS is recommended to use a hybrid edge–cloud architecture. The sensors in the environment, the occupancy sensors, the electricity meters and the water monitoring sensors are connected via the Local Home Gateway, where the KASUS Context Engine gets the data and makes decisions in real-time. Having critical events processed locally decreases latency, enhances reliability and enables critical services to operate in the event of temporary outages in the internet."
+      },
+      {
+        "paragraph_number": 309,
+        "text": "Cloud services enable long term analytics, software updates, aggregated reporting and authorised maintenance instead of live household monitoring. This design will offer scalability and reduce the sharing of critical information about residents."
+      },
+      {
+        "paragraph_number": 310,
+        "text": "5.2 Recommended Sensors and Technologies"
+      },
+      {
+        "paragraph_number": 311,
+        "text": "KASUS should incorporate environmental sensors, smart utility meters and occupancy detection technologies, based on the comparative evaluation, for context-aware decision making. The temperature and humidity sensors complement Healthy Home Climate Management, and the smart electricity and water meters provide a continuous monitoring of the utilities. Most areas should use PIR occupancy sensors because they are cheaper and they perform well in that application; a mmWave sensor should be installed in areas where more precise presence detection is needed."
+      },
+      {
+        "paragraph_number": 312,
+        "text": "Communication: Thread with Matter is recommended as the long-term networking solution of choice due to its interoperability, scalability and low power consumption. However, Zigbee is still a viable solution when budget or infrastructure would otherwise be an issue. An edge–cloud architecture should be used to deliver fast edge processing and secure cloud-based analytics and support."
+      },
+      {
+        "paragraph_number": 313,
+        "text": "5.3 Recommended Interaction Model"
+      },
+      {
+        "paragraph_number": 314,
+        "text": "The multi-modal interaction model should be used by KASUS that takes into consideration the diversity of digital accessibility and digital literacy of residents. An in-home display should show the condition of the household, what utilities are being used, and what systems are suggested; a “mobile” application should provide a view of the data and let the resident change the preferences from the comfort of their own home. Physical controls must also be maintained for critical functions as well as manual override, so that residents can always communicate with the system, it doesn't matter what their technical abilities are."
+      },
+      {
+        "paragraph_number": 315,
+        "text": "This way, transparency is kept and automation is not a threatening force in resident decision making."
+      },
+      {
+        "paragraph_number": 316,
+        "text": "5.4 Recommendation to Senior Management Team"
+      },
+      {
+        "paragraph_number": 317,
+        "text": "This report concludes that, for the development of the Kāinga Ora Adaptive Smart Utility System (KASUS), a hybrid edge–cloud system with a distributed computing and resident-centred interaction model should be continued."
+      },
+      {
+        "paragraph_number": 318,
+        "text": "The proposed system shows a possible implementation of ubiquitous computing to enhance the indoor environment, optimise the use of the utilities and facilitate proactive maintenance without compromising user independence. KASUS integrates a range of mature sensing technologies, intelligent context analysis and clear communication with the user to offer a practical, scalable and future-proof solution to this challenge of Kāinga Ora social housing."
+      },
+      {
+        "paragraph_number": 319,
+        "text": "The recommended architecture is also scalable, as future technologies for smart housing (sensors, renewable energy, predictive maintenance etc.) can be added on without any modifications."
+      },
+      {
+        "paragraph_number": 321,
+        "text": "6. Conclusion"
+      },
+      {
+        "paragraph_number": 322,
+        "text": "This report suggested that the Kāinga Ora Adaptive Smart Utility System (KASUS) is one solution for ubiquitous computing in Kāinga Ora social housing. It illustrated how the three use cases can complement each other in a single contextual platform that can support for better household wellbeing and resource efficiency."
+      },
+      {
+        "paragraph_number": 323,
+        "text": "The evaluation revealed that the technology base of KASUS consists of distributed sensing, context awareness and intelligent computing, whereas controlled autonomy and implicit human–computer interaction increases the usability of the system without compromising the control of the residents. The technology comparison also pinpointed a hybrid edge–cloud architecture, relying on interoperable communication technologies and a number of interaction modes, as the most appropriate solution for performance, privacy, scalability and accessibility."
+      },
+      {
+        "paragraph_number": 324,
+        "text": "In sum, KASUS illustrates the potential for pervasive computing to go beyond simple monitoring to provide intelligent and human-centred services. The proposed system will be a practical basis for future smart social housing developments throughout the Wellington Region by using reliable technologies and clear automation and resident involvement."
+      },
+      {
+        "paragraph_number": 325,
+        "text": "References"
+      },
+      {
+        "paragraph_number": 327,
+        "text": "Abdelnaby, K. M., Al-Husainy, M. A. F., Alhawarat, M. O., Rohaim, M. A., Assar, K. M., & Elshafey, K. A. (2026). The intelligent home: A systematic review of technological pillars, emerging paradigms, and future directions. Symmetry, 18(5), 718."
+      },
+      {
+        "paragraph_number": 328,
+        "text": "https://doi.org/10.3390/sym18050718"
+      },
+      {
+        "paragraph_number": 330,
+        "text": "Sun, Y., & Li, S. (2021). A systematic review of the research framework and evolution of smart homes based on the Internet of Things. Telecommunication Systems, 77(3), 411–428. https://doi.org/10.1007/s11235-021-00787-w"
+      },
+      {
+        "paragraph_number": 333,
+        "text": "Madadi-Barough, S., Ruiz-Blanco, P., Lin, J., Vidal Ferré, R., & Gómez, C. (2024). Matter: IoT interoperability for smart homes. IEEE Communications Magazine, 63(4), 106–112. https://doi.org/10.1109/MCOM.001.2400274"
+      },
+      {
+        "paragraph_number": 336,
+        "text": "Yar, H., Imran, A. S., Khan, Z. A., Sajjad, M., & Kastrati, Z. (2021). Towards smart home automation using IoT-enabled edge-computing paradigm. Sensors, 21(14), 4932. https://doi.org/10.3390/s21144932"
+      },
+      {
+        "paragraph_number": 339,
+        "text": "Baccour, E., Mhaisen, N., Abdellatif, A. A., Erbad, A., Mohamed, A., Hamdi, M., & Guizani, M. (2021). Pervasive AI for IoT applications: A survey on resource-efficient distributed artificial intelligence. IEEE Access (Preprint/arXiv). https://arxiv.org/abs/2104.07914"
+      },
+      {
+        "paragraph_number": 342,
+        "text": "Zhang, J., Wang, H., Yang, Z., & Shi, L. (2023). A survey of mmWave-based human sensing: Technology, platform and applications. arXiv. https://arxiv.org/abs/2308.03149"
+      },
+      {
+        "paragraph_number": 345,
+        "text": "Zeng, R., Zhang, J., Mao, Y., Yang, Z., & Shi, L. (2025). mmMotion: A real-time human motion detection smart home system based on mmWave radar. IEEE Internet of Things Journal. https://researchportal.hkust.edu.hk/en/publications/mmmotion-a-real-time-human-motion-detection-smart-home-system-bas"
+      },
+      {
+        "paragraph_number": 348,
+        "text": "Elkhoukhi, H., Bakhouya, M., Elmouatamid, A., El Ouadghiri, D., & Gaber, J. (2025). A review of occupancy sensing technologies and approaches in smart buildings. Journal of Reliable Intelligent Environments. https://journals.sagepub.com/doi/10.3233/RFT-240006"
+      },
+      {
+        "paragraph_number": 351,
+        "text": "Apthorpe, N., Shvartzshnaider, Y., Mathur, A., Reisman, D., & Feamster, N. (2018). Discovering smart home Internet of Things privacy norms using contextual integrity. Proceedings on Privacy Enhancing Technologies. https://arxiv.org/abs/1805.06031"
+      },
+      {
+        "paragraph_number": 354,
+        "text": "Al Mutawa, R. F., & Eassa, F. A. (2020). A smart home system based on Internet of Things. arXiv. https://arxiv.org/abs/2009.05328"
+      },
+      {
+        "paragraph_number": 357,
+        "text": "Khan, L. U., Yaqoob, I., Tran, N. H., Kazmi, S. M. A., Dang, T. N., & Hong, C. S. (2019). Edge-computing-enabled smart cities: A comprehensive survey. IEEE Internet of Things Journal (Preprint). https://arxiv.org/abs/1909.08747"
+      },
+      {
+        "paragraph_number": 360,
+        "text": "Crawford, C. (2024). Protocol power: Matter, IoT interoperability, and a critique of industry self-regulation. Internet Policy Review, 13(2). https://doi.org/10.14763/2024.2.1776"
+      },
+      {
+        "paragraph_number": 363,
+        "text": "Alfakhri, Y., Alawadi, S., Aloul, F., & Al-Ali, A. (2021). Smart home research themes: An analysis and taxonomy. Procedia Computer Science, 185, 91–100. https://doi.org/10.1016/j.procs.2021.05.010"
+      },
+      {
+        "paragraph_number": 366,
+        "text": "Khan, H. U., Alomari, M. K., Khan, S., Nazir, S., Gill, A. Q., & Al-Maadid, A. A. (2021). Systematic analysis of safety and security risks in smart homes. Computers, Materials & Continua, 68(1), 1409–1428. https://doi.org/10.32604/cmc.2021.016058"
+      },
+      {
+        "paragraph_number": 369,
+        "text": "Mitzner, T. L., et al. (2025). (Re)Defining smart home through an HCI perspective: A systematic review of over two decades of smart home conceptualization and research. International Journal of Human–Computer Interaction. https://doi.org/10.1080/10447318.2024.2437112"
+      }
+    ]
+  },
+  "extracted_data": {
+    "is_startup_document": false,
+    "document_category": "Academic Assignment",
+    "startup_relevance_reason": "The document is a student assessment report for the course IT8106 – Ubiquitous Computing at Whitecliffe College, describing a proposal for a smart utility system (KASUS) rather than a startup business, fundraising opportunity, or commercial venture.",
+    "startup_name": null,
+    "description": null,
+    "industry": null,
+    "sector": null,
+    "founders": [],
+    "product": null,
+    "business_model": null,
+    "target_customers": null,
+    "financials": {
+      "revenue": null,
+      "arr": null,
+      "mrr": null,
+      "burn_rate": null,
+      "runway": null,
+      "growth_rate": null,
+      "gross_margin": null,
+      "churn": null,
+      "cac": null,
+      "ltv": null
+    },
+    "funding_raised": null,
+    "investors": [],
+    "customers": null,
+    "traction": null,
+    "market_size": {
+      "tam": null,
+      "sam": null,
+      "som": null
+    },
+    "competitors": [],
+    "risks": [],
+    "key_metrics": {},
+    "missing_information": [],
+    "evidence": [
+      {
+        "claim": "The document is an academic assignment submission for a university course.",
+        "source": "Text",
+        "location": "PARAGRAPH 4",
+        "supporting_text": "IT8106 – Ubiquitous Computing",
+        "confidence": 1.0
+      },
+      {
+        "claim": "The report is Assessment 1 submitted at Whitecliffe College.",
+        "source": "Text",
+        "location": "PARAGRAPH 5",
+        "supporting_text": "Assessment 1: Research and Requirements",
+        "confidence": 1.0
+      },
+      {
+        "claim": "The institution named on the document is Whitecliffe College.",
+        "source": "Text",
+        "location": "PARAGRAPH 10",
+        "supporting_text": "Whitecliffe College",
+        "confidence": 1.0
+      }
+    ]
+  },
+  "validation_errors": [],
+  "retry_count": 0,
+  "status": "not_startup_document"
+}
