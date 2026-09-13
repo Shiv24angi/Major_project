@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VenturePulse AI - Startup Evaluation Platform</title>
+  <meta name="description" content="Multi-agent AI Startup Evaluation Platform powered by Agent 1 Document Analysis, Agent 6 Code LLM, Agent 2 Data Normalization, Agent 3 Scoring Engine, and Agent 4 Investment Insights.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       TOP NAVIGATION
+       ============================================================ -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">VenturePulse AI</div>
+      </div>
+      <span class="brand-badge">Agentic Evaluation v2.4</span>
+    </div>
+
+    <div class="nav-center">
+      <button class="nav-tab-btn active">Active Evaluation</button>
+      <button class="nav-tab-btn" onclick="alert('Portfolio view: 18 evaluated startups in current deal flow pipeline.')">Deal Flow (18)</button>
+      <button class="nav-tab-btn" onclick="alert('Multi-Agent Configuration: Agent 1 (LLM), Agent 6 (Code RAG), Agent 2 (Normalizer), Agent 3 (Scoring), Agent 4 (Thesis), Agent 5 (Reports)')">Agent Graph</button>
+    </div>
+
+    <div class="nav-actions">
+      <select id="startupSelectDropdown" class="select-startup-dropdown" aria-label="Select Startup">
+        <option value="ecoverse">EcoVerse (ClimateTech / Mode B)</option>
+        <option value="finai">FinAI Sentinel (FinTech / Hybrid)</option>
+        <option value="biosynth">BioSynth AI (BioTech / Mode A)</option>
+      </select>
+
+      <button id="openNewAnalysisBtn" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        New Evaluation
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT CONTAINER
+       ============================================================ -->
+  <main class="dashboard-container">
+
+    <!-- ============================================================
+         AGENT PIPELINE MONITOR CARD
+         ============================================================ -->
+    <section class="pipeline-card">
+      <div class="pipeline-header">
+        <div class="pipeline-title-group">
+          <div class="pipeline-status-pulse"></div>
+          <span class="pipeline-title">Live Multi-Agent Processing Pipeline</span>
+          <span id="pipelineLiveLog" style="font-size: 0.78rem; color: var(--emerald); font-weight: 500; margin-left: 10px;">
+            ✓ All Agents Synced & Evaluated
+          </span>
+        </div>
+        <button id="runSimulationBtn" class="btn btn-secondary btn-sm" onclick="runPipelineSimulation()">
+          ⚡ Re-run Pipeline Simulation
+        </button>
+      </div>
+
+      <div class="pipeline-flow">
+        <!-- Node 0 -->
+        <div class="pipeline-node" onclick="alert('Preprocessing Layer: Handles PDF/PPT parsing, OCR, Audio transcription, and GitHub repository file chunking.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">LAYER 0</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Preprocessing</div>
+          <div class="node-desc">PDF/OCR, Code AST Chunking</div>
+        </div>
+
+        <!-- Node 1 -->
+        <div class="pipeline-node" onclick="alert('Agent 1: Document Analysis Agent parses pitch decks, financials, and company updates.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">AGENT 1</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Doc Analysis</div>
+          <div class="node-desc">Pitch deck, Team, TAM/SAM</div>
+        </div>
+
+        <!-- Node 6 -->
+        <div class="pipeline-node" onclick="alert('Agent 6: Code Agent analyzes GitHub repo, tech stack, architecture, and code quality.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7;">AGENT 6</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Code LLM (RAG)</div>
+          <div class="node-desc">Architecture, Tech Stack, Quality</div>
+        </div>
+
+        <!-- Node 2 -->
+        <div class="pipeline-node" onclick="alert('Agent 2: Normalizes and structures data from Agent 1 and Agent 6 into unified schema.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">AGENT 2</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Normalization</div>
+          <div class="node-desc">Deduplicate & Unify Schema</div>
+        </div>
+
+        <!-- Node 3 -->
+        <div class="pipeline-node" onclick="alert('Agent 3: Multi-dimensional quantitative scoring engine.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">AGENT 3</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Scoring Engine</div>
+          <div class="node-desc">6-Dimensional Quant Model</div>
+        </div>
+
+        <!-- Node 4 -->
+        <div class="pipeline-node" onclick="alert('Agent 4: Generates investment thesis, risks, and verdict.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">AGENT 4</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Insights & Thesis</div>
+          <div class="node-desc">Thesis, Risks, Recommendation</div>
+        </div>
+
+        <!-- Node 5 -->
+        <div class="pipeline-node" onclick="alert('Agent 5: Compiles exportable PDF, PPT, Excel reports.')">
+          <div class="pipeline-node-top">
+            <span class="node-badge">AGENT 5</span>
+            <div class="node-status-dot"></div>
+          </div>
+          <div class="node-name">Report Generator</div>
+          <div class="node-desc">PDF, PPT, Excel, Share Link</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STARTUP HERO BANNER & OVERALL SCORE GAUGE
+         ============================================================ -->
+    <section class="hero-grid">
+      <!-- Info Left -->
+      <div class="startup-banner">
+        <div>
+          <div class="startup-info-top">
+            <div class="startup-title-box">
+              <h1 id="startupName">EcoVerse</h1>
+              <p id="startupTagline" class="startup-tagline">Decentralized Carbon Credit Verification & Real-time ESG Telemetry</p>
+            </div>
+            <span id="chipMode" class="meta-chip" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
+              Mode B (Project → Startup)
+            </span>
+          </div>
+
+          <div class="startup-meta-chips">
+            <div class="meta-chip">Sector: <strong id="chipCategory">ClimateTech / SaaS</strong></div>
+            <div class="meta-chip">Stage: <strong id="chipStage">Seed</strong></div>
+            <div class="meta-chip">Founders: <strong id="chipFounder">Shivangi & Team</strong></div>
+            <div class="meta-chip">Location: <strong id="chipLocation">San Francisco / Bengaluru</strong></div>
+          </div>
+        </div>
+
+        <!-- Metrics strip -->
+        <div class="metrics-strip">
+          <div class="metric-box">
+            <span class="metric-label">MRR</span>
+            <span id="valMrr" class="metric-val">$48,500</span>
+            <span class="metric-sub">+24% MoM</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">ARR Run-rate</span>
+            <span id="valArr" class="metric-val">$582,000</span>
+            <span class="metric-sub">SaaS + Rev Share</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Growth Rate</span>
+            <span id="valGrowth" class="metric-val">+24.5%</span>
+            <span class="metric-sub">Organic Growth</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Runway</span>
+            <span id="valRunway" class="metric-val">18 Months</span>
+            <span class="metric-sub">$32k / mo burn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Score & Verdict Right -->
+      <div class="score-verdict-card">
+        <div class="radial-gauge-container">
+          <svg class="radial-gauge-svg" viewBox="0 0 140 140">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10B981" />
+                <stop offset="100%" stop-color="#6366F1" />
+              </linearGradient>
+            </defs>
+            <circle class="radial-gauge-bg" cx="70" cy="70" r="60" />
+            <circle id="radialGaugeFill" class="radial-gauge-fill" cx="70" cy="70" r="60" />
+          </svg>
+          <div class="radial-gauge-text">
+            <span id="overallScoreNumber" class="radial-gauge-number">88</span>
+            <span class="radial-gauge-max">/ 100</span>
+          </div>
+        </div>
+
+        <div class="verdict-badge-box">
+          <div id="verdictPill" class="verdict-pill">INVEST</div>
+          <div id="verdictBadge" style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">High Conviction</div>
+          <div id="verdictConfidence" class="verdict-confidence">Confidence: High (94%)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MULTI-DIMENSIONAL SCORES BREAKDOWN
+         ============================================================ -->
+    <section class="score-breakdown-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600;">
+          Agent 3 Multi-Dimensional Quant Scoring Model
+        </h3>
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Weighted Composite Algorithm</span>
+      </div>
+      <div id="scoreBarsGrid" class="score-bars-grid">
+        <!-- Rendered via app.js -->
+      </div>
+    </section>
+
+    <!-- ============================================================
+         WORKSPACE TABS NAVIGATION
+         ============================================================ -->
+    <nav class="tab-navigation">
+      <button class="workspace-tab active" data-tab="tabAgent6">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Agent 6: Code & Tech Deep-Dive
+      </button>
+
+      <button class="workspace-tab" data-tab="tabAgent1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Agent 1: Business & Pitch
+      </button>
+
+      <button class="workspace-tab" data-tab="tabAgent2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Agent 2: Normalized Storage Bridge
+      </button>
+
+      <button class="workspace-tab" data-tab="tabThesis">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Agent 4: Investment Thesis & Risks
+      </button>
+
+      <button class="workspace-tab" data-tab="tabReports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Agent 5: Export & Reports
+      </button>
+    </nav>
+
+    <!-- ============================================================
+         TAB 1: AGENT 6 CODE & TECHNICAL DEEP DIVE
+         ============================================================ -->
+    <div id="tabAgent6" class="tab-panel active">
+      <div class="findings-container">
+        <div class="findings-toolbar">
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 2px;">
+              Agent 6 Codebase Evidence & Finding Claims
+            </h3>
+            <p style="font-size: 0.78rem; color: var(--text-dim);">
+              Inspected via Code LLM + AST Chunker with strict evidence verification rules.
+            </p>
+          </div>
+
+          <div class="filter-pills">
+            <button class="filter-pill active" data-filter="all">All Claims</button>
+            <button class="filter-pill" data-filter="supported">✓ Supported (Verified)</button>
+            <button class="filter-pill" data-filter="inferred">⚡ Inferred</button>
+            <button class="filter-pill" data-filter="unknown">❓ Unknown / Missing</button>
+          </div>
+        </div>
+
+        <div id="findingsListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2: AGENT 1 BUSINESS & PITCH ANALYSIS
+         ============================================================ -->
+    <div id="tabAgent1" class="tab-panel">
+      <div class="thesis-grid">
+        <div class="thesis-card">
+          <h3>🎯 Problem Statement</h3>
+          <p id="agent1Problem"></p>
+
+          <h3 style="margin-top: 10px;">💡 Solution & Value Proposition</h3>
+          <p id="agent1Solution"></p>
+        </div>
+
+        <div class="thesis-card">
+          <h3>🌍 Market Sizing (TAM / SAM / SOM)</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 6px;">
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Total Addressable Market (TAM)</div>
+              <div id="agent1Tam" style="font-size: 0.95rem; font-weight: 700; color: #a5b4fc;"></div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 6px;">
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Serviceable Addressable Market (SAM)</div>
+              <div id="agent1Sam" style="font-size: 0.95rem; font-weight: 700; color: #38bdf8;"></div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 6px;">
+              <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Serviceable Obtainable Market (SOM)</div>
+              <div id="agent1Som" style="font-size: 0.95rem; font-weight: 700; color: var(--emerald);"></div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 12px;">⚔️ Competitive Landscape</h3>
+          <div id="agent1Competitors" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3: AGENT 2 NORMALIZED DATA BRIDGE & STORAGE
+         ============================================================ -->
+    <div id="tabAgent2" class="tab-panel">
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 700; color: #818cf8; font-size: 0.92rem;">
+              📦 Agent 6 ➔ Agent 2 Persistent Handoff Bridge
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Stored file path: <code style="color: #6ee7b7; font-family: monospace;">Agent-6/backend/storage/agent6_outputs/latest.json</code>
+            </div>
+          </div>
+          <button id="syncBackendBtn" class="btn btn-secondary btn-sm">
+            ⚡ Pull Live Backend Stored Output
+          </button>
+        </div>
+
+        <div class="code-viewer-container">
+          <div class="code-viewer-header">
+            <span class="code-viewer-title">agent6_to_agent2_handoff.json (Standardized Normalization Contract)</span>
+            <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('agent2JsonHandoff').textContent); alert('JSON copied to clipboard!');">
+              📋 Copy JSON
+            </button>
+          </div>
+          <pre id="agent2JsonHandoff" class="code-viewer-body"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4: AGENT 4 INVESTMENT THESIS & RISKS
+         ============================================================ -->
+    <div id="tabThesis" class="tab-panel">
+      <div class="thesis-grid">
+        <div class="thesis-card">
+          <h3 style="color: var(--emerald);">🚀 Bull Case Thesis</h3>
+          <p id="thesisBull"></p>
+
+          <h3 style="color: #f87171; margin-top: 10px;">🐻 Bear Case Concerns</h3>
+          <p id="thesisBear"></p>
+
+          <h3 style="margin-top: 10px;">⭐ Core Technical & Business Strengths</h3>
+          <ul id="thesisStrengths" class="bullet-list"></ul>
+        </div>
+
+        <div class="thesis-card">
+          <h3 style="color: var(--amber);">⚠️ Risks & Mitigation Pathways</h3>
+          <ul id="thesisRisks" class="bullet-list"></ul>
+
+          <h3 style="margin-top: 12px; color: var(--primary);">📋 Recommended Diligence Next Steps</h3>
+          <ul id="thesisSteps" class="bullet-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 5: AGENT 5 REPORT STUDIO & EXPORTS
+         ============================================================ -->
+    <div id="tabReports" class="tab-panel">
+      <div class="export-grid">
+        <div class="export-tile" onclick="triggerReportDownload('pdf')">
+          <div class="export-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h4>Executive PDF Report</h4>
+          <p>Comprehensive 12-page investor briefing memo with score cards and code evidence.</p>
+          <button class="btn btn-primary btn-sm">Download PDF</button>
+        </div>
+
+        <div class="export-tile" onclick="triggerReportDownload('ppt')">
+          <div class="export-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h4>Investment Deck (PPT)</h4>
+          <p>IC-ready slide deck formatted for Partner meeting presentation.</p>
+          <button class="btn btn-secondary btn-sm">Download PPT</button>
+        </div>
+
+        <div class="export-tile" onclick="triggerReportDownload('excel')">
+          <div class="export-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+          </div>
+          <h4>Financial & Cap Table (XLSX)</h4>
+          <p>Normalized unit economics model, revenue run-rates, and runway forecasts.</p>
+          <button class="btn btn-secondary btn-sm">Download Excel</button>
+        </div>
+
+        <div class="export-tile" onclick="alert('Share link generated: https://venturepulse.ai/share/eval-829104 - Valid for 30 days.')">
+          <div class="export-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #22d3ee;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <h4>Interactive Share Link</h4>
+          <p>Secure password-protected read-only link for co-investors and syndicates.</p>
+          <button class="btn btn-emerald btn-sm">Generate Link</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       MODAL: CREATE NEW EVALUATION
+       ============================================================ -->
+  <div id="newAnalysisModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700;">Initiate Startup Evaluation</h2>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 2px;">Select ingestion mode based on available data sources.</p>
+        </div>
+        <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="mode-selector-grid">
+        <!-- Mode A -->
+        <div class="mode-card">
+          <div class="mode-card-header">
+            <span style="font-size: 1.3rem;">🏢</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Mode A: Startup Evaluation</div>
+              <div style="font-size: 0.72rem; color: var(--text-dim);">Pitch deck, financials & email sync</div>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Upload Pitch Deck (PDF / PPTX)</label>
+            <input type="file" class="text-input" style="padding: 6px;">
+          </div>
+          <div class="input-group">
+            <label>Connect Founder Gmail (Optional)</label>
+            <button class="btn btn-secondary btn-sm" onclick="alert('Gmail OAuth connector: Sync founder updates & attachments.')">
+              📧 Connect Gmail API
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode B -->
+        <div class="mode-card selected">
+          <div class="mode-card-header">
+            <span style="font-size: 1.3rem;">💻</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Mode B: Project → Startup</div>
+              <div style="font-size: 0.72rem; color: var(--text-dim);">Code LLM, GitHub repo & AST analysis</div>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>GitHub Repository URL</label>
+            <input type="text" class="text-input" value="https://github.com/Shiv24angi/EcoVerse" placeholder="https://github.com/owner/repo">
+          </div>
+          <div class="input-group">
+            <label>Project Demo URL (Optional)</label>
+            <input type="text" class="text-input" placeholder="https://demo.app">
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+        <button class="btn btn-secondary" onclick="document.getElementById('newAnalysisModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" onclick="startNewEvaluation()">
+          🚀 Run Multi-Agent Evaluation
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="mock_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

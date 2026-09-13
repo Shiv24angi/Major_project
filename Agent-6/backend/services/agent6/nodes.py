@@ -256,166 +256,453 @@ def chunk_files(state):
 # ============================================================
 
 def analyze_repository(state):
+    import json
 
-    repository = state["repository"]
+    from services.agent6.analyzers import validate_analysis
+    from services.agent6.llm import ask_llm
 
-    readme = state.get(
-        "readme",
-        ""
+    repository = state.get("repository", {})
+    readme = state.get("readme", "")
+    selected_files = state.get("selected_files", [])
+    file_contents = state.get("file_contents", {})
+    chunks = state.get("chunks", [])
+
+    source_code = "\n\n".join(
+        f"===== FILE: {path} =====\n{content}"
+        for path, content in file_contents.items()
     )
 
-    files = state.get(
-        "files",
-        []
+    chunk_context = "\n\n".join(
+        f"""
+===== FILE: {chunk["file_path"]} =====
+===== CHUNK {chunk["chunk_index"] + 1}/{chunk["total_chunks"]} =====
+{chunk["content"]}
+"""
+        for chunk in chunks
     )
-
-    selected_files = state.get(
-        "selected_files",
-        []
-    )
-
-    file_contents = state.get(
-        "file_contents",
-        {}
-    )
-
-    chunks = state.get(
-        "chunks",
-        []
-    )
-
-    # ============================================================
-    # BUILD REPOSITORY CONTEXT
-    # ============================================================
-
-    repository_context = {
-    "repository": repository,
-
-    "readme": readme,
-
-    "selected_files": selected_files,
-
-    "source_code": file_contents,
-
-    "chunks": chunks,
-
-    "analysis_metadata": {
-        "files_discovered": len(files),
-        "files_selected": len(selected_files),
-        "files_read": len(file_contents),
-        "chunks_created": len(chunks)
-    }
-}
-
-    # ============================================================
-    # AGENT 6 PROMPT
-    # ============================================================
 
     prompt = f"""
-You are Agent 6 in an AI startup evaluation system.
+You are Agent 6, the repository analysis agent in an AI startup
+evaluation system.
 
-Your job is to inspect and understand the technical project
-represented by a GitHub repository.
-
-You are performing a repository and codebase analysis.
+Your job is to inspect the provided GitHub repository evidence and
+produce a structured technical and product evaluation.
 
 IMPORTANT RULES:
 
-1. Only use information supplied in the repository context.
-2. Do not invent facts.
-3. Do not use outside knowledge.
-4. Clearly distinguish supported facts from inference.
-5. Do not score the startup.
-6. Do not make an investment decision.
-7. Do not write the final startup report.
-8. Use actual source-code contents when making technical claims.
-9. Every important claim must contain evidence.
-10. Evidence must reference files that actually exist in the
-    supplied repository context.
-11. If there is not enough evidence, mark the finding as
-    "unknown".
-12. Do not claim that the entire repository was inspected if
-    only selected files were supplied.
+1. Use ONLY evidence provided in this prompt.
+2. Do NOT use outside knowledge.
+3. Do NOT invent files, endpoints, database tables, technologies,
+   features, security mechanisms, or architecture.
+4. Every important conclusion must include repository evidence.
+5. Evidence must reference files that were actually provided/read.
+6. If something cannot be determined from the provided repository
+   evidence, mark it as "unknown".
+7. Clearly distinguish:
+   - supported = directly shown by repository evidence
+   - inferred = reasonable conclusion from repository evidence
+   - unknown = insufficient evidence
+8. Do not claim that something is absent from the entire repository
+   merely because it was not included in the selected files.
+   Instead say that it was "not observed in the reviewed files".
+9. Market potential and monetization are allowed to be inferred,
+   but MUST be clearly marked as inferred unless directly supported
+   by repository evidence.
+10. Scores must be justified by evidence.
+11. Do not make investment decisions.
+12. Do not recommend whether someone should invest.
+13. Do not produce the final startup report.
+14. Your output is an intermediate structured assessment for Agent 2.
 
-You have access to:
+REPOSITORY:
 
-- README
-- complete repository file listing
-- selected important files
-- actual source-code contents of selected files
-- source-code chunks
+{json.dumps(repository, indent=2)}
 
+README:
+
+{readme}
+
+SELECTED FILES:
+
+{json.dumps(selected_files, indent=2)}
+
+FILE CONTENT:
+
+{source_code}
+
+CHUNKED CODE:
+
+{chunk_context}
+
+REVIEW COVERAGE:
+
+Files discovered: {len(state.get("files", []))}
+Files selected: {len(selected_files)}
+Files read: {len(file_contents)}
+Chunks created: {len(chunks)}
+
+==================================================
+ANALYSIS REQUIREMENTS
+==================================================
+
+Analyze the repository in the following areas.
+
+PROJECT
+- Project name
+- Project type
+- Purpose
+
+PROBLEM
+- What problem the project appears to solve
+- What user/business problem is addressed
+- Capabilities related to solving the problem
+
+FEATURES
+Identify implemented or clearly documented features.
+
+TECH STACK
+Identify technologies actually found in the repository.
+
+ARCHITECTURE
 Analyze:
+- Architecture style
+- Modules/components
+- Separation of responsibilities
+- Data flow
+- Important architectural observations
 
-1. Project identity
-2. Problem being solved
-3. Features
-4. Technology stack
-5. Architecture
-6. Important technical components
-7. Implementation details
-8. Technical strengths
-9. Technical weaknesses
-10. Project completeness
-11. Potential product/startup signals
-12. Missing information
+DATABASE
+Analyze when evidence exists:
+- Entities
+- Relationships
+- Indexes
+- Constraints
+- Unique constraints
+- Important fields
 
-For every important finding:
+If database information was not present in the reviewed files,
+mark the relevant information as unknown.
 
-- "supported" = directly evidenced by supplied repository data
-- "inferred" = reasonable conclusion based on supplied evidence
-- "unknown" = insufficient evidence
+API ANALYSIS
+Analyze:
+- Major endpoints
+- HTTP methods
+- Authentication requirements
+- Public endpoints
+- Protected endpoints
+- Validation
+- Error handling
 
-IMPORTANT EVIDENCE RULE:
+TECHNICAL MATURITY
+Analyze:
+- Testing
+- Documentation
+- Dockerization
+- Error handling
+- Configuration management
+- Code organization
+- Production readiness
 
-Evidence must reference actual repository paths
-or supplied repository information.
+SECURITY
+Analyze:
+- JWT
+- Password hashing
+- Validation
+- Authentication guards
+- Secrets/configuration
+- Hardcoded credentials
+- Authorization/RBAC gaps
+- API exposure
 
-Do not invent evidence paths.
+Do not claim that credentials are absent from the entire repository
+unless the repository evidence actually proves this.
+
+SCALABILITY
+Analyze:
+- Database architecture
+- Statelessness
+- Pagination
+- Caching opportunities
+- Potential bottlenecks
+- Horizontal scaling readiness
+
+CODE QUALITY
+Analyze:
+- Modularity
+- Separation of concerns
+- DTO usage
+- Exception handling
+- Testing
+- Maintainability
+- Technical debt
+
+MARKET POTENTIAL
+Based ONLY on repository evidence and clearly marked inference:
+- Problem
+- Potential target customers
+- Differentiation
+- Potential use cases
+- Adoption potential
+
+Do not claim actual market traction, customers, revenue,
+or adoption unless directly evidenced.
+
+MONETIZATION
+Identify evidence-based or clearly inferred possibilities such as:
+- SaaS subscription
+- Transaction/booking fee
+- Enterprise/API plans
+- Other possibilities
+
+Clearly distinguish inference from repository-supported facts.
+
+RISKS
+Identify:
+- Security risks
+- Architecture risks
+- Product risks
+- Scalability risks
+- Missing/unfinished functionality
+
+FINAL PROJECT ASSESSMENT
+
+Give scores from 0 to 10 for:
+
+- Technical maturity
+- Scalability
+- Security
+- Code quality
+- Market potential
+- Monetization potential
+
+Every score must include:
+- score
+- assessment
+- evidence
+
+==================================================
+EVIDENCE FORMAT
+==================================================
+
+Use this format for evidence:
+
+{{
+    "file": "path/to/file.ts",
+    "reason": "Explains exactly what in this file supports the conclusion."
+}}
+
+Do NOT cite files that were not provided.
+
+==================================================
+OUTPUT FORMAT
+==================================================
 
 Return ONLY valid JSON.
 
-The JSON MUST have exactly this structure:
+The JSON must follow this structure:
 
 {{
-    "findings": [
-        {{
-            "category": "project|problem|feature|technology|architecture|technical",
-            "claim": "Specific finding",
-            "status": "supported|inferred|unknown",
-            "evidence": [
-                "README.md"
-            ]
-        }}
-    ]
+    "project": {{
+        "name": "...",
+        "type": "...",
+        "purpose": "...",
+        "evidence": []
+    }},
+
+    "problem": {{
+        "summary": "...",
+        "capabilities": [],
+        "evidence": []
+    }},
+
+    "features": [],
+
+    "tech_stack": [],
+
+    "architecture": {{
+        "style": "...",
+        "modules": [],
+        "data_flow": "...",
+        "observations": [],
+        "evidence": []
+    }},
+
+    "database": {{
+        "entities": [],
+        "relationships": [],
+        "indexes": [],
+        "constraints": [],
+        "important_fields": [],
+        "evidence": []
+    }},
+
+    "api_analysis": {{
+        "endpoints": [],
+        "authentication": [],
+        "public_endpoints": [],
+        "protected_endpoints": [],
+        "validation": [],
+        "error_handling": [],
+        "evidence": []
+    }},
+
+    "technical_maturity": {{
+        "testing": "...",
+        "documentation": "...",
+        "dockerization": "...",
+        "error_handling": "...",
+        "configuration_management": "...",
+        "code_organization": "...",
+        "production_readiness": "...",
+        "evidence": []
+    }},
+
+    "security": {{
+        "jwt": "...",
+        "password_hashing": "...",
+        "validation": "...",
+        "authentication_guards": "...",
+        "secrets_configuration": "...",
+        "hardcoded_credentials": "...",
+        "authorization_gaps": "...",
+        "api_exposure": "...",
+        "evidence": []
+    }},
+
+    "scalability": {{
+        "database_architecture": "...",
+        "stateless_api": "...",
+        "pagination": "...",
+        "caching_opportunities": [],
+        "bottlenecks": [],
+        "horizontal_scaling_readiness": "...",
+        "evidence": []
+    }},
+
+    "code_quality": {{
+        "modularity": "...",
+        "separation_of_concerns": "...",
+        "dto_usage": "...",
+        "exception_handling": "...",
+        "testing": "...",
+        "maintainability": "...",
+        "technical_debt": [],
+        "evidence": []
+    }},
+
+    "market_potential": {{
+        "problem": "...",
+        "target_customers": [],
+        "differentiation": [],
+        "potential_use_cases": [],
+        "adoption_potential": "...",
+        "evidence": []
+    }},
+
+    "monetization": {{
+        "possibilities": []
+    }},
+
+    "risks": [],
+
+    "final_project_assessment": {{
+        "technical_maturity": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "scalability": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "security": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "code_quality": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "market_potential": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "monetization_potential": {{
+            "score": 0,
+            "assessment": "...",
+            "evidence": []
+        }},
+        "overall_assessment": "..."
+    }}
 }}
-
-Additional rules:
-
-- "findings" must always be an array.
-- Every finding must contain:
-  - category
-  - claim
-  - status
-  - evidence
-- "status" must be exactly:
-  "supported"
-  "inferred"
-  or
-  "unknown"
-- "evidence" must always be an array.
-- Do not invent file paths.
-- Do not include Markdown.
-- Do not include ```json.
-- Do not include explanations outside the JSON.
-
-REPOSITORY CONTEXT:
-
-{json.dumps(
-    repository_context,
-    indent=2
-)}
 """
+
+    try:
+        raw_response = ask_llm(prompt)
+
+        print("\n===== RAW AGENT 6 ANALYSIS =====")
+        print(raw_response)
+
+        parsed = json.loads(raw_response)
+
+        validated = validate_analysis(parsed)
+
+        final_analysis = validated.model_dump()
+
+        findings = []
+
+        for category, section in final_analysis.items():
+
+            if isinstance(section, dict):
+                evidence = section.get("evidence", [])
+
+                if evidence:
+                    findings.append({
+                        "category": category,
+                        "claim": section,
+                        "status": "supported",
+                        "evidence": evidence,
+                    })
+
+            elif isinstance(section, list):
+
+                for item in section:
+
+                    if isinstance(item, dict):
+                        evidence = item.get("evidence", [])
+
+                        if evidence:
+                            findings.append({
+                                "category": category,
+                                "claim": item,
+                                "status": "supported",
+                                "evidence": evidence,
+                            })
+
+        print("\n===== STRUCTURED AGENT 6 ANALYSIS =====")
+        print(json.dumps(final_analysis, indent=2))
+
+        return {
+            "final_analysis": final_analysis,
+            "findings": findings,
+            "raw_analysis": raw_response,
+        }
+
+    except Exception as e:
+
+        print("\n===== AGENT 6 ANALYSIS ERROR =====")
+        print(str(e))
+
+        return {
+            "error": str(e),
+            "raw_analysis": raw_response if "raw_response" in locals() else "",
+            "final_analysis": {},
+            "findings": [],
+        }
 
     # ============================================================
     # CALL LLM
@@ -614,4 +901,4 @@ def validate_evidence(state):
         "agent6_output": agent6_output,
         "stored_file_path": file_path,
         "run_id": run_id
-    }
+    }
