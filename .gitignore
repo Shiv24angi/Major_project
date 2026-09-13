@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Build & compiled outputs
+dist/
+build/
+.next/
+
+# IDE & local agent skills configuration
+.agents/
+skills-lock.json
+.vscode/
+.idea/
+.DS_Store

@@ -10,8 +10,12 @@ if sys.platform.startswith("win"):
 from services.agent6.graph import agent6_graph
 
 
+# Allow dynamic GitHub repository URL via command line argument, with fallback
+target_github_url = sys.argv[1] if len(sys.argv) > 1 else "https://github.com/vanshaggarwal27/EN2H_assignment"
+print(f"[AGENT-6] Executing pipeline for repository: {target_github_url}")
+
 result = agent6_graph.invoke({
-    "github_url": "https://github.com/vanshaggarwal27/EN2H_assignment"
+    "github_url": target_github_url
 })
 
 

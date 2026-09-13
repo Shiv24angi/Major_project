@@ -81,6 +81,7 @@ export interface AnalysisRecord {
     filesDiscovered: number;
     filesRead: number;
   };
+  agent6Data?: any;
   fundingMatches: FundingOpportunity[];
   chatHistory: ChatMessage[];
 }
@@ -355,6 +356,59 @@ export const SEED_ANALYSES: AnalysisRecord[] = [
       ],
       filesDiscovered: 142,
       filesRead: 18,
+    },
+    agent6Data: {
+      version: "1.0",
+      run_id: "Shiv24angi_EcoVerse_20260905_214323",
+      timestamp: "2026-09-05T16:13:23.417647Z",
+      source_agent: "agent_6_project_code",
+      target_agent: "agent_2_data_normalization",
+      github_url: "https://github.com/Shiv24angi/EcoVerse",
+      repository: {
+        owner: "Shiv24angi",
+        name: "EcoVerse",
+        full_name: "Shiv24angi/EcoVerse"
+      },
+      findings_summary: {
+        total_findings: 12,
+        supported_count: 12,
+        inferred_count: 0,
+        unknown_count: 0
+      },
+      findings: [
+        {
+          category: "project",
+          claim: "EcoVerse is a sustainability-focused web application offering product barcode scanning, carbon footprint tracking, recyclability insights, eco-points, and community leaderboards.",
+          status: "supported",
+          evidence: ["README.md"]
+        },
+        {
+          category: "technology",
+          claim: "The technical stack consists of Next.js 15 (App Router), TypeScript 5, Tailwind CSS, Radix UI, Firebase Auth, MongoDB/Mongoose, and a secondary Python FastAPI service with SQLAlchemy and SQLite.",
+          status: "supported",
+          evidence: ["README.md", "package.json", "ai_services/main.py", "ai_services/database.py"]
+        },
+        {
+          category: "architecture",
+          claim: "The application architecture pairs Next.js middleware-protected frontend and API routes with a separate stateful Python FastAPI service (ai_services/main.py) for backend carbon analytics and leaderboard computations.",
+          status: "supported",
+          evidence: ["README.md", "middleware.ts", "ai_services/main.py"]
+        },
+        {
+          category: "technical",
+          claim: "Next.js middleware and next.config.ts enforce strict security headers, including Content-Security-Policy (CSP), Permissions-Policy, X-Frame-Options, and X-Content-Type-Options, backed by Jest unit tests in middleware.csp.test.ts.",
+          status: "supported",
+          evidence: ["middleware.ts", "next.config.ts", "middleware.csp.test.ts"]
+        }
+      ],
+      metadata: {
+        files_discovered: 142,
+        files_selected: 18,
+        files_read: 18,
+        chunks_created: 32,
+        saved_at: "2026-09-05T16:13:23.417647Z",
+        storage_type: "file_json"
+      }
     },
     fundingMatches: [
       {
