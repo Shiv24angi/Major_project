@@ -254,3 +254,114 @@ export async function fetchAnalysesFromSupabase(): Promise<AnalysisRecord[]> {
     return [];
   }
 }
+
+/**
+ * Agent 1 Document Diligence Evaluation Record
+ */
+export interface Agent1EvaluationRecord {
+  id: string;
+  analysis_id?: string;
+  company_name?: string;
+  status: 'completed' | 'processing' | 'failed';
+  uploaded_files: Array<{
+    original_filename: string;
+    stored_filename?: string;
+    file_type?: string;
+  }>;
+  document_analyses: any[];
+  merged_analysis?: any;
+  contradictions: any[];
+  validation_errors: any[];
+  metadata?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Save Agent 1 Document Diligence Analysis to Supabase database
+ */
+export async function saveAgent1Evaluation(
+  record: Agent1EvaluationRecord
+): Promise<{ success: boolean; data?: any; error?: string }> {
+  try {
+    const payload = {
+      id: record.id,
+      analysis_id: record.analysis_id || null,
+      company_name: record.company_name || null,
+      status: record.status || 'completed',
+      uploaded_files: record.uploaded_files || [],
+      document_analyses: record.document_analyses || [],
+      merged_analysis: record.merged_analysis || {},
+      contradictions: record.contradictions || [],
+      validation_errors: record.validation_errors || [],
+      metadata: record.metadata || {},
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase
+      .from('agent1_evaluations')
+      .upsert([payload], { onConflict: 'id' })
+      .select()
+      .single();
+
+    if (error) {
+      console.warn('[Supabase Service] saveAgent1Evaluation error:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (err: any) {
+    console.warn('[Supabase Service] Failed to save Agent 1 evaluation:', err);
+    return { success: false, error: err.message || 'Unknown database error' };
+  }
+}
+
+/**
+ * Get the latest Agent 1 evaluation for a given analysis
+ */
+export async function getAgent1EvaluationByAnalysisId(
+  analysisId: string
+): Promise<Agent1EvaluationRecord | null> {
+  try {
+    const { data, error } = await supabase
+      .from('agent1_evaluations')
+      .select('*')
+      .eq('analysis_id', analysisId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data as Agent1EvaluationRecord;
+  } catch (err) {
+    console.warn('[Supabase Service] getAgent1EvaluationByAnalysisId error:', err);
+    return null;
+  }
+}
+
+/**
+ * List all recent Agent 1 evaluations
+ */
+export async function listAgent1Evaluations(
+  limit = 20
+): Promise<Agent1EvaluationRecord[]> {
+  try {
+    const { data, error } = await supabase
+      .from('agent1_evaluations')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data as Agent1EvaluationRecord[];
+  } catch (err) {
+    console.warn('[Supabase Service] listAgent1Evaluations error:', err);
+    return [];
+  }
+}

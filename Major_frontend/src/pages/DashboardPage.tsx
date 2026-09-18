@@ -45,6 +45,8 @@ import {
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
 import Agent6DiligenceView from '../components/Agent6DiligenceView';
 import { checkAgent6Health } from '../services/agent6Service';
+import Agent1DiligenceView from '../components/Agent1DiligenceView';
+import { checkAgent1Health } from '../services/agent1Service';
 import { uploadDocumentToSupabaseStorage } from '../services/supabaseService';
 import { toast } from 'sonner';
 
@@ -92,6 +94,7 @@ export default function DashboardPage() {
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisRecord | null>(null);
   const [currentTab, setCurrentTab] = useState<
     | 'dashboard'
+    | 'agent1'
     | 'agent6'
     | 'my-analyses'
     | 'documents'
@@ -103,7 +106,8 @@ export default function DashboardPage() {
     | 'reports'
   >('dashboard');
 
-  // Agent 6 backend connectivity status
+  // Agent 1 & Agent 6 backend connectivity status
+  const [agent1Online, setAgent1Online] = useState(false);
   const [agent6Online, setAgent6Online] = useState(false);
 
   // Interactive AI chat input
@@ -121,9 +125,11 @@ export default function DashboardPage() {
     const loaded = getStoredAnalyses();
     setAnalyses(loaded);
 
-    // Initial check and periodic polling of Agent 6 backend on port 8000
+    // Initial check and periodic polling of Agent 1 (port 8001) and Agent 6 (port 8000)
+    checkAgent1Health().then((res) => setAgent1Online(res.online));
     checkAgent6Health().then((res) => setAgent6Online(res.online));
     const healthInterval = setInterval(() => {
+      checkAgent1Health().then((res) => setAgent1Online(res.online));
       checkAgent6Health().then((res) => setAgent6Online(res.online));
     }, 8000);
 
@@ -266,6 +272,7 @@ export default function DashboardPage() {
           <nav className="space-y-1">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+              { id: 'agent1', label: 'Agent 1 Document Diligence', icon: FileText, badge: agent1Online ? 'Online' : 'Ready' },
               { id: 'agent6', label: 'Agent 6 Code Diligence', icon: Code2, badge: agent6Online ? 'Online' : 'Ready' },
               { id: 'new-analysis', label: 'New Analysis', icon: PlusCircle, isAction: true },
               { id: 'my-analyses', label: 'My Analyses', icon: Folder },
@@ -420,13 +427,40 @@ export default function DashboardPage() {
           </div>
 
           {/* User Profile & Actions */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Agent 1 Backend Status Indicator */}
+            <button
+              type="button"
+              onClick={() => setCurrentTab('agent1')}
+              title="Agent 1 Document Diligence Engine Status (Port 8001)"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                agent1Online
+                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
+                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E] hover:bg-[#FEF3C7]'
+              }`}
+            >
+              <span className="relative flex h-2 w-2">
+                {agent1Online && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    agent1Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
+                  }`}
+                />
+              </span>
+              <span className="hidden sm:inline">
+                Agent 1: <strong className="font-bold">{agent1Online ? 'Online (8001)' : 'Standby'}</strong>
+              </span>
+              <span className="sm:hidden font-bold">A1</span>
+            </button>
+
             {/* Agent 6 Backend Status Indicator */}
             <button
               type="button"
               onClick={() => setCurrentTab('agent6')}
-              title="Agent 6 Code Diligence Engine Status (Click to inspect)"
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+              title="Agent 6 Code Diligence Engine Status (Port 8000)"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                 agent6Online
                   ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
                   : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E] hover:bg-[#FEF3C7]'
@@ -1368,6 +1402,18 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* TAB: AGENT 1 DOCUMENT DILIGENCE CONTROL CENTER */}
+          {currentTab === 'agent1' && activeAnalysis && (
+            <Agent1DiligenceView
+              activeAnalysis={activeAnalysis}
+              onAnalysisChange={(updated) => {
+                setActiveAnalysis(updated);
+                setAnalyses(getStoredAnalyses());
+              }}
+              onNavigateToDashboard={() => setCurrentTab('dashboard')}
+            />
+          )}
+
           {/* TAB: AGENT 6 CODE DILIGENCE CONTROL CENTER */}
           {currentTab === 'agent6' && activeAnalysis && (
             <Agent6DiligenceView
@@ -1492,12 +1538,22 @@ export default function DashboardPage() {
               {/* Company Document Inventory */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-sm text-[#1E1B2E]">
-                    Documents in {activeAnalysis?.title} Vault
-                  </h4>
-                  <span className="text-xs text-[#64748B]">
-                    {activeAnalysis?.documents?.length || 0} Files Partitioned
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-sm text-[#1E1B2E]">
+                      Documents in {activeAnalysis?.title} Vault
+                    </h4>
+                    <span className="text-xs text-[#64748B]">
+                      ({activeAnalysis?.documents?.length || 0} Files)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentTab('agent1')}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[#EEECFC] text-[#5028E0] hover:bg-[#DDD6FE] px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Cross-Examine with Agent 1 →</span>
+                  </button>
                 </div>
 
                 <div className="divide-y divide-[#F1F5F9] rounded-xl border border-[#E2E8F0] overflow-hidden">

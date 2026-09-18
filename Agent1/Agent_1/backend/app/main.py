@@ -1,15 +1,25 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from app.api.routes import router
 
 
 app = FastAPI(
     title="AI Startup Analyst - Agent 1",
-    description="Document Analysis Agent",
+    description="Document Analysis & Multi-Document Diligence Agent",
     version="0.1.0",
     docs_url=None
+)
+
+# Enable CORS for frontend integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Compatibility workaround for Swagger UI / file uploads
@@ -198,6 +208,39 @@ async def custom_swagger_ui_html():
     body_content = html_response.body.decode("utf-8")
     enhanced_content = body_content.replace("</body>", f"{custom_script}</body>")
     return HTMLResponse(content=enhanced_content)
+
+
+@app.get("/health")
+async def health_check():
+    import os
+    has_key = bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
+    model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    return {
+        "status": "healthy",
+        "online": True,
+        "agent": "Agent 1",
+        "name": "AI Document & Pitch Deck Analyst",
+        "version": "0.1.0",
+        "port": 8001,
+        "llm_configured": has_key,
+        "model": model,
+        "endpoints": {
+            "analyze_documents": "/api/v1/analyze-documents",
+            "analyze_document": "/api/v1/analyze-document",
+            "upload": "/api/v1/upload",
+            "extract_document": "/api/v1/extract-document",
+        }
+    }
+
+
+@app.get("/")
+async def root():
+    return {
+        "message": "AI Startup Analyst - Agent 1 Document Diligence Backend is running",
+        "docs": "/docs",
+        "health": "/health",
+        "port": 8001
+    }
 
 
 app.include_router(
