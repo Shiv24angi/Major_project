@@ -15,9 +15,13 @@ import StartupInputPage from './pages/StartupInputPage';
 import ProjectInputPage from './pages/ProjectInputPage';
 import ProcessingPage from './pages/ProcessingPage';
 import DashboardPage from './pages/DashboardPage';
+import { initSupabaseDatabase } from './services/supabaseService';
 
 export default function App() {
   useEffect(() => {
+    // Initialize & seed baseline database records in Supabase
+    initSupabaseDatabase().catch((err) => console.warn('[Supabase] Init warning:', err));
+
     applyPresetHashOnLoad();
 
     // Initialize Lenis for silky-smooth, inertia scrolling across the entire site

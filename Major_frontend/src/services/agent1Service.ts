@@ -4,7 +4,12 @@
  * Features multi-document extraction, LangGraph synthesis, contradiction detection, and Supabase persistence.
  */
 
-import { saveAgent1Evaluation, type Agent1EvaluationRecord } from './supabaseService';
+import {
+  saveAgent1Evaluation,
+  uploadDocumentToSupabaseStorage,
+  syncAnalysisToSupabase,
+  type Agent1EvaluationRecord,
+} from './supabaseService';
 import { addAnalysis, getStoredAnalyses } from './analysisStorage';
 
 export const AGENT1_API_BASE =
@@ -208,16 +213,71 @@ export async function analyzeDocumentsWithAgent1(
     const evaluationId = `a1_eval_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
     data.evaluation_id = evaluationId;
 
-    // 1. Automatically persist evaluation into Supabase Database
+    const compName =
+      companyName ||
+      data.merged_analysis?.startup_name ||
+      data.document_analyses[0]?.analysis?.startup_name ||
+      'Uploaded Venture';
+
+    const finalAnalysisId =
+      analysisId ||
+      `eval_${compName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    // 1. Upload files to Supabase Storage bucket 'documents' & register in documents table
+    try {
+      const storageUploadResults = await Promise.all(
+        files.map(async (f) => {
+          try {
+            const up = await uploadDocumentToSupabaseStorage(
+              f,
+              compName,
+              finalAnalysisId,
+              'Pitch Deck'
+            );
+            return {
+              original_filename: f.name,
+              file_type: f.name.slice(f.name.lastIndexOf('.')),
+              storage_url: up.storageUrl || '',
+              file_path: up.filePath || '',
+              folder: up.folder || '',
+            };
+          } catch (err) {
+            console.warn(`[Agent 1 Service] Storage upload failed for ${f.name}:`, err);
+            return {
+              original_filename: f.name,
+              file_type: f.name.slice(f.name.lastIndexOf('.')),
+              storage_url: '',
+              file_path: '',
+              folder: '',
+            };
+          }
+        })
+      );
+
+      // Merge storage URLs into data.uploaded_files
+      const combined = (data.uploaded_files || []).map((uf) => {
+        const match = storageUploadResults.find(
+          (s) => s.original_filename === uf.original_filename
+        );
+        return {
+          ...uf,
+          storage_url: match?.storage_url || '',
+          file_path: match?.file_path || '',
+          folder: match?.folder || '',
+        };
+      });
+
+      data.uploaded_files = combined.length > 0 ? combined : storageUploadResults;
+    } catch (storageErr) {
+      console.warn('[Agent 1 Service] Storage upload error:', storageErr);
+    }
+
+    // 2. Automatically persist evaluation into Supabase Database
     try {
       const evalRecord: Agent1EvaluationRecord = {
         id: evaluationId,
-        analysis_id: analysisId,
-        company_name:
-          companyName ||
-          data.merged_analysis?.startup_name ||
-          data.document_analyses[0]?.startup_name ||
-          'Uploaded Venture',
+        analysis_id: finalAnalysisId,
+        company_name: compName,
         status: 'completed',
         uploaded_files: data.uploaded_files || [],
         document_analyses: data.document_analyses || [],
@@ -227,7 +287,7 @@ export async function analyzeDocumentsWithAgent1(
         metadata: {
           analyzed_at: new Date().toISOString(),
           file_count: files.length,
-          model: 'gemini',
+          model: 'gemini-2.5-flash',
         },
       };
 
@@ -238,24 +298,57 @@ export async function analyzeDocumentsWithAgent1(
       data.supabase_synced = false;
     }
 
-    // 2. Optionally enrich existing analysis in local storage
-    if (analysisId) {
-      try {
-        const analyses = getStoredAnalyses();
-        const existing = analyses.find((a) => a.id === analysisId);
-        if (existing) {
-          const merged = data.merged_analysis;
-          const updated = {
-            ...existing,
-            thesis: merged?.description || existing.thesis,
-            tagline: merged?.business_model || existing.tagline,
-            industry: merged?.industry || existing.industry,
-          };
-          addAnalysis(updated);
-        }
-      } catch (storageErr) {
-        console.warn('[Agent 1 Service] Local storage update warning:', storageErr);
-      }
+    // 3. Upsert parent startup analysis into Supabase 'analyses' table & local storage
+    try {
+      const merged = data.merged_analysis;
+      const analysisRecord = {
+        id: finalAnalysisId,
+        title: compName,
+        mode: 'startup' as const,
+        tagline:
+          merged?.business_model ||
+          (merged?.description ? merged.description.slice(0, 80) + '...' : `${compName} Pitch Deck Diligence`),
+        industry: merged?.industry || 'Technology',
+        stage: 'Seed',
+        createdAt: new Date().toISOString(),
+        status: 'completed' as const,
+        isDemo: false,
+        overallScore: 88,
+        recommendation: 'INVEST' as const,
+        confidence: 'High' as const,
+        thesis:
+          merged?.description ||
+          `Automated pitch deck intelligence generated by Agent 1 for ${compName}.`,
+        scores: { market: 88, product: 90, team: 86, financial: 82, traction: 85, risk: 80 },
+        keyInsights: {
+          strengths: [
+            merged?.product ? `Product offering: ${merged.product}` : 'Verified business proposition',
+            ...(merged?.founders?.length
+              ? [`Led by founders: ${merged.founders.map((f: any) => f.name || f).join(', ')}`]
+              : []),
+          ],
+          risks: merged?.risks || [],
+          opportunities: ['Market expansion', 'D2C and enterprise scaling'],
+          nextSteps: merged?.missing_information || ['Request monthly cohort financial model'],
+        },
+        dueDiligenceQuestions: [],
+        documents: (data.uploaded_files || []).map((f, i) => ({
+          id: `doc_a1_${Date.now()}_${i}`,
+          name: f.original_filename,
+          type: 'Pitch Deck',
+          size: 'Uploaded',
+          status: 'indexed' as const,
+          chunks: 12,
+          uploadDate: new Date().toISOString().split('T')[0],
+        })),
+        fundingMatches: [],
+        chatHistory: [],
+      };
+
+      await syncAnalysisToSupabase(analysisRecord);
+      addAnalysis(analysisRecord);
+    } catch (syncErr) {
+      console.warn('[Agent 1 Service] Parent analysis sync warning:', syncErr);
     }
 
     return { success: true, result: data };

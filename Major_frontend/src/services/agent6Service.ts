@@ -4,9 +4,12 @@
  */
 
 import type { AnalysisRecord, ScoringDimensions, AnalysisDocument, DueDiligenceQuestion } from './analysisStorage';
+import { saveAgent6Evaluation } from './supabaseService';
 
 export const AGENT6_API_BASE =
-  import.meta.env.AGENT6_API_URL || 'http://localhost:8000';
+  import.meta.env.VITE_AGENT6_API_URL ||
+  import.meta.env.AGENT6_API_URL ||
+  'http://localhost:8000';
 
 
 export interface Agent6Finding {
@@ -243,6 +246,19 @@ export async function analyzeGithubRepo(githubUrl: string): Promise<{
           chunks_created: 12,
         },
       };
+
+      // Automatically persist Agent 6 run to Supabase
+      saveAgent6Evaluation({
+        run_id: payload.run_id,
+        analysis_id: `eval_${payload.run_id}`,
+        github_url: payload.github_url,
+        repository_owner: payload.repository?.owner,
+        repository_name: payload.repository?.name,
+        findings_summary: payload.findings_summary,
+        findings: payload.findings,
+        raw_analysis: payload.raw_analysis,
+        metadata: payload.metadata,
+      }).catch((dbErr) => console.warn('[Agent 6 Service] Supabase persistence warning:', dbErr));
 
       return { success: true, payload, rawResponse: data };
     } else {

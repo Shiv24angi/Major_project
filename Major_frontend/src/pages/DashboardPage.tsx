@@ -50,8 +50,10 @@ import { checkAgent1Health } from '../services/agent1Service';
 import {
   uploadDocumentToSupabaseStorage,
   getAgent1EvaluationByAnalysisId,
+  fetchAnalysesFromSupabase,
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
+import { saveAnalyses } from '../services/analysisStorage';
 import { toast } from 'sonner';
 
 // VentureLens Aperture Facet Logo
@@ -131,6 +133,19 @@ export default function DashboardPage() {
   useEffect(() => {
     const loaded = getStoredAnalyses();
     setAnalyses(loaded);
+
+    // Fetch live analyses directly from Supabase database
+    fetchAnalysesFromSupabase().then((dbAnalyses) => {
+      if (dbAnalyses && dbAnalyses.length > 0) {
+        setAnalyses((prev) => {
+          const idMap = new Map(prev.map((a) => [a.id, a]));
+          dbAnalyses.forEach((a) => idMap.set(a.id, a));
+          const merged = Array.from(idMap.values());
+          saveAnalyses(merged);
+          return merged;
+        });
+      }
+    }).catch((err) => console.warn('[DashboardPage] Supabase fetch warning:', err));
 
     // Initial check and periodic polling of Agent 1 (port 8001) and Agent 6 (port 8000)
     checkAgent1Health().then((res) => setAgent1Online(res.online));
