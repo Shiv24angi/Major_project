@@ -6,7 +6,7 @@
 import type { AnalysisRecord, ScoringDimensions, AnalysisDocument, DueDiligenceQuestion } from './analysisStorage';
 
 export const AGENT6_API_BASE =
-  import.meta.env.VITE_AGENT6_API_URL || 'http://localhost:8000';
+  import.meta.env.AGENT6_API_URL || 'http://localhost:8000';
 
 
 export interface Agent6Finding {
