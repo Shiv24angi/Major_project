@@ -95,11 +95,12 @@ def analyze_multiple_documents_node(state: AgentState):
     )
 
     if not documents:
+        errors = list(state.get("validation_errors", []))
+        if not errors:
+            errors = ["No parsed documents are available for analysis"]
         return {
             "document_analyses": [],
-            "validation_errors": [
-                "No parsed documents are available for analysis"
-            ],
+            "validation_errors": errors,
             "status": "analysis_failed"
         }
 
@@ -152,6 +153,8 @@ def analyze_multiple_documents_node(state: AgentState):
         "validation_errors": errors,
         "status": "documents_analyzed"
     }
+
+
 def merge_document_analyses_node(state: AgentState):
     """
     Merge individual document analyses into one
@@ -164,11 +167,12 @@ def merge_document_analyses_node(state: AgentState):
     )
 
     if not document_analyses:
+        errors = list(state.get("validation_errors", []))
+        if not errors:
+            errors = ["No document analyses are available for merging"]
         return {
             "merged_analysis": None,
-            "validation_errors": [
-                "No document analyses are available for merging"
-            ],
+            "validation_errors": errors,
             "status": "merge_failed"
         }
 
@@ -190,8 +194,11 @@ def merge_document_analyses_node(state: AgentState):
             )
 
     if not startup_analyses:
+        errors = list(state.get("validation_errors", []))
+        errors.append("None of the uploaded documents were identified as startup-related.")
         return {
             "merged_analysis": None,
+            "validation_errors": errors,
             "status": "no_startup_documents"
         }
 
@@ -225,11 +232,35 @@ def merge_document_analyses_node(state: AgentState):
         )
 
         errors.append(
-            f"Failed to merge document analyses: {str(e)}"
+            f"Failed to merge document analyses via LLM: {str(e)}"
         )
 
+        # Fallback to single document structure if merge chain encounters an issue
+        first_analysis = startup_analyses[0].get("analysis", {})
+        fallback_merged = {
+            "startup_name": first_analysis.get("startup_name"),
+            "description": first_analysis.get("description"),
+            "industry": first_analysis.get("industry"),
+            "sector": first_analysis.get("sector"),
+            "founders": first_analysis.get("founders", []),
+            "product": first_analysis.get("product"),
+            "business_model": first_analysis.get("business_model"),
+            "target_customers": first_analysis.get("target_customers"),
+            "financials": first_analysis.get("financials", {}),
+            "funding_raised": first_analysis.get("funding_raised"),
+            "investors": first_analysis.get("investors", []),
+            "customers": first_analysis.get("customers"),
+            "traction": first_analysis.get("traction"),
+            "market_size": first_analysis.get("market_size", {}),
+            "competitors": first_analysis.get("competitors", []),
+            "risks": first_analysis.get("risks", []),
+            "key_metrics": first_analysis.get("key_metrics", {}),
+            "missing_information": first_analysis.get("missing_information", []),
+            "source_files": [item["filename"] for item in startup_analyses],
+        }
+
         return {
-            "merged_analysis": None,
+            "merged_analysis": fallback_merged,
             "validation_errors": errors,
-            "status": "merge_failed"
+            "status": "analyses_merged"
         }

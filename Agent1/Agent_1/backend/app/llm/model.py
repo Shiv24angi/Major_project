@@ -15,7 +15,7 @@ def get_llm():
             "GEMINI_API_KEY or GOOGLE_API_KEY is missing from .env"
         )
 
-    model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     llm = ChatGoogleGenerativeAI(
         model=model_name,
