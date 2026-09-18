@@ -16,12 +16,14 @@ import Footer from '../components/Footer';
 import { navigateTo } from '../shared/preset-site-routing';
 import { addAnalysis, type AnalysisRecord, type AnalysisDocument } from '../services/analysisStorage';
 import { analyzeGithubRepo, convertAgent6PayloadToAnalysisRecord } from '../services/agent6Service';
+import { syncAnalysisToSupabase, uploadDocumentToSupabaseStorage } from '../services/supabaseService';
 
 interface UploadedFileItem {
   id: string;
   name: string;
   category: string;
   size: string;
+  fileObj?: File;
 }
 
 export default function ProjectInputPage() {
@@ -54,6 +56,7 @@ export default function ProjectInputPage() {
       name: f.name,
       category,
       size: formatFileSize(f.size),
+      fileObj: f,
     }));
 
     setFiles((prev) => [...prev, ...newFiles]);
@@ -108,6 +111,21 @@ export default function ProjectInputPage() {
           projectName.trim(),
           projectDescription.trim()
         );
+        syncAnalysisToSupabase(liveRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
+
+        // Upload attached documents into project's dedicated folder in Supabase Storage
+        files.forEach((item) => {
+          if (item.fileObj) {
+            uploadDocumentToSupabaseStorage(item.fileObj, projectName, liveRecord.id, item.category)
+              .then((res) => {
+                if (res.success) {
+                  console.log(`[Supabase] File '${item.name}' stored in folder '${res.folder}':`, res.storageUrl);
+                }
+              })
+              .catch((err) => console.warn(`[Supabase] Upload error for ${item.name}:`, err));
+          }
+        });
+
         addAnalysis(liveRecord);
         navigateTo('processing', { id: liveRecord.id, mode: 'project' });
         return;
@@ -245,6 +263,21 @@ export default function ProjectInputPage() {
         },
       ],
     };
+
+    syncAnalysisToSupabase(newRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
+
+    // Upload attached documents into project's dedicated folder in Supabase Storage
+    files.forEach((item) => {
+      if (item.fileObj) {
+        uploadDocumentToSupabaseStorage(item.fileObj, projectName, analysisId, item.category)
+          .then((res) => {
+            if (res.success) {
+              console.log(`[Supabase] File '${item.name}' stored in folder '${res.folder}':`, res.storageUrl);
+            }
+          })
+          .catch((err) => console.warn(`[Supabase] Upload error for ${item.name}:`, err));
+      }
+    });
 
     addAnalysis(newRecord);
     navigateTo('processing', { id: analysisId, mode: 'project' });

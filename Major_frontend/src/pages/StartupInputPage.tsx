@@ -17,6 +17,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { navigateTo } from '../shared/preset-site-routing';
 import { addAnalysis, type AnalysisRecord, type AnalysisDocument } from '../services/analysisStorage';
+import { uploadDocumentToSupabaseStorage, syncAnalysisToSupabase } from '../services/supabaseService';
 
 interface UploadedFileItem {
   id: string;
@@ -24,6 +25,7 @@ interface UploadedFileItem {
   category: string;
   size: string;
   type: string;
+  fileObj?: File;
 }
 
 export default function StartupInputPage() {
@@ -95,6 +97,7 @@ export default function StartupInputPage() {
       category,
       size: formatFileSize(f.size),
       type: f.type || 'Document',
+      fileObj: f,
     }));
 
     setFiles((prev) => [...prev, ...newItems]);
@@ -251,6 +254,33 @@ export default function StartupInputPage() {
         },
       ],
     };
+
+    // Upload pitch deck into dedicated company folder in Supabase Storage 'documents' bucket
+    if (pitchDeck) {
+      uploadDocumentToSupabaseStorage(pitchDeck, startupName, analysisId, 'Pitch Deck (Primary)')
+        .then((res) => {
+          if (res.success && res.storageUrl) {
+            console.log(`[Supabase] Pitch deck saved in company folder '${res.folder}':`, res.storageUrl);
+          }
+        })
+        .catch((err) => console.warn('[Supabase] Storage upload failed:', err));
+    }
+
+    // Upload any other attached documents into the same company folder
+    files.forEach((item) => {
+      if (item.fileObj && item.category !== 'Pitch Deck (Primary)') {
+        uploadDocumentToSupabaseStorage(item.fileObj, startupName, analysisId, item.category)
+          .then((res) => {
+            if (res.success) {
+              console.log(`[Supabase] Document '${item.name}' saved to company folder '${res.folder}'`);
+            }
+          })
+          .catch((err) => console.warn(`[Supabase] Upload error for ${item.name}:`, err));
+      }
+    });
+
+    // Persist analysis to Supabase analyses table
+    syncAnalysisToSupabase(newRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
 
     addAnalysis(newRecord);
     navigateTo('processing', { id: analysisId, mode: 'startup' });
