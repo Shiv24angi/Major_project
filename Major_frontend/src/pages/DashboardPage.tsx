@@ -47,7 +47,11 @@ import Agent6DiligenceView from '../components/Agent6DiligenceView';
 import { checkAgent6Health } from '../services/agent6Service';
 import Agent1DiligenceView from '../components/Agent1DiligenceView';
 import { checkAgent1Health } from '../services/agent1Service';
-import { uploadDocumentToSupabaseStorage } from '../services/supabaseService';
+import {
+  uploadDocumentToSupabaseStorage,
+  getAgent1EvaluationByAnalysisId,
+  type Agent1EvaluationRecord,
+} from '../services/supabaseService';
 import { toast } from 'sonner';
 
 // VentureLens Aperture Facet Logo
@@ -110,6 +114,9 @@ export default function DashboardPage() {
   const [agent1Online, setAgent1Online] = useState(false);
   const [agent6Online, setAgent6Online] = useState(false);
 
+  // Agent 1 evaluation result from Supabase
+  const [agent1Eval, setAgent1Eval] = useState<Agent1EvaluationRecord | null>(null);
+
   // Interactive AI chat input
   const [chatInput, setChatInput] = useState('');
   const [isChatThinking, setIsChatThinking] = useState(false);
@@ -150,6 +157,17 @@ export default function DashboardPage() {
 
     return () => clearInterval(healthInterval);
   }, []);
+
+  // Sync Agent 1 evaluation from Supabase whenever active venture changes
+  useEffect(() => {
+    if (!activeAnalysis?.id) {
+      setAgent1Eval(null);
+      return;
+    }
+    getAgent1EvaluationByAnalysisId(activeAnalysis.id).then((res) => {
+      setAgent1Eval(res);
+    });
+  }, [activeAnalysis?.id]);
 
   const selectAnalysis = (item: AnalysisRecord) => {
     setActiveAnalysis(item);
@@ -681,6 +699,12 @@ export default function DashboardPage() {
                             </span>
                           </>
                         )}
+                        {agent1Eval && (
+                          <span className="rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] px-2.5 py-0.5 text-[11px] font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-[#059669]" />
+                            <span>Agent 1 Document Verified</span>
+                          </span>
+                        )}
                         {activeAnalysis.codeDetails?.githubUrl && (
                           <a
                             href={activeAnalysis.codeDetails.githubUrl}
@@ -818,6 +842,49 @@ export default function DashboardPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Agent 1 Live Intelligence Banner (When evaluation exists in Supabase) */}
+                {agent1Eval && (
+                  <div className="rounded-xl border border-[#DDD6FE] bg-gradient-to-r from-[#F8F9FE] to-[#F4F1FD] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start sm:items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-[#5028E0] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                        A1
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs font-bold text-[#1E1B2E]">
+                            Agent 1 Document Intelligence
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                            Live Synthesized ({agent1Eval.uploaded_files?.length || 1} doc)
+                          </span>
+                          {agent1Eval.contradictions?.length > 0 ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FCA5A5]">
+                              {agent1Eval.contradictions.length} Contradiction(s)
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#EEECFC] text-[#5028E0]">
+                              0 Contradictions
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[#64748B] line-clamp-1">
+                          {agent1Eval.merged_analysis?.description ||
+                            'Multi-document findings and claims verified by LangGraph engine.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTab('agent1')}
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#5028E0] text-white hover:bg-[#4320BD] shrink-0 transition-all cursor-pointer shadow-2xs"
+                    >
+                      <span>Inspect Agent 1 Diligence</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* MIDDLE ROW: ANALYSIS PIPELINE & KNOWLEDGE BASE */}
