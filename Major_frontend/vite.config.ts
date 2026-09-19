@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
+  envPrefix: ['VITE_', 'AGENT1_', 'AGENT6_', 'AGENT_'],
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

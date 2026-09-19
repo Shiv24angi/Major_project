@@ -6,10 +6,11 @@
 import type { AnalysisRecord, ScoringDimensions, AnalysisDocument, DueDiligenceQuestion } from './analysisStorage';
 import { saveAgent6Evaluation } from './supabaseService';
 
-export const AGENT6_API_BASE =
-  import.meta.env.VITE_AGENT6_API_URL ||
-  import.meta.env.AGENT6_API_URL ||
-  'http://localhost:8000';
+export const AGENT6_API_BASE = (
+  (import.meta.env.AGENT6_API_URL as string) ||
+  (import.meta.env.VITE_AGENT6_API_URL as string) ||
+  'http://localhost:8000'
+).replace(/\/+$/, '');
 
 
 export interface Agent6Finding {

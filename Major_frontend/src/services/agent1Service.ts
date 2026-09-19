@@ -12,10 +12,11 @@ import {
 } from './supabaseService';
 import { addAnalysis, getStoredAnalyses } from './analysisStorage';
 
-export const AGENT1_API_BASE =
-  import.meta.env.VITE_AGENT1_API_URL ||
-  import.meta.env.AGENT1_API_URL ||
-  'http://localhost:8001';
+export const AGENT1_API_BASE = (
+  (import.meta.env.AGENT1_API_URL as string) ||
+  (import.meta.env.VITE_AGENT1_API_URL as string) ||
+  'https://agent-1-2hph.onrender.com'
+).replace(/\/+$/, '');
 
 export interface Agent1Founder {
   name?: string;
