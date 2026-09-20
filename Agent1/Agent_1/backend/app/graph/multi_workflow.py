@@ -34,14 +34,32 @@ def create_multi_document_graph():
         "parse_documents"
     )
 
-    graph.add_edge(
+    def route_after_parse(state: AgentState):
+        if state.get("status") == "parse_failed" or not state.get("documents"):
+            return END
+        return "analyze_documents"
+
+    def route_after_analyze(state: AgentState):
+        if state.get("status") == "analysis_failed" or not state.get("document_analyses"):
+            return END
+        return "merge_analyses"
+
+    graph.add_conditional_edges(
         "parse_documents",
-        "analyze_documents"
+        route_after_parse,
+        {
+            "analyze_documents": "analyze_documents",
+            END: END
+        }
     )
 
-    graph.add_edge(
+    graph.add_conditional_edges(
         "analyze_documents",
-        "merge_analyses"
+        route_after_analyze,
+        {
+            "merge_analyses": "merge_analyses",
+            END: END
+        }
     )
 
     graph.add_edge(

@@ -214,7 +214,7 @@ async def custom_swagger_ui_html():
 async def health_check():
     import os
     has_key = bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
-    model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     return {
         "status": "healthy",
         "online": True,

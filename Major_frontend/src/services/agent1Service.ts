@@ -279,7 +279,12 @@ export async function analyzeDocumentsWithAgent1(
         id: evaluationId,
         analysis_id: finalAnalysisId,
         company_name: compName,
-        status: 'completed',
+        status:
+          data.status === 'merge_failed' ||
+          data.status === 'parse_failed' ||
+          data.status === 'analysis_failed'
+            ? 'failed'
+            : 'completed',
         uploaded_files: data.uploaded_files || [],
         document_analyses: data.document_analyses || [],
         merged_analysis: data.merged_analysis || {},

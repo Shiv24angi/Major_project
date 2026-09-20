@@ -14,5 +14,7 @@ langchain
 langchain-core
 langgraph
 langchain-google-genai
+google-genai>=2.1.0
+requests>=2.31.0
 
 pytest

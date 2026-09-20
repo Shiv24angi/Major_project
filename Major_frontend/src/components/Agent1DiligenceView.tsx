@@ -193,6 +193,12 @@ export default function Agent1DiligenceView({
     setTimeout(() => setCopiedJson(false), 2000);
   };
 
+  const isEvaluationFailed =
+    analysisResult?.status === 'merge_failed' ||
+    analysisResult?.status === 'parse_failed' ||
+    analysisResult?.status === 'analysis_failed' ||
+    (!merged && docAnalyses.length === 0 && (analysisResult?.validation_errors?.length || 0) > 0);
+
   return (
     <div className="space-y-6">
       {/* HEADER / NAVIGATION BAR */}
@@ -443,10 +449,17 @@ export default function Agent1DiligenceView({
           <div className="p-6 border-b border-[#EAEBF2] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#F8FAFC]">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
-                  <CheckCircle2 className="w-3 h-3" />
-                  Evaluation Completed
-                </span>
+                {isEvaluationFailed ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FCA5A5]">
+                    <AlertCircle className="w-3 h-3" />
+                    Extraction / Parsing Incomplete
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Evaluation Completed
+                  </span>
+                )}
                 {analysisResult.supabase_synced && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#EFF6FF] text-[#1D4ED8]">
                     <Database className="w-3 h-3" />
@@ -479,6 +492,24 @@ export default function Agent1DiligenceView({
               </button>
             </div>
           </div>
+
+          {/* Validation Warnings / Extraction Notice Banner */}
+          {analysisResult.validation_errors && analysisResult.validation_errors.length > 0 && (
+            <div className="p-4 bg-[#FFFBEB] border-b border-[#FDE68A] text-xs text-[#92400E] flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-[#B45309]">Notice: Document Extraction Issues Detected</p>
+                <ul className="list-disc list-inside space-y-0.5 text-[11px]">
+                  {analysisResult.validation_errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+                <p className="text-[11px] text-[#78350F] pt-1">
+                  Tip: When pitch deck slides are graphical or image-only, the backend automatically uses Gemini multimodal vision transcription. Check the Raw State tab below for detailed logs.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Sub-Tabs Navigation */}
           <div className="flex items-center gap-1 p-2 border-b border-[#EAEBF2] bg-white overflow-x-auto">
