@@ -20,6 +20,8 @@ export interface AnalysisDocument {
   status: DocumentStatus;
   chunks: number;
   uploadDate: string;
+  storageUrl?: string;
+  filePath?: string;
 }
 
 export interface DueDiligenceQuestion {

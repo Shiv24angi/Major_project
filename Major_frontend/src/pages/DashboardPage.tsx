@@ -50,6 +50,7 @@ import { checkAgent1Health } from '../services/agent1Service';
 import {
   uploadDocumentToSupabaseStorage,
   getAgent1EvaluationByAnalysisId,
+  getDocumentsByAnalysisId,
   fetchAnalysesFromSupabase,
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
@@ -182,6 +183,25 @@ export default function DashboardPage() {
     getAgent1EvaluationByAnalysisId(activeAnalysis.id).then((res) => {
       setAgent1Eval(res);
     });
+  }, [activeAnalysis?.id]);
+
+  // Sync documents from Supabase documents table whenever active venture changes
+  useEffect(() => {
+    if (!activeAnalysis?.id) return;
+    let isMounted = true;
+    getDocumentsByAnalysisId(activeAnalysis.id).then((docs) => {
+      if (!isMounted || !docs || docs.length === 0) return;
+      setActiveAnalysis((prev) => {
+        if (!prev || prev.id !== activeAnalysis.id) return prev;
+        return {
+          ...prev,
+          documents: docs,
+        };
+      });
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [activeAnalysis?.id]);
 
   const selectAnalysis = (item: AnalysisRecord) => {
@@ -1653,10 +1673,24 @@ export default function DashboardPage() {
                             </p>
                           </div>
                         </div>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3 h-3" />
-                          <span>Indexed</span>
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {doc.storageUrl && (
+                            <a
+                              href={doc.storageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#5028E0] hover:text-[#4320BD] bg-[#EEECFC] hover:bg-[#DDD6FE] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                              title="Open document directly from Supabase Cloud Storage"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              <span>View in Storage</span>
+                            </a>
+                          )}
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#059669] bg-[#ECFDF5] border border-[#A7F3D0] px-2 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Indexed</span>
+                          </span>
+                        </div>
                       </div>
                     ))
                   ) : (
@@ -1728,25 +1762,45 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-3">
-                {activeAnalysis.documents.map((d) => (
-                  <div
-                    key={d.id}
-                    className="flex items-center justify-between p-4 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] text-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-[#5028E0]" />
-                      <div>
-                        <span className="font-bold text-[#1E1B2E] block">{d.name}</span>
-                        <span className="text-[#64748B] text-[11px]">
-                          {d.type} • {d.size} • {d.chunks} chunks
+                {activeAnalysis.documents.length === 0 ? (
+                  <div className="p-8 text-center text-xs text-[#64748B] bg-[#F8F9FE] rounded-xl border border-[#EAEBF2]">
+                    No documents uploaded yet for this venture. Upload a pitch deck or financial model to store in Supabase.
+                  </div>
+                ) : (
+                  activeAnalysis.documents.map((d) => (
+                    <div
+                      key={d.id}
+                      className="flex items-center justify-between p-4 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-[#5028E0]" />
+                        <div>
+                          <span className="font-bold text-[#1E1B2E] block">{d.name}</span>
+                          <span className="text-[#64748B] text-[11px]">
+                            {d.type} • {d.size} • {d.chunks} chunks
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {d.storageUrl && (
+                          <a
+                            href={d.storageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#5028E0] hover:text-[#4320BD] bg-[#EEECFC] hover:bg-[#DDD6FE] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            title="Open document directly from Supabase Cloud Storage"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>View in Storage</span>
+                          </a>
+                        )}
+                        <span className="rounded-full bg-[#ECFDF5] text-[#059669] px-3 py-1 text-xs font-semibold">
+                          ✓ Indexed & Searchable
                         </span>
                       </div>
                     </div>
-                    <span className="rounded-full bg-[#ECFDF5] text-[#059669] px-3 py-1 text-xs font-semibold">
-                      ✓ Indexed & Searchable
-                    </span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}

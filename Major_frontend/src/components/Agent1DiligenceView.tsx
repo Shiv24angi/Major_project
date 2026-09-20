@@ -19,6 +19,7 @@ import {
   Building,
   Target,
   FileCheck2,
+  ExternalLink,
 } from 'lucide-react';
 import {
   checkAgent1Health,
@@ -508,6 +509,35 @@ export default function Agent1DiligenceView({
                   Tip: When pitch deck slides are graphical or image-only, the backend automatically uses Gemini multimodal vision transcription. Check the Raw State tab below for detailed logs.
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* Supabase Cloud Persistence Status Banner */}
+          {analysisResult.supabase_synced && (
+            <div className="px-6 py-3.5 bg-[#F0FDF4] border-b border-[#BBF7D0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5 text-[#166534]">
+                <Database className="w-4 h-4 text-[#16A34A] shrink-0" />
+                <span>
+                  <strong>Supabase Verified:</strong> Evaluation stored in <code className="bg-[#DCFCE7] px-1.5 py-0.5 rounded text-[11px] font-mono">agent1_evaluations</code> ({analysisResult.evaluation_id || 'active'}).
+                </span>
+              </div>
+              {analysisResult.uploaded_files && analysisResult.uploaded_files.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {analysisResult.uploaded_files.map((uf, idx) => uf.storage_url ? (
+                    <a
+                      key={idx}
+                      href={uf.storage_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#15803D] bg-white border border-[#86EFAC] hover:bg-[#DCFCE7] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      title="View pitch deck directly in Supabase Cloud Storage"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>{uf.original_filename} (Supabase Storage)</span>
+                    </a>
+                  ) : null)}
+                </div>
+              )}
             </div>
           )}
 

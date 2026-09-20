@@ -180,6 +180,8 @@ export async function uploadDocumentToSupabaseStorage(
       status: 'indexed',
       chunks: Math.floor(Math.random() * 15) + 10,
       uploadDate: new Date().toISOString().split('T')[0],
+      storageUrl,
+      filePath: uploadData.path,
     };
 
     const { error: dbError } = await supabase.from('documents').upsert(
@@ -187,6 +189,8 @@ export async function uploadDocumentToSupabaseStorage(
         {
           id: docId,
           analysis_id: finalAnalysisId,
+          company_name: companyOrIdeaName,
+          folder_path: `${companyFolder}/${categoryFolder}`,
           name: file.name,
           type: category,
           size: docRecord.size,
@@ -288,7 +292,38 @@ export async function syncAnalysisToSupabase(analysis: AnalysisRecord): Promise<
 }
 
 /**
- * Fetch all analyses from Supabase database
+ * Get all stored documents for a specific analysis from Supabase documents table
+ */
+export async function getDocumentsByAnalysisId(
+  analysisId: string
+): Promise<AnalysisDocument[]> {
+  try {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('analysis_id', analysisId)
+      .order('created_at', { ascending: false });
+
+    if (error || !data) return [];
+    return data.map((d: any) => ({
+      id: d.id,
+      name: d.name,
+      type: d.type || 'Pitch Deck',
+      size: d.size || '1.5 MB',
+      status: d.status || 'indexed',
+      chunks: d.chunks || 12,
+      uploadDate: d.upload_date || d.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+      storageUrl: d.storage_url || '',
+      filePath: d.file_path || '',
+    }));
+  } catch (err) {
+    console.warn('[Supabase Service] getDocumentsByAnalysisId error:', err);
+    return [];
+  }
+}
+
+/**
+ * Fetch all analyses from Supabase database with their associated documents
  */
 export async function fetchAnalysesFromSupabase(): Promise<AnalysisRecord[]> {
   try {
@@ -300,6 +335,29 @@ export async function fetchAnalysesFromSupabase(): Promise<AnalysisRecord[]> {
     if (error || !data) {
       return [];
     }
+
+    // Query all documents associated with these analyses
+    const { data: docsData } = await supabase
+      .from('documents')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    const docsByAnalysis = new Map<string, AnalysisDocument[]>();
+    (docsData || []).forEach((d: any) => {
+      const list = docsByAnalysis.get(d.analysis_id) || [];
+      list.push({
+        id: d.id,
+        name: d.name,
+        type: d.type || 'Pitch Deck',
+        size: d.size || '1.5 MB',
+        status: d.status || 'indexed',
+        chunks: d.chunks || 12,
+        uploadDate: d.upload_date || d.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+        storageUrl: d.storage_url || '',
+        filePath: d.file_path || '',
+      });
+      docsByAnalysis.set(d.analysis_id, list);
+    });
 
     return data.map((row: any) => ({
       id: row.id,
@@ -319,7 +377,7 @@ export async function fetchAnalysesFromSupabase(): Promise<AnalysisRecord[]> {
       scores: row.scores || { market: 75, product: 75, team: 75, financial: 75, traction: 75, risk: 75 },
       keyInsights: row.key_insights || { strengths: [], risks: [], opportunities: [], nextSteps: [] },
       dueDiligenceQuestions: row.due_diligence_questions || [],
-      documents: [],
+      documents: docsByAnalysis.get(row.id) || [],
       codeDetails: row.code_details,
       agent6Data: row.agent6_data,
       fundingMatches: row.funding_matches || [],
