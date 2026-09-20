@@ -409,7 +409,7 @@ export default function Agent1DiligenceView({
             <ul className="text-xs text-[#64748B] space-y-2.5 divide-y divide-[#F1F5F9]">
               <li className="pt-1.5 flex justify-between">
                 <span>Model Engine:</span>
-                <strong className="text-[#1E1B2E]">{health.model || 'gemini-1.5-flash'}</strong>
+                <strong className="text-[#1E1B2E]">{health.model || 'gemini-2.5-flash'}</strong>
               </li>
               <li className="pt-1.5 flex justify-between">
                 <span>Orchestration:</span>

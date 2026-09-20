@@ -17,10 +17,25 @@ def get_llm():
 
     model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-    llm = ChatGoogleGenerativeAI(
+    # Override deprecated Google models (gemini-1.5 and gemini-2.0 return 404)
+    if not model_name or "1.5" in model_name or "2.0" in model_name:
+        model_name = "gemini-2.5-flash"
+
+    primary_llm = ChatGoogleGenerativeAI(
         model=model_name,
         temperature=0,
         google_api_key=api_key
     )
 
-    return llm
+    fallback_models = ["gemini-3.5-flash", "gemini-flash-latest"]
+    fallbacks = [
+        ChatGoogleGenerativeAI(
+            model=m,
+            temperature=0,
+            google_api_key=api_key
+        )
+        for m in fallback_models
+        if m != model_name
+    ]
+
+    return primary_llm.with_fallbacks(fallbacks)
