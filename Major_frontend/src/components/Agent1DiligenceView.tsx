@@ -410,7 +410,7 @@ export default function Agent1DiligenceView({
             <ul className="text-xs text-[#64748B] space-y-2.5 divide-y divide-[#F1F5F9]">
               <li className="pt-1.5 flex justify-between">
                 <span>Model Engine:</span>
-                <strong className="text-[#1E1B2E]">{health.model || 'gemini-2.5-flash'}</strong>
+                <strong className="text-[#1E1B2E]">Neural Vision & Diligence LLM</strong>
               </li>
               <li className="pt-1.5 flex justify-between">
                 <span>Orchestration:</span>
@@ -506,7 +506,7 @@ export default function Agent1DiligenceView({
                   ))}
                 </ul>
                 <p className="text-[11px] text-[#78350F] pt-1">
-                  Tip: When pitch deck slides are graphical or image-only, the backend automatically uses Gemini multimodal vision transcription. Check the Raw State tab below for detailed logs.
+                  Tip: When pitch deck slides are graphical or image-only, the backend automatically uses multimodal vision transcription. Check the Raw State tab below for detailed logs.
                 </p>
               </div>
             </div>

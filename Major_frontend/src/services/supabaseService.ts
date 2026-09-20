@@ -640,3 +640,58 @@ export async function initSupabaseDatabase(): Promise<void> {
     console.warn('[Supabase Init] Error initializing database:', err);
   }
 }
+
+/**
+ * Save chat message to Supabase chat_messages table
+ */
+export async function saveChatMessageToSupabase(
+  analysisId: string,
+  message: { id: string; role: 'user' | 'assistant'; text: string }
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('chat_messages').insert([
+      {
+        id: message.id,
+        analysis_id: analysisId,
+        role: message.role,
+        text: message.text,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+    if (error) {
+      console.warn('[Supabase] saveChatMessage warning:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('[Supabase] Failed to save chat message:', err);
+    return false;
+  }
+}
+
+/**
+ * Fetch chat message history from Supabase chat_messages table
+ */
+export async function fetchChatMessagesFromSupabase(
+  analysisId: string
+): Promise<Array<{ id: string; role: 'user' | 'assistant'; text: string; timestamp: string }>> {
+  try {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .eq('analysis_id', analysisId)
+      .order('created_at', { ascending: true })
+      .limit(100);
+
+    if (error || !data) return [];
+    return data.map((m: any) => ({
+      id: m.id,
+      role: m.role as 'user' | 'assistant',
+      text: m.text,
+      timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    }));
+  } catch (err) {
+    console.warn('[Supabase] Failed to fetch chat messages:', err);
+    return [];
+  }
+}

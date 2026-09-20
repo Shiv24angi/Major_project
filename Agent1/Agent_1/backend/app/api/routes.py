@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional, List
 import uuid
+from pydantic import BaseModel
 
 from fastapi import (
     APIRouter,
@@ -299,3 +300,39 @@ async def analyze_uploaded_documents(
                 f"Multi-document analysis failed: {str(e)}"
             )
         )
+
+
+class ChatRequest(BaseModel):
+    message: str
+    context: Optional[dict] = None
+
+
+@router.post("/chat")
+async def chat_with_venture_analyst(req: ChatRequest):
+    """
+    Real-time interactive AI Diligence assistant answering queries
+    grounded in the active venture dossier.
+    """
+    try:
+        from app.llm.model import get_llm
+        llm = get_llm()
+
+        ctx = req.context or {}
+        system_prompt = (
+            "You are the VentureLens AI Due Diligence Analyst assisting an investor. "
+            "Answer questions factually, concisely, and objectively based on the startup's verified intelligence:\n"
+            f"Venture: {ctx.get('title', 'Active Venture')}\n"
+            f"Thesis: {ctx.get('thesis', 'N/A')}\n"
+            f"Diligence Profile: {ctx.get('merged', {})}\n"
+            "If specific metrics are not present in the dossier, state that they were not disclosed in the deck."
+        )
+
+        res = llm.invoke([
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": req.message}
+        ])
+
+        reply_content = res.content if hasattr(res, "content") else str(res)
+        return {"reply": reply_content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

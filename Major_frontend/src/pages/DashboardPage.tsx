@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   PlusCircle,
@@ -40,6 +40,7 @@ import {
   getActiveAnalysis,
   setActiveAnalysisId,
   updateAnalysisChat,
+  saveAnalyses,
   type AnalysisRecord,
 } from '../services/analysisStorage';
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
@@ -52,10 +53,11 @@ import {
   getAgent1EvaluationByAnalysisId,
   getDocumentsByAnalysisId,
   fetchAnalysesFromSupabase,
+  saveChatMessageToSupabase,
+  fetchChatMessagesFromSupabase,
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
-import { saveAnalyses } from '../services/analysisStorage';
-import { toast } from 'sonner';
+import { queryVentureAiChat, getSessionPitchDeck } from '../services/aiChatService';
 
 // VentureLens Aperture Facet Logo
 function VentureLensLogo({ className = 'w-7 h-7' }: { className?: string }) {
@@ -120,9 +122,17 @@ export default function DashboardPage() {
   // Agent 1 evaluation result from Supabase
   const [agent1Eval, setAgent1Eval] = useState<Agent1EvaluationRecord | null>(null);
 
-  // Interactive AI chat input
+  // Interactive AI chat input & auto-scroll ref
   const [chatInput, setChatInput] = useState('');
   const [isChatThinking, setIsChatThinking] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll chat window when new message arrives or model starts thinking
+  useEffect(() => {
+    if (currentTab === 'chatbot') {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [activeAnalysis?.chatHistory, isChatThinking, currentTab]);
 
   // Global search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,6 +155,24 @@ export default function DashboardPage() {
           saveAnalyses(merged);
           return merged;
         });
+
+        // Auto-select latest real non-demo startup (e.g. Grow / ArangoDB) if current is demo or unset
+        const currentActiveId = getActiveAnalysisId();
+        const nonDemo = dbAnalyses.filter((a) => !a.isDemo);
+        if (nonDemo.length > 0) {
+          const matchingReal = nonDemo.find((a) => a.id === currentActiveId);
+          if (matchingReal) {
+            setActiveAnalysis(matchingReal);
+          } else if (
+            !currentActiveId ||
+            currentActiveId === 'eval_airbnb_01' ||
+            currentActiveId === 'eval_ecoverse_01'
+          ) {
+            const latestReal = nonDemo[nonDemo.length - 1];
+            setActiveAnalysis(latestReal);
+            setActiveAnalysisId(latestReal.id);
+          }
+        }
       }
     }).catch((err) => console.warn('[DashboardPage] Supabase fetch warning:', err));
 
@@ -204,15 +232,41 @@ export default function DashboardPage() {
     };
   }, [activeAnalysis?.id]);
 
+  // Load chat history from Supabase whenever active venture changes
+  useEffect(() => {
+    if (!activeAnalysis?.id) return;
+    let isMounted = true;
+    fetchChatMessagesFromSupabase(activeAnalysis.id).then((savedMsgs) => {
+      if (!isMounted || !savedMsgs || savedMsgs.length === 0) return;
+      setActiveAnalysis((prev) => {
+        if (!prev || prev.id !== activeAnalysis.id) return prev;
+        const existingIds = new Set(prev.chatHistory.map((m) => m.id));
+        const merged = [...prev.chatHistory];
+        for (const sm of savedMsgs) {
+          if (!existingIds.has(sm.id)) {
+            merged.push(sm);
+          }
+        }
+        return {
+          ...prev,
+          chatHistory: merged,
+        };
+      });
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [activeAnalysis?.id]);
+
   const selectAnalysis = (item: AnalysisRecord) => {
     setActiveAnalysis(item);
     setActiveAnalysisId(item.id);
   };
 
-  // Chat query submission
-  const handleSendChat = (textToSend?: string) => {
+  // Real-time AI Chat query submission powered by AI Diligence Copilot & Agent 1
+  const handleSendChat = async (textToSend?: string) => {
     const q = (textToSend || chatInput).trim();
-    if (!q || !activeAnalysis) return;
+    if (!q || !activeAnalysis || isChatThinking) return;
 
     setChatInput('');
     const userMsg = {
@@ -223,25 +277,20 @@ export default function DashboardPage() {
     };
 
     updateAnalysisChat(activeAnalysis.id, userMsg);
+    saveChatMessageToSupabase(activeAnalysis.id, userMsg);
     setActiveAnalysis((prev) =>
       prev ? { ...prev, chatHistory: [...prev.chatHistory, userMsg] } : prev
     );
 
     setIsChatThinking(true);
 
-    setTimeout(() => {
-      let replyText = `Based on the verified ${activeAnalysis.title} documentation: `;
-      const lower = q.toLowerCase();
-
-      if (lower.includes('score') || lower.includes('financial') || lower.includes('79')) {
-        replyText += `The financial score of 79/100 reflects sound core revenue potential balanced by high customer acquisition costs (CAC) and municipal regulatory compliance reserves in top-tier metro markets.`;
-      } else if (lower.includes('risk') || lower.includes('biggest')) {
-        replyText += `Primary identified risks: 1) High customer acquisition costs and rising platform marketing spend; 2) Multi-homing superhost retention volatility; 3) Evolving municipal zoning and lodging restrictions.`;
-      } else if (lower.includes('claim') || lower.includes('verification')) {
-        replyText += `Key claims flagged for diligence verification: Claimed $48B global TAM beyond urban hotels, organic vs. paid search booking ratios, and gross booking value (GBV) repeat frequency across mature cohorts.`;
-      } else {
-        replyText += `Agent analysis confirms a ${activeAnalysis.recommendation} verdict with ${activeAnalysis.confidence} confidence. Strong market opportunity and founding team, but traction and unit economics require further validation.`;
-      }
+    try {
+      const replyText = await queryVentureAiChat({
+        userMessage: q,
+        activeAnalysis,
+        agent1Eval,
+        chatHistory: activeAnalysis.chatHistory,
+      });
 
       const botMsg = {
         id: `chat_b_${Date.now()}`,
@@ -251,11 +300,25 @@ export default function DashboardPage() {
       };
 
       updateAnalysisChat(activeAnalysis.id, botMsg);
+      saveChatMessageToSupabase(activeAnalysis.id, botMsg);
       setActiveAnalysis((prev) =>
         prev ? { ...prev, chatHistory: [...prev.chatHistory, botMsg] } : prev
       );
+    } catch (err: any) {
+      console.error('[AI Chat] Error querying AI engine:', err);
+      const errorMsg = {
+        id: `chat_err_${Date.now()}`,
+        role: 'assistant' as const,
+        text: `Sorry, I encountered an issue querying the AI engine: ${err.message || 'Network error'}. Please try again.`,
+        timestamp: 'Just now',
+      };
+      updateAnalysisChat(activeAnalysis.id, errorMsg);
+      setActiveAnalysis((prev) =>
+        prev ? { ...prev, chatHistory: [...prev.chatHistory, errorMsg] } : prev
+      );
+    } finally {
       setIsChatThinking(false);
-    }, 850);
+    }
   };
 
   if (!activeAnalysis) {
@@ -267,6 +330,9 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  // Active pitch deck document attached to this venture session
+  const activeSessionDoc = activeAnalysis ? getSessionPitchDeck(activeAnalysis, agent1Eval) : null;
 
   // Dimension scores mapping for the 6 cards under the hero
   const scoreDimensions = [
@@ -1310,33 +1376,61 @@ export default function DashboardPage() {
                   </button>
                 </div>
 
-                {/* CARD 4: Ask About This Startup (Interactive Chat) */}
+                {/* CARD 4: Ask About This Startup (Interactive AI Diligence) */}
                 <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between space-y-3">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center">
-                        <MessageSquare className="w-3.5 h-3.5" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center">
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="font-bold text-sm text-[#1E1B2E]">Ask About This Startup</span>
                       </div>
-                      <span className="font-bold text-sm text-[#1E1B2E]">Ask About This Startup</span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('chatbot')}
+                        className="text-[11px] font-semibold text-[#5028E0] hover:underline cursor-pointer flex items-center gap-1"
+                      >
+                        <span>Full Chat</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
                     </div>
                     <p className="text-[11px] text-[#64748B] mt-1 leading-tight">
-                      Get answers from your startup's documents, analysis and external research.
+                      Real-time diligence answers grounded strictly in this startup's pitch deck.
                     </p>
+                    {activeSessionDoc ? (
+                      <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold text-[#5028E0] bg-[#EEECFC] px-2.5 py-1 rounded-lg border border-[#DDD6FE]">
+                        <FileText className="w-3 h-3 text-[#5028E0] shrink-0" />
+                        <span className="truncate">{activeSessionDoc.name}</span>
+                        {activeSessionDoc.isPdf && (
+                          <span className="ml-auto text-[9px] bg-[#5028E0] text-white px-1.5 py-0.2 rounded font-bold">
+                            PDF Grounded
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mt-2 text-[10px] text-[#F59E0B] font-medium bg-[#FFFBEB] px-2 py-0.5 rounded border border-[#FDE68A]">
+                        No deck uploaded for {activeAnalysis.title} yet
+                      </div>
+                    )}
 
                     {/* Quick Suggestion Chips */}
                     <div className="space-y-1.5 pt-2">
                       {[
-                        'Why did this startup receive a financial score of 79?',
-                        'What are the biggest risks?',
-                        'Which claims need verification?',
+                        'What is the revenue & commercial model?',
+                        'What are the biggest diligence risks?',
+                        'Who are the founders & team background?',
                       ].map((prompt) => (
                         <button
                           key={prompt}
                           type="button"
-                          onClick={() => handleSendChat(prompt)}
-                          className="w-full text-left p-2 rounded-xl bg-[#F8F9FE] border border-[#E2E8F0] hover:border-[#5028E0] hover:bg-white text-[11px] text-[#1E1B2E] transition-colors flex items-center gap-2 cursor-pointer"
+                          onClick={() => {
+                            handleSendChat(prompt);
+                            setCurrentTab('chatbot');
+                          }}
+                          className="w-full text-left p-2 rounded-xl bg-[#F8F9FE] border border-[#E2E8F0] hover:border-[#5028E0] hover:bg-[#F4F1FD] text-[11px] text-[#1E1B2E] transition-colors flex items-center gap-2 cursor-pointer"
                         >
-                          <MessageSquare className="w-3 h-3 text-[#94A3B8] shrink-0" />
+                          <MessageSquare className="w-3 h-3 text-[#5028E0] shrink-0" />
                           <span className="truncate">{prompt}</span>
                         </button>
                       ))}
@@ -1348,6 +1442,7 @@ export default function DashboardPage() {
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleSendChat();
+                      setCurrentTab('chatbot');
                     }}
                     className="relative pt-2"
                   >
@@ -1355,14 +1450,14 @@ export default function DashboardPage() {
                       type="text"
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
-                      placeholder="Ask a question..."
+                      placeholder={`Ask about ${activeAnalysis.title}...`}
                       disabled={isChatThinking}
                       className="w-full pl-3 pr-10 py-2 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors disabled:opacity-50"
                     />
                     <button
                       type="submit"
                       disabled={!chatInput.trim() || isChatThinking}
-                      className="absolute right-1.5 top-3.5 w-7 h-7 rounded-lg bg-[#5028E0] text-white flex items-center justify-center hover:bg-[#4320BD] transition-colors disabled:opacity-40 cursor-pointer"
+                      className="absolute right-1.5 top-3.5 w-7 h-7 rounded-lg bg-[#5028E0] text-white flex items-center justify-center hover:bg-[#4320BD] transition-colors disabled:opacity-40 cursor-pointer shadow-xs"
                     >
                       <Send className="w-3.5 h-3.5" />
                     </button>
@@ -1899,76 +1994,196 @@ export default function DashboardPage() {
           {/* TAB 8: AI CHATBOT DETAILED SESSION */}
           {currentTab === 'chatbot' && (
             <div className="rounded-2xl border border-[#EAEBF2] bg-white p-6 shadow-sm space-y-4 max-w-4xl mx-auto">
-              <div className="flex items-center justify-between border-b border-[#EAEBF2] pb-4">
+              {/* Chat Header with Live AI Status & Session Pitch Deck */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#EAEBF2] pb-4 gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#5028E0] text-white flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#5028E0] to-[#7B5CF5] text-white flex items-center justify-center shadow-sm shrink-0">
+                    <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-base text-[#1E1B2E]">
-                      VentureLens Analyst Assistant
-                    </h2>
-                    <p className="text-xs text-[#64748B]">Context: {activeAnalysis.title}</p>
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-bold text-base text-[#1E1B2E]">
+                        VentureLens AI Diligence Copilot
+                      </h2>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                        AI Copilot Live
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#64748B] mt-1">
+                      <span>Venture: <strong className="text-[#1E1B2E] font-bold">{activeAnalysis.title}</strong></span>
+                      {activeSessionDoc ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#EEECFC] text-[#5028E0] font-medium border border-[#DDD6FE] text-[11px]">
+                          <FileText className="w-3 h-3 text-[#5028E0]" />
+                          <span className="font-semibold truncate max-w-[200px]">{activeSessionDoc.name}</span>
+                          {activeSessionDoc.isPdf && (
+                            <span className="text-[9px] font-bold bg-[#5028E0] text-white px-1.5 py-0.2 rounded">
+                              PDF Grounded
+                            </span>
+                          )}
+                          {activeSessionDoc.storageUrl && (
+                            <a
+                              href={activeSessionDoc.storageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#5028E0] hover:underline flex items-center gap-0.5 ml-1"
+                              title="Open original pitch deck PDF"
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          )}
+                        </span>
+                      ) : (
+                        <span className="text-[#F59E0B] text-[11px] font-medium">
+                          ⚠️ No pitch deck uploaded for this session yet
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setCurrentTab('dashboard')}
-                  className="text-xs font-semibold text-[#5028E0] hover:underline"
-                >
-                  ← Back to Dashboard
-                </button>
+
+                {/* Session Switcher Dropdown & Back Button */}
+                <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                  <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                    <span className="font-medium hidden md:inline">Venture:</span>
+                    <select
+                      value={activeAnalysis.id}
+                      onChange={(e) => {
+                        const selected = analyses.find((a) => a.id === e.target.value);
+                        if (selected) {
+                          selectAnalysis(selected);
+                        }
+                      }}
+                      className="text-xs bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl px-2.5 py-1.5 text-[#1E1B2E] font-semibold focus:outline-none focus:border-[#5028E0] cursor-pointer"
+                    >
+                      {analyses.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.title} {a.isDemo ? '(Demo)' : '(Uploaded)'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentTab('dashboard')}
+                    className="text-xs font-semibold text-[#5028E0] hover:underline cursor-pointer"
+                  >
+                    ← Back to Dashboard
+                  </button>
+                </div>
               </div>
 
-              {/* Chat History Box */}
-              <div className="h-96 overflow-y-auto space-y-3 p-4 bg-[#F8F9FE] rounded-xl border border-[#EAEBF2]">
+              {/* Chat History Container */}
+              <div className="h-[460px] overflow-y-auto space-y-3.5 p-4 bg-[#F8F9FE] rounded-xl border border-[#EAEBF2]">
                 {activeAnalysis.chatHistory.map((m) => (
                   <div
                     key={m.id}
                     className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-md p-3.5 rounded-2xl text-xs ${
+                      className={`max-w-xl p-4 rounded-2xl text-xs ${
                         m.role === 'user'
-                          ? 'bg-[#5028E0] text-white'
-                          : 'bg-white border border-[#EAEBF2] text-[#1E1B2E] shadow-2xs'
+                          ? 'bg-[#5028E0] text-white shadow-sm'
+                          : 'bg-white border border-[#EAEBF2] text-[#1E1B2E] shadow-xs'
                       }`}
                     >
-                      <p className="leading-relaxed">{m.text}</p>
-                      <span className="block text-[9px] opacity-70 mt-1">{m.timestamp}</span>
+                      {m.role === 'assistant' ? (
+                        <div>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#5028E0] mb-1.5">
+                            <Sparkles className="w-3 h-3 text-[#5028E0]" />
+                            <span>VentureLens Analyst</span>
+                          </div>
+                          <div className="whitespace-pre-wrap leading-relaxed text-[#1E1B2E] text-xs">
+                            {m.text}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="leading-relaxed whitespace-pre-wrap text-xs">{m.text}</p>
+                      )}
+                      <span
+                        className={`block text-[9px] mt-1.5 ${
+                          m.role === 'user' ? 'text-white/70' : 'text-[#94A3B8]'
+                        }`}
+                      >
+                        {m.timestamp}
+                      </span>
                     </div>
                   </div>
                 ))}
+
                 {isChatThinking && (
                   <div className="flex justify-start">
-                    <div className="bg-white border border-[#EAEBF2] text-[#64748B] text-xs p-3 rounded-2xl">
-                      VentureLens Analyst is verifying vectors...
+                    <div className="bg-white border border-[#EAEBF2] text-[#5028E0] text-xs p-3.5 rounded-2xl shadow-xs flex items-center gap-3">
+                      <div className="flex space-x-1">
+                        <div
+                          className="w-2 h-2 bg-[#5028E0] rounded-full animate-bounce"
+                          style={{ animationDelay: '0ms' }}
+                        />
+                        <div
+                          className="w-2 h-2 bg-[#5028E0] rounded-full animate-bounce"
+                          style={{ animationDelay: '150ms' }}
+                        />
+                        <div
+                          className="w-2 h-2 bg-[#5028E0] rounded-full animate-bounce"
+                          style={{ animationDelay: '300ms' }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-[#64748B]">
+                        AI Diligence Copilot is analyzing pitch deck vectors & diligence metrics...
+                      </span>
                     </div>
                   </div>
                 )}
+                <div ref={chatEndRef} />
               </div>
 
-              {/* Send Box */}
+              {/* Quick Prompt Chips */}
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#64748B]">Suggested Diligence Inquiries:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    'What is the revenue & commercial model?',
+                    'Who are the founders & leadership team?',
+                    'What are the primary investment risks & red flags?',
+                    'Summarize traction, customers, and market sizing',
+                    'Are there any contradictions across documents?',
+                  ].map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => handleSendChat(chip)}
+                      disabled={isChatThinking}
+                      className="px-2.5 py-1 rounded-lg bg-[#F4F1FD] border border-[#DDD6FE] hover:border-[#5028E0] hover:bg-white text-[11px] font-medium text-[#5028E0] transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Chat Input Bar */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleSendChat();
                 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 pt-1"
               >
                 <input
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  placeholder={`Ask anything about ${activeAnalysis.title}...`}
-                  className="flex-1 px-4 py-2.5 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] focus:outline-none focus:border-[#5028E0]"
+                  placeholder={`Ask anything about ${activeAnalysis.title} (e.g. revenue, risks, traction, founders)...`}
+                  disabled={isChatThinking}
+                  className="flex-1 px-4 py-3 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors disabled:opacity-50"
                 />
                 <button
                   type="submit"
                   disabled={!chatInput.trim() || isChatThinking}
-                  className="px-5 py-2.5 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] transition-colors disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-3 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-1.5 shadow-sm"
                 >
-                  Send
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send</span>
                 </button>
               </form>
             </div>
