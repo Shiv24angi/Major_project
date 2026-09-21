@@ -38,11 +38,13 @@ import {
 import {
   getStoredAnalyses,
   getActiveAnalysis,
+  getActiveAnalysisId,
   setActiveAnalysisId,
   updateAnalysisChat,
   saveAnalyses,
   type AnalysisRecord,
 } from '../services/analysisStorage';
+import { toast } from 'sonner';
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
 import Agent6DiligenceView from '../components/Agent6DiligenceView';
 import { checkAgent6Health } from '../services/agent6Service';
@@ -57,7 +59,7 @@ import {
   fetchChatMessagesFromSupabase,
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
-import { queryVentureAiChat, getSessionPitchDeck } from '../services/aiChatService';
+import { queryVentureAiChat, getSessionPitchDeck, getSessionRepositoryInfo } from '../services/aiChatService';
 
 // VentureLens Aperture Facet Logo
 function VentureLensLogo({ className = 'w-7 h-7' }: { className?: string }) {
@@ -333,6 +335,8 @@ export default function DashboardPage() {
 
   // Active pitch deck document attached to this venture session
   const activeSessionDoc = activeAnalysis ? getSessionPitchDeck(activeAnalysis, agent1Eval) : null;
+  // Active repository intelligence attached to this session (Agent 6)
+  const activeRepoInfo = activeAnalysis ? getSessionRepositoryInfo(activeAnalysis) : null;
 
   // Dimension scores mapping for the 6 cards under the hero
   const scoreDimensions = [
@@ -2012,7 +2016,28 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-[#64748B] mt-1">
                       <span>Venture: <strong className="text-[#1E1B2E] font-bold">{activeAnalysis.title}</strong></span>
-                      {activeSessionDoc ? (
+                      {activeRepoInfo ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#EEECFC] text-[#5028E0] font-medium border border-[#DDD6FE] text-[11px]">
+                          <Code2 className="w-3 h-3 text-[#5028E0]" />
+                          <span className="font-semibold truncate max-w-[200px]">
+                            {activeRepoInfo.owner}/{activeRepoInfo.repoName}
+                          </span>
+                          <span className="text-[9px] font-bold bg-[#10B981] text-white px-1.5 py-0.2 rounded">
+                            AST Code Diligence
+                          </span>
+                          {activeRepoInfo.githubUrl && (
+                            <a
+                              href={activeRepoInfo.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#5028E0] hover:underline flex items-center gap-0.5 ml-1"
+                              title="Open GitHub repository"
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          )}
+                        </span>
+                      ) : activeSessionDoc ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#EEECFC] text-[#5028E0] font-medium border border-[#DDD6FE] text-[11px]">
                           <FileText className="w-3 h-3 text-[#5028E0]" />
                           <span className="font-semibold truncate max-w-[200px]">{activeSessionDoc.name}</span>
@@ -2129,7 +2154,9 @@ export default function DashboardPage() {
                         />
                       </div>
                       <span className="text-xs font-medium text-[#64748B]">
-                        AI Diligence Copilot is analyzing pitch deck vectors & diligence metrics...
+                        {activeRepoInfo
+                          ? 'AI Diligence Copilot is analyzing repository AST, code evidence & architecture...'
+                          : 'AI Diligence Copilot is analyzing pitch deck vectors & diligence metrics...'}
                       </span>
                     </div>
                   </div>
@@ -2141,13 +2168,22 @@ export default function DashboardPage() {
               <div className="space-y-1.5">
                 <span className="text-[11px] font-semibold text-[#64748B]">Suggested Diligence Inquiries:</span>
                 <div className="flex flex-wrap gap-1.5">
-                  {[
-                    'What is the revenue & commercial model?',
-                    'Who are the founders & leadership team?',
-                    'What are the primary investment risks & red flags?',
-                    'Summarize traction, customers, and market sizing',
-                    'Are there any contradictions across documents?',
-                  ].map((chip) => (
+                  {(activeRepoInfo
+                    ? [
+                        'What is the tech stack & architecture?',
+                        'What technical claims were verified in the code?',
+                        'What are the repository\'s code strengths?',
+                        'Are there any technical risks or scaling flags?',
+                        'Which files and components were audited?',
+                      ]
+                    : [
+                        'What is the revenue & commercial model?',
+                        'Who are the founders & leadership team?',
+                        'What are the primary investment risks & red flags?',
+                        'Summarize traction, customers, and market sizing',
+                        'Are there any contradictions across documents?',
+                      ]
+                  ).map((chip) => (
                     <button
                       key={chip}
                       type="button"
@@ -2173,7 +2209,11 @@ export default function DashboardPage() {
                   type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  placeholder={`Ask anything about ${activeAnalysis.title} (e.g. revenue, risks, traction, founders)...`}
+                  placeholder={
+                    activeRepoInfo
+                      ? `Ask anything about ${activeAnalysis.title}'s code, architecture, tech stack, or files...`
+                      : `Ask anything about ${activeAnalysis.title} (e.g. revenue, risks, traction, founders)...`
+                  }
                   disabled={isChatThinking}
                   className="flex-1 px-4 py-3 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors disabled:opacity-50"
                 />

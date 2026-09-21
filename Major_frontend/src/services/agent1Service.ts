@@ -10,7 +10,7 @@ import {
   syncAnalysisToSupabase,
   type Agent1EvaluationRecord,
 } from './supabaseService';
-import { addAnalysis, getStoredAnalyses } from './analysisStorage';
+import { addAnalysis } from './analysisStorage';
 
 export const AGENT1_API_BASE = (
   (import.meta.env.AGENT1_API_URL as string) ||
@@ -217,7 +217,7 @@ export async function analyzeDocumentsWithAgent1(
     const compName =
       companyName ||
       data.merged_analysis?.startup_name ||
-      data.document_analyses[0]?.analysis?.startup_name ||
+      (data.document_analyses[0] as any)?.analysis?.startup_name ||
       'Uploaded Venture';
 
     const finalAnalysisId =

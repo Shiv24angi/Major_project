@@ -608,6 +608,10 @@ export function getActiveAnalysis(): AnalysisRecord {
   return analyses[0];
 }
 
+export function getActiveAnalysisId(): string | null {
+  return localStorage.getItem(ACTIVE_ANALYSIS_KEY);
+}
+
 export function setActiveAnalysisId(id: string): void {
   localStorage.setItem(ACTIVE_ANALYSIS_KEY, id);
 }

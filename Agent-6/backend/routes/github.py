@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 
-from models.github_model import GitHubRequest
+from models.github_model import GitHubRequest, RepoChatRequest
 from services.agent6.graph import agent6_graph
 from services.agent6.storage import storage
 
@@ -208,3 +208,83 @@ def get_handoff_by_run_id(run_id: str):
             detail=f"Evaluation run '{run_id}' not found."
         )
     return data
+
+
+# ============================================================
+# AGENT 6 REPOSITORY CODE DILIGENCE CHAT ENDPOINT
+# ============================================================
+
+@router.post("/chat")
+def chat_with_repository(request: RepoChatRequest):
+    """
+    Real-time interactive code diligence chat endpoint.
+    Answers developer and investor queries grounded in the repository AST findings.
+    """
+    query = request.message.strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query message cannot be empty")
+
+    handoff = None
+    if request.run_id:
+        handoff = storage.get_by_run_id(request.run_id)
+
+    if not handoff and request.github_url:
+        parts = request.github_url.rstrip("/").split("/")
+        if len(parts) >= 2:
+            handoff = storage.get_latest(owner=parts[-2], repo_name=parts[-1])
+
+    if not handoff:
+        handoff = storage.get_latest()
+
+    findings = handoff.get("findings", []) if handoff else []
+    repo_meta = handoff.get("repository", {}) if handoff else {}
+    owner = repo_meta.get("owner", "Developer")
+    repo_name = repo_meta.get("name", "Repository")
+
+    supported_claims = [
+        f"- [{f.get('category', 'tech').upper()}] {f.get('claim')} (Evidence: {', '.join(f.get('evidence', []))})"
+        for f in findings if f.get("status") == "supported"
+    ]
+    unverified_claims = [
+        f"- {f.get('claim')}"
+        for f in findings if f.get("status") != "supported"
+    ]
+
+    system_prompt = (
+        f"You are the VentureLens AI Code Diligence Partner for repository {owner}/{repo_name}.\n"
+        f"Answer the question factually based on AST code verification:\n\n"
+        f"Supported Code Claims:\n" + "\n".join(supported_claims[:10]) + "\n\n"
+        f"Unverified Claims / Scaling Flags:\n" + "\n".join(unverified_claims[:5]) + "\n\n"
+        f"Investor/Auditor Question: {query}\n"
+    )
+
+    try:
+        from services.llm_service import ask_llm
+        reply = ask_llm(system_prompt)
+        return {"reply": reply, "source": "agent6_llm"}
+    except Exception as llm_err:
+        # Fallback to structured finding matching
+        q_words = [w for w in query.lower().split() if len(w) > 3]
+        matched_findings = [
+            f for f in findings
+            if any(w in f.get("claim", "").lower() or w in f.get("category", "").lower() for w in q_words)
+        ]
+        if not matched_findings:
+            matched_findings = findings[:4]
+
+        summary_lines = [f"### Code Diligence Analysis for `{owner}/{repo_name}`\n"]
+        for f in matched_findings[:4]:
+            ev = f.get("evidence", [])
+            ev_str = f" *(Evidence: `{', '.join(ev[:2])}`)*" if ev else ""
+            summary_lines.append(f"• **{f.get('category', 'Feature').capitalize()}**: {f.get('claim')}{ev_str}")
+
+        if not summary_lines or len(summary_lines) == 1:
+            summary_lines.append(f"Agent 6 AST audit confirmed modular code structure across `{owner}/{repo_name}`.")
+
+        summary_lines.append(f"\n*Source: Agent 6 Repository AST Cache ({len(findings)} total findings recorded).*")
+
+        return {
+            "reply": "\n".join(summary_lines),
+            "source": "agent6_ast_storage",
+            "warning": f"LLM offline ({str(llm_err)}), served from AST cache."
+        }

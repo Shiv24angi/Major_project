@@ -523,10 +523,10 @@ export default function Agent1DiligenceView({
               </div>
               {analysisResult.uploaded_files && analysisResult.uploaded_files.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
-                  {analysisResult.uploaded_files.map((uf, idx) => uf.storage_url ? (
+                  {analysisResult.uploaded_files.map((uf, idx) => (uf as any).storage_url ? (
                     <a
                       key={idx}
-                      href={uf.storage_url}
+                      href={(uf as any).storage_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#15803D] bg-white border border-[#86EFAC] hover:bg-[#DCFCE7] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
