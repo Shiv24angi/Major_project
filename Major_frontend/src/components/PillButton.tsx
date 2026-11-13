@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { PresetNavLink } from '../shared/components/PresetNavLink';
+import { useAuth } from '../contexts/AuthContext';
 
 type PillButtonProps = {
   children: ReactNode;
@@ -10,6 +11,7 @@ type PillButtonProps = {
   onClick?: () => void;
   className?: string;
   presetText?: string;
+  requireAuth?: boolean;
 };
 
 export default function PillButton({
@@ -20,7 +22,10 @@ export default function PillButton({
   onClick,
   className = '',
   presetText,
+  requireAuth,
 }: PillButtonProps) {
+  const { isAuthenticated } = useAuth();
+
   const sizeClass =
     size === 'lg'
       ? 'text-base md:text-lg pl-8 pr-2 py-2'
@@ -37,11 +42,24 @@ export default function PillButton({
     </>
   );
 
-  const baseClassName = `group inline-flex items-center gap-3 rounded-full bg-black font-medium text-white transition-colors duration-200 hover:bg-gray-800 ${sizeClass} ${className}`;
+  const baseClassName = `group inline-flex items-center gap-3 rounded-full bg-black font-medium text-white transition-colors duration-200 hover:bg-gray-800 ${sizeClass} ${className} cursor-pointer`;
 
   if (route) {
+    const isProtected =
+      requireAuth ??
+      ['new-analysis', 'analyze-startup', 'analyze-project', 'processing'].includes(route);
+
+    // If unauthenticated and clicking a protected route, route through login with return parameter
+    const effectiveRoute =
+      isProtected && !isAuthenticated ? `login?redirect=${encodeURIComponent(route)}` : route;
+
     return (
-      <PresetNavLink target={{ kind: 'route', path: route }} className={baseClassName} data-editable>
+      <PresetNavLink
+        target={{ kind: 'route', path: effectiveRoute }}
+        className={baseClassName}
+        data-editable
+        onClick={onClick}
+      >
         {inner}
       </PresetNavLink>
     );
@@ -49,7 +67,12 @@ export default function PillButton({
 
   if (section) {
     return (
-      <PresetNavLink target={{ kind: 'section', id: section }} className={baseClassName} data-editable>
+      <PresetNavLink
+        target={{ kind: 'section', id: section }}
+        className={baseClassName}
+        data-editable
+        onClick={onClick}
+      >
         {inner}
       </PresetNavLink>
     );

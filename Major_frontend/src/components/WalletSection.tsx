@@ -23,7 +23,7 @@ export default function WalletSection() {
         >
           Upload startup documentation and generate multi-agent due diligence evaluations.
         </p>
-        <PillButton size="base" section="how-it-works" presetText="wallet-cta">
+        <PillButton size="base" route="new-analysis" presetText="wallet-cta">
           Start Analysis
         </PillButton>
       </div>

@@ -1,9 +1,29 @@
+import { useEffect } from 'react';
 import { ArrowRight, FileText, Code2, CheckCircle2, Layers, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { navigateTo } from '../shared/preset-site-routing';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function NewAnalysisModePage() {
+  const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigateTo('login', { redirect: 'new-analysis' });
+    }
+  }, [isAuthenticated, loading]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-black border-t-transparent" />
+          <p className="text-sm font-medium text-black/60">Verifying session...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-black flex flex-col justify-between">
       <div>

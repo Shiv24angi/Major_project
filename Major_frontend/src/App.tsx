@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
+import { BrowserRouter } from 'react-router-dom';
 import { PresetHashRouter } from './shared/components/PresetHashRouter';
 import { applyPresetHashOnLoad, getPresetRoutePath } from './shared/preset-site-routing';
 import EcosystemPage from './pages/EcosystemPage';
@@ -15,6 +16,9 @@ import StartupInputPage from './pages/StartupInputPage';
 import ProjectInputPage from './pages/ProjectInputPage';
 import ProcessingPage from './pages/ProcessingPage';
 import DashboardPage from './pages/DashboardPage';
+import AuthPage from './pages/AuthPage';
+import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from 'sonner';
 import { initSupabaseDatabase } from './services/supabaseService';
 
 export default function App() {
@@ -65,7 +69,21 @@ export default function App() {
     const handleHashChange = () => {
       const path = getPresetRoutePath();
       // If it's a page route and not an anchor
-      if (['new-analysis', 'analyze-startup', 'analyze-project', 'processing', 'dashboard', 'my-analyses', 'documents', 'reports'].includes(path)) {
+      if (
+        [
+          'auth',
+          'login',
+          'signup',
+          'new-analysis',
+          'analyze-startup',
+          'analyze-project',
+          'processing',
+          'dashboard',
+          'my-analyses',
+          'documents',
+          'reports',
+        ].includes(path)
+      ) {
         window.scrollTo(0, 0);
         lenis.scrollTo(0, { immediate: true });
       }
@@ -83,26 +101,34 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-[#F5F5F5]">
-      <PresetHashRouter
-        routes={{
-          '': <HomePage />,
-          'new-analysis': <NewAnalysisModePage />,
-          'analyze-startup': <StartupInputPage />,
-          'analyze-project': <ProjectInputPage />,
-          'processing': <ProcessingPage />,
-          'dashboard': <DashboardPage />,
-          'my-analyses': <DashboardPage />,
-          'documents': <DashboardPage />,
-          'reports': <DashboardPage />,
-          network: <NetworkPage />,
-          ecosystem: <EcosystemPage />,
-          rewards: <RewardsPage />,
-          help: <HelpPage />,
-          news: <NewsPage />,
-          wallet: <WalletPage />,
-        }}
-      />
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="flex flex-col bg-[#F5F5F5]">
+          <PresetHashRouter
+            routes={{
+              '': <HomePage />,
+              auth: <AuthPage />,
+              login: <AuthPage />,
+              signup: <AuthPage />,
+              'new-analysis': <NewAnalysisModePage />,
+              'analyze-startup': <StartupInputPage />,
+              'analyze-project': <ProjectInputPage />,
+              'processing': <ProcessingPage />,
+              'dashboard': <DashboardPage />,
+              'my-analyses': <DashboardPage />,
+              'documents': <DashboardPage />,
+              'reports': <DashboardPage />,
+              network: <NetworkPage />,
+              ecosystem: <EcosystemPage />,
+              rewards: <RewardsPage />,
+              help: <HelpPage />,
+              news: <NewsPage />,
+              wallet: <WalletPage />,
+            }}
+          />
+          <Toaster position="top-right" richColors />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
