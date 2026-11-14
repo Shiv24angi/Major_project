@@ -361,20 +361,29 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#F8F9FE] text-[#1E1B2E] antialiased">
-      {/* SIDEBAR NAVIGATION */}
+    <div className="flex h-screen w-full overflow-hidden bg-[#F8F9FE] text-[#1E1B2E] antialiased">
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* SIDEBAR NAVIGATION - FIXED & COMPACT (NO SCROLLING) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 xl:w-72 bg-white border-r border-[#EAEBF2] p-5 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+        data-lenis-prevent
+        className={`fixed inset-y-0 left-0 z-50 w-64 xl:w-72 bg-white border-r border-[#EAEBF2] px-3.5 py-3.5 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 h-screen shrink-0 overflow-y-auto lg:overflow-hidden select-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="space-y-6">
+        <div className="space-y-3">
           {/* Logo & Brand Header */}
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center gap-3">
-              <VentureLensLogo className="w-8 h-8 shrink-0" />
+          <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#F1F2F6]">
+            <div className="flex items-center gap-2.5">
+              <VentureLensLogo className="w-7 h-7 shrink-0" />
               <div>
-                <span className="text-base font-bold text-[#1E1B2E] tracking-tight block leading-tight">
+                <span className="text-sm font-bold text-[#1E1B2E] tracking-tight block leading-tight">
                   VentureLens
                 </span>
                 <span className="text-[10px] text-[#64748B] block leading-tight font-normal">
@@ -392,7 +401,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Primary Navigation Items */}
-          <nav className="space-y-1">
+          <nav className="space-y-0.5">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
               { id: 'agent1', label: 'Agent 1 Document Diligence', icon: FileText, badge: agent1Online ? 'Online' : 'Ready' },
@@ -400,8 +409,6 @@ export default function DashboardPage() {
               { id: 'new-analysis', label: 'New Analysis', icon: PlusCircle, isAction: true },
               { id: 'my-analyses', label: 'My Analyses', icon: Folder },
               { id: 'documents', label: 'Documents', icon: FileText },
-              { id: 'gmail', label: 'Gmail Integration', icon: Mail },
-              { id: 'knowledge-base', label: 'Knowledge Base', icon: Database },
               { id: 'funding', label: 'Funding Discovery', icon: CircleDollarSign },
               { id: 'chatbot', label: 'AI Chatbot', icon: MessageSquare },
               { id: 'questions', label: 'Due-Diligence Questions', icon: HelpCircle },
@@ -421,15 +428,15 @@ export default function DashboardPage() {
                     }
                     setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  className={`w-full flex items-center justify-between gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-[#EEECFC] text-[#5028E0] font-semibold'
                       : 'text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E]'
                   }`}
                 >
-                  <div className="flex items-center gap-3 truncate">
+                  <div className="flex items-center gap-2.5 truncate">
                     <Icon
-                      className={`w-4.5 h-4.5 shrink-0 ${
+                      className={`w-4 h-4 shrink-0 ${
                         isActive ? 'text-[#5028E0]' : 'text-[#64748B]'
                       }`}
                     />
@@ -437,7 +444,7 @@ export default function DashboardPage() {
                   </div>
                   {item.badge && (
                     <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
                         item.badge === 'Online'
                           ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
                           : 'bg-[#F1F2F6] text-[#64748B]'
@@ -452,78 +459,80 @@ export default function DashboardPage() {
           </nav>
 
           {/* Analysis Tools Section */}
-          <div className="pt-2">
-            <p className="px-3.5 pb-2 text-[11px] font-bold uppercase tracking-wider text-[#94A3B8]">
+          <div className="pt-1 border-t border-[#F1F2F6]">
+            <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#94A3B8]">
               Analysis Tools
             </p>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <button
                 type="button"
                 onClick={() => navigateTo('analyze-startup')}
-                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
+                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
               >
-                <TrendingUp className="w-4.5 h-4.5 shrink-0 text-[#64748B]" />
+                <TrendingUp className="w-4 h-4 shrink-0 text-[#64748B]" />
                 <span>Startup Analysis</span>
               </button>
               <button
                 type="button"
                 onClick={() => navigateTo('analyze-project')}
-                className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
+                className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
               >
-                <Code2 className="w-4.5 h-4.5 shrink-0 text-[#64748B]" />
+                <Code2 className="w-4 h-4 shrink-0 text-[#64748B]" />
                 <span>Project → Startup</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section: Settings & Upgrade to Pro */}
-        <div className="space-y-4 pt-4 border-t border-[#EAEBF2]">
-          <div className="space-y-1">
+        {/* Bottom Section: Settings & Upgrade to Pro (Compact & Clean) */}
+        <div className="space-y-2 pt-2.5 border-t border-[#EAEBF2]">
+          <div className="space-y-0.5">
             <button
               type="button"
               onClick={() => alert('Settings configuration modal')}
-              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
+              className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
             >
-              <Settings className="w-4.5 h-4.5 shrink-0 text-[#64748B]" />
+              <Settings className="w-4 h-4 shrink-0 text-[#64748B]" />
               <span>Settings</span>
             </button>
             <button
               type="button"
               onClick={() => alert('VentureLens Support: support@venturelens.ai')}
-              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
+              className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
             >
-              <LifeBuoy className="w-4.5 h-4.5 shrink-0 text-[#64748B]" />
+              <LifeBuoy className="w-4 h-4 shrink-0 text-[#64748B]" />
               <span>Help & Support</span>
             </button>
           </div>
 
-          {/* Upgrade to Pro Promo Card */}
-          <div className="rounded-2xl bg-gradient-to-br from-[#F4F1FD] to-[#EDE9FE] border border-[#DDD6FE] p-4 relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-lg bg-[#5028E0] text-white flex items-center justify-center shadow-xs">
-                <Crown className="w-3.5 h-3.5" />
+          {/* Compact Upgrade to Pro Card */}
+          <div className="rounded-xl bg-gradient-to-br from-[#F4F1FD] to-[#EDE9FE] border border-[#DDD6FE] p-2.5 relative">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-5 rounded-md bg-[#5028E0] text-white flex items-center justify-center shadow-xs">
+                  <Crown className="w-3 h-3" />
+                </div>
+                <span className="font-bold text-xs text-[#1E1B2E]">Upgrade to Pro</span>
               </div>
-              <span className="font-bold text-xs text-[#1E1B2E]">Upgrade to Pro</span>
+              <button
+                type="button"
+                onClick={() => alert('Pro Plan: Unlimited agent evaluations and team exports.')}
+                className="py-0.5 px-2 rounded-md bg-white border border-[#DDD6FE] text-[#5028E0] hover:bg-[#F8F7FD] font-semibold text-[10px] transition-colors shadow-2xs cursor-pointer"
+              >
+                View Plans
+              </button>
             </div>
-            <p className="text-[11px] text-[#64748B] leading-snug mb-3">
-              Unlock more analyses, higher limits and advanced features.
+            <p className="text-[10px] text-[#64748B] leading-tight">
+              Unlock higher limits & deeper evaluations.
             </p>
-            <button
-              type="button"
-              onClick={() => alert('Pro Plan: Unlimited agent evaluations and team exports.')}
-              className="w-full py-1.5 px-3 rounded-lg bg-white border border-[#DDD6FE] text-[#5028E0] hover:bg-[#F8F7FD] font-semibold text-xs transition-colors shadow-2xs cursor-pointer text-center"
-            >
-              View Plans
-            </button>
           </div>
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* TOP APP BAR */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-[#EAEBF2] px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      {/* MAIN CONTENT AREA - INDEPENDENT SCROLL */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        {/* TOP APP BAR - PINNED HEADER */}
+        <header className="shrink-0 z-30 bg-white/95 backdrop-blur border-b border-[#EAEBF2] px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 max-w-2xl">
             <button
               type="button"
@@ -630,8 +639,11 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* MAIN BODY CONTENT */}
-        <main className="flex-1 p-6 lg:p-8 max-w-[90rem] w-full mx-auto space-y-6">
+        {/* MAIN BODY CONTENT - SCROLLS INDEPENDENTLY */}
+        <main
+          data-lenis-prevent
+          className="flex-1 overflow-y-auto p-6 lg:p-8 max-w-[90rem] w-full mx-auto space-y-6"
+        >
           {/* TAB 1: DASHBOARD OVERVIEW (EXACT SCREENSHOT LAYOUT) */}
           {currentTab === 'dashboard' && (
             <div className="space-y-6">

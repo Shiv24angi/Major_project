@@ -157,3 +157,20 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* Custom subtle slim scrollbar for dashboard and fixed panels */
+[data-lenis-prevent]::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+[data-lenis-prevent]::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-lenis-prevent]::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+[data-lenis-prevent]::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
