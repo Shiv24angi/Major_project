@@ -17,6 +17,7 @@ import { navigateTo } from '../shared/preset-site-routing';
 import { addAnalysis, type AnalysisRecord, type AnalysisDocument } from '../services/analysisStorage';
 import { analyzeGithubRepo, convertAgent6PayloadToAnalysisRecord } from '../services/agent6Service';
 import { syncAnalysisToSupabase, uploadDocumentToSupabaseStorage } from '../services/supabaseService';
+import { fetchRelatedEcosystemProjects } from '../services/tavilyService';
 
 interface UploadedFileItem {
   id: string;
@@ -111,6 +112,19 @@ export default function ProjectInputPage() {
           projectName.trim(),
           projectDescription.trim()
         );
+
+        // Pre-fetch live Tavily research on GitHub, LinkedIn, and Web for the project
+        fetchRelatedEcosystemProjects(
+          liveRecord.title,
+          liveRecord.thesis || liveRecord.tagline,
+          liveRecord.codeDetails?.techStack
+        )
+          .then((items) => {
+            liveRecord.relatedProjects = items;
+            addAnalysis(liveRecord);
+          })
+          .catch((err) => console.warn('[Tavily] Background project research error:', err));
+
         syncAnalysisToSupabase(liveRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
 
         // Upload attached documents into project's dedicated folder in Supabase Storage
@@ -254,6 +268,7 @@ export default function ProjectInputPage() {
           rationale: 'Backs technical founders spinning out open-source projects into venture-backed businesses.',
         },
       ],
+      relatedProjects: [],
       chatHistory: [
         {
           id: 'c1',
@@ -263,6 +278,18 @@ export default function ProjectInputPage() {
         },
       ],
     };
+
+    // Pre-fetch live Tavily research for this project
+    fetchRelatedEcosystemProjects(
+      newRecord.title,
+      projectDescription.trim(),
+      ['TypeScript', 'Node.js', 'PostgreSQL', 'Docker']
+    )
+      .then((items) => {
+        newRecord.relatedProjects = items;
+        addAnalysis(newRecord);
+      })
+      .catch((err) => console.warn('[Tavily] Fallback research error:', err));
 
     syncAnalysisToSupabase(newRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
 

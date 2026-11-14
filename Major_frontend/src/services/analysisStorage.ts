@@ -1,4 +1,7 @@
+import type { RelatedProjectItem } from './tavilyService';
+
 export type AnalysisMode = 'startup' | 'project';
+
 export type RecommendationVerdict = 'INVEST' | 'MAYBE' | 'MONITOR' | 'PASS';
 export type ConfidenceLevel = 'High' | 'Moderate' | 'Low';
 export type DocumentStatus = 'uploaded' | 'processing' | 'indexed' | 'failed';
@@ -151,6 +154,7 @@ export interface AnalysisRecord {
   };
   agent6Data?: any;
   fundingMatches: FundingOpportunity[];
+  relatedProjects?: RelatedProjectItem[];
   chatHistory: ChatMessage[];
   researchData?: ExternalResearchData;
 }
@@ -1202,3 +1206,11 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   };
 }
 
+export function updateAnalysisRelatedProjects(analysisId: string, projects: RelatedProjectItem[]): void {
+  const analyses = getStoredAnalyses();
+  const target = analyses.find((a) => a.id === analysisId);
+  if (target) {
+    target.relatedProjects = projects;
+    saveAnalyses(analyses);
+  }
+}

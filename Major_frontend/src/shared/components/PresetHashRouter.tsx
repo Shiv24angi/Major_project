@@ -10,6 +10,16 @@ export function PresetHashRouter({ routes }: { routes: Record<string, ReactNode>
   const activeKey = routes[route] !== undefined ? route : '';
   const content = routes[activeKey] || routes[''];
 
+  const isFixedLayout = [
+    'dashboard',
+    'my-analyses',
+    'documents',
+    'reports',
+    'login',
+    'signup',
+    'auth',
+  ].includes(activeKey);
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -18,7 +28,7 @@ export function PresetHashRouter({ routes }: { routes: Record<string, ReactNode>
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full min-h-screen"
+        className={`w-full ${isFixedLayout ? 'h-screen overflow-hidden' : 'min-h-screen'}`}
       >
         {content}
       </motion.div>
