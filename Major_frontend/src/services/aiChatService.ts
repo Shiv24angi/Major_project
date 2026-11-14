@@ -9,7 +9,7 @@ import type { AnalysisRecord, ChatMessage } from './analysisStorage';
 import type { Agent1EvaluationRecord } from './supabaseService';
 import { AGENT6_API_BASE } from './agent6Service';
 
-const RAW_GEMINI_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+const RAW_GEMINI_KEY = (import.meta.env.GEMINI_API_KEY as string) || '';
 
 export function isGeminiKeyValid(key?: string): boolean {
   if (!key) return false;
@@ -19,7 +19,7 @@ export function isGeminiKeyValid(key?: string): boolean {
 }
 
 const FALLBACK_MODELS = [
-  (import.meta.env.VITE_GEMINI_MODEL as string) || 'gemini-2.5-flash',
+  (import.meta.env.GEMINI_MODEL as string) || 'gemini-2.5-flash',
   'gemini-3.5-flash',
   'gemini-flash-latest',
 ];
@@ -382,11 +382,11 @@ function buildSessionDiligencePrompt(
   const contradictionsText =
     contradictions.length > 0
       ? contradictions
-          .map(
-            (c: any) =>
-              `  - Claim 1 (${c.source_1}): "${c.claim_1}" vs Claim 2 (${c.source_2}): "${c.claim_2}" (${c.explanation || ''})`
-          )
-          .join('\n')
+        .map(
+          (c: any) =>
+            `  - Claim 1 (${c.source_1}): "${c.claim_1}" vs Claim 2 (${c.source_2}): "${c.claim_2}" (${c.explanation || ''})`
+        )
+        .join('\n')
       : '  No conflicting claims found across documents.';
 
   const historyText = (history || [])
@@ -542,7 +542,7 @@ export function synthesizeRepositoryResponse(
       `${supportedList}\n\n` +
       (inferredFindings.length > 0
         ? `**Unverified / Inferred Claims Requiring Testing:**\n` +
-          inferredFindings.slice(0, 3).map((f) => `• ${f.claim} *(External validation recommended)*`).join('\n')
+        inferredFindings.slice(0, 3).map((f) => `• ${f.claim} *(External validation recommended)*`).join('\n')
         : 'All core architectural claims were verified directly in the code files.');
   }
   // 4. Strengths & Quality
@@ -620,7 +620,7 @@ export function synthesizeRepositoryResponse(
 
   // Append informative note if Google API key is missing or invalid format
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key (\`AIzaSy...\`) to \`Major_frontend/.env\` as \`VITE_GEMINI_API_KEY\`.*`;
+    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key (\`AIzaSy...\`) to \`Major_frontend/.env\` as \`GEMINI_API_KEY\`.*`;
   }
 
   return body;
