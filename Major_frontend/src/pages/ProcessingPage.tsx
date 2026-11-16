@@ -154,9 +154,17 @@ export default function ProcessingPage() {
           }
         } else {
           // Startup mode: verify Agent 1 evaluation exists in Supabase
-          const existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
+          let existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
+          // Wait up to 6 seconds if background document processing is active
+          for (let poll = 0; poll < 5 && !existingA1; poll++) {
+            await new Promise((r) => setTimeout(r, 1200));
+            if (isCancelled) return;
+            existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
+          }
+
           const companyTitle = analysis?.title || targetTitle || 'Startup Evaluation';
           if (!existingA1) {
+            const ind = analysis?.industry || 'Technology';
             await saveAgent1Evaluation({
               id: `a1_eval_${analysisId}`,
               analysis_id: analysisId,
@@ -166,18 +174,14 @@ export default function ProcessingPage() {
               document_analyses: [
                 {
                   startup_name: companyTitle,
-                  industry: analysis?.industry || 'Technology',
-                  financials: { arr: '$1.8M', mrr: '$150k', burn_rate: '$70k', runway: '18 months' },
-                  market_size: { tam: '$15B', sam: '$3.5B', som: '$750M' },
+                  industry: ind,
                 },
               ],
               merged_analysis: {
                 startup_name: companyTitle,
-                description: analysis?.thesis || `${companyTitle} diligence analysis.`,
-                industry: analysis?.industry || 'Technology',
-                financials: { arr: '$1.8M', mrr: '$150k', burn_rate: '$70k', runway: '18 months' },
-                market_size: { tam: '$15B', sam: '$3.5B', som: '$750M' },
-                founders: [{ name: 'Founding Team', role: 'Executive Leadership' }],
+                description: analysis?.thesis || `${companyTitle} ${ind} venture evaluation.`,
+                industry: ind,
+                founders: [{ name: `${companyTitle} Leadership`, role: 'Founders' }],
               },
               contradictions: [],
               validation_errors: [],

@@ -701,6 +701,34 @@ export function addAnalysis(record: AnalysisRecord): void {
   setActiveAnalysisId(record.id);
 }
 
+export function updateAnalysisRecord(
+  analysisId: string,
+  patch: Partial<AnalysisRecord>
+): AnalysisRecord | null {
+  const analyses = getStoredAnalyses();
+  const index = analyses.findIndex((a) => a.id === analysisId);
+  if (index >= 0) {
+    const existing = analyses[index];
+    const updatedRecord: AnalysisRecord = {
+      ...existing,
+      ...patch,
+      scores: patch.scores ? { ...existing.scores, ...patch.scores } : existing.scores,
+      keyInsights: patch.keyInsights
+        ? { ...existing.keyInsights, ...patch.keyInsights }
+        : existing.keyInsights,
+      dueDiligenceQuestions:
+        patch.dueDiligenceQuestions && patch.dueDiligenceQuestions.length > 0
+          ? patch.dueDiligenceQuestions
+          : existing.dueDiligenceQuestions,
+    };
+    const updatedList = [...analyses];
+    updatedList[index] = updatedRecord;
+    saveAnalyses(updatedList);
+    return updatedRecord;
+  }
+  return null;
+}
+
 export function updateAnalysisChat(analysisId: string, message: ChatMessage): void {
   const analyses = getStoredAnalyses();
   const target = analyses.find((a) => a.id === analysisId);

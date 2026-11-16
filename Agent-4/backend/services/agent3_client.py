@@ -85,27 +85,33 @@ async def fetch_upstream_data(analysis_id: str) -> Tuple[Dict[str, Any], Dict[st
                     rows = resp.json()
                     if rows:
                         row = rows[0]
+                        sp = row.get("startup_profile") if isinstance(row.get("startup_profile"), dict) else {}
+                        fi = row.get("financial_information") if isinstance(row.get("financial_information"), dict) else {}
+                        ti = row.get("technical_information") if isinstance(row.get("technical_information"), dict) else {}
+                        team_i = row.get("team_information") if isinstance(row.get("team_information"), dict) else {}
+                        mi = row.get("market_information") if isinstance(row.get("market_information"), dict) else {}
+
                         normalized_data = {
                             "startup_profile": {
-                                "canonical_name": row.get("canonical_name"),
-                                "primary_industry": row.get("industry"),
+                                "canonical_name": sp.get("canonical_name") or row.get("canonical_name"),
+                                "primary_industry": sp.get("primary_industry") or row.get("primary_industry") or row.get("industry") or "Technology",
                             },
                             "financial_information": {
-                                "annual_recurring_revenue": row.get("annual_recurring_revenue"),
-                                "runway_months": row.get("runway_months"),
-                                "ltv_cac_ratio": row.get("ltv_cac_ratio"),
+                                "annual_recurring_revenue": fi.get("annual_recurring_revenue") if fi.get("annual_recurring_revenue") is not None else row.get("annual_recurring_revenue"),
+                                "runway_months": fi.get("runway_months") if fi.get("runway_months") is not None else row.get("runway_months"),
+                                "ltv_cac_ratio": fi.get("ltv_cac_ratio") if fi.get("ltv_cac_ratio") is not None else row.get("ltv_cac_ratio"),
                             },
                             "technical_information": {
-                                "code_maturity_rating": row.get("code_maturity_rating", "moderate"),
-                                "tech_stack_standardized": row.get("tech_stack", []),
+                                "code_maturity_rating": ti.get("code_maturity_rating") or row.get("code_maturity_rating", "moderate"),
+                                "tech_stack_standardized": ti.get("tech_stack_standardized") or row.get("tech_stack", []),
                             },
                             "team_information": {
-                                "founders": row.get("founders", []),
-                                "technical_founder_present": row.get("technical_founder_present", True),
+                                "founders": team_i.get("founders") or row.get("founders", []),
+                                "technical_founder_present": team_i.get("technical_founder_present") if team_i.get("technical_founder_present") is not None else row.get("technical_founder_present", True),
                             },
                             "market_information": {
-                                "tam_usd": row.get("tam_usd"),
-                                "cagr_percentage": row.get("cagr_percentage"),
+                                "tam_usd": mi.get("tam_usd") if mi.get("tam_usd") is not None else row.get("tam_usd"),
+                                "cagr_percentage": mi.get("cagr_percentage") if mi.get("cagr_percentage") is not None else row.get("cagr_percentage"),
                             },
                             "conflicts": row.get("conflicts", []),
                         }

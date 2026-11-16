@@ -73,7 +73,7 @@ import Agent1DiligenceView from '../components/Agent1DiligenceView';
 import { checkAgent1Health } from '../services/agent1Service';
 import { checkAgent2Health } from '../services/agent2Service';
 import { checkAgent3Health } from '../services/agent3Service';
-import { checkAgent4Health } from '../services/agent4Service';
+import { checkAgent4Health, getAgent4Recommendations } from '../services/agent4Service';
 import {
   uploadDocumentToSupabaseStorage,
   getAgent1EvaluationByAnalysisId,
@@ -302,6 +302,34 @@ export default function DashboardPage() {
     getAgent1EvaluationByAnalysisId(activeAnalysis.id).then((res) => {
       setAgent1Eval(res);
     });
+  }, [activeAnalysis?.id]);
+
+  // Sync Agent 4 recommendations and due diligence questions whenever active venture changes
+  useEffect(() => {
+    if (!activeAnalysis?.id) return;
+    let isMounted = true;
+    getAgent4Recommendations(activeAnalysis.id).then((rec) => {
+      if (!isMounted || !rec) return;
+      setActiveAnalysis((prev) => {
+        if (!prev || prev.id !== activeAnalysis.id) return prev;
+        return {
+          ...prev,
+          thesis: rec.investment_thesis || prev.thesis,
+          recommendation: (rec.recommendation as any) || prev.recommendation,
+          confidence: (rec.confidence as any) || prev.confidence,
+          overallScore: rec.overall_score || prev.overallScore,
+          scores: rec.dimension_scores ? { ...prev.scores, ...rec.dimension_scores } : prev.scores,
+          dueDiligenceQuestions:
+            rec.due_diligence_questions && rec.due_diligence_questions.length > 0
+              ? rec.due_diligence_questions
+              : prev.dueDiligenceQuestions,
+          keyInsights: rec.key_insights || prev.keyInsights,
+        };
+      });
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [activeAnalysis?.id]);
 
   // Sync documents from Supabase documents table whenever active venture changes
