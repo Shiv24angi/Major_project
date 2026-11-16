@@ -19,6 +19,7 @@ import { getAnalysisById, setActiveAnalysisId } from '../services/analysisStorag
 import { analyzeGithubRepo } from '../services/agent6Service';
 import { fetchAndNormalize } from '../services/agent2Service';
 import { evaluateStartup } from '../services/agent3Service';
+import { generateInsightsAndRecommendations } from '../services/agent4Service';
 import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation } from '../services/supabaseService';
 
 interface PipelineStep {
@@ -207,11 +208,17 @@ export default function ProcessingPage() {
         await new Promise((r) => setTimeout(r, 1400));
         if (isCancelled) return;
 
-        // Step 4: Insight & Recommendation Generation
+        // Step 4: Insight & Recommendation Generation (Agent 4)
         if (steps.length > 3) {
           setCurrentStepIndex(3);
           setStatusMessage(steps[3].statusText);
-          await new Promise((r) => setTimeout(r, 1200));
+
+          // Triggers Agent 4 Insight & Recommendation Generator
+          await generateInsightsAndRecommendations(analysisId, targetTitle).catch((e) =>
+            console.warn('Agent 4 recommendation error:', e)
+          );
+
+          await new Promise((r) => setTimeout(r, 1400));
           if (isCancelled) return;
         }
 
