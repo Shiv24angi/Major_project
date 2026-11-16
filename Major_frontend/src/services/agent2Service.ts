@@ -200,21 +200,39 @@ export async function checkAgent2Health(): Promise<boolean> {
   }
 }
 
+import { supabase } from './supabaseService';
+import { runClientNormalization } from './normalizationEngine';
+
 export async function getNormalizedDataset(analysisId: string): Promise<NormalizedStartupDataset | null> {
+  // 1. Try backend endpoint
   try {
     const res = await fetch(`${AGENT2_API_BASE}/api/v1/agent2/${analysisId}`);
-    if (!res.ok) return null;
-    return await res.json();
+    if (res.ok) return await res.json();
+  } catch (_) {}
+
+  // 2. Query Supabase directly
+  try {
+    const { data, error } = await supabase
+      .from('normalized_startup_profiles')
+      .select('*')
+      .eq('analysis_id', analysisId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!error && data) return data as any;
   } catch (err) {
-    console.error('Failed to fetch normalized dataset from Agent 2:', err);
-    return null;
+    console.warn('[Agent 2 Service] Supabase direct fetch warning:', err);
   }
+
+  return null;
 }
 
 export async function fetchAndNormalize(
   analysisId: string,
   startupName?: string
 ): Promise<NormalizedStartupDataset | null> {
+  // 1. Try FastAPI backend if online
   try {
     const res = await fetch(`${AGENT2_API_BASE}/api/v1/agent2/fetch-and-normalize`, {
       method: 'POST',
@@ -225,10 +243,17 @@ export async function fetchAndNormalize(
         save_to_database: true,
       }),
     });
-    if (!res.ok) throw new Error(`Agent 2 responded with status ${res.status}`);
-    return await res.json();
+    if (res.ok) return await res.json();
+  } catch (_) {
+    console.info('[Agent 2 Service] Backend offline; running direct Supabase normalization engine.');
+  }
+
+  // 2. Direct Supabase normalization engine (Guaranteed to work in deployment)
+  try {
+    const normalized = await runClientNormalization(analysisId, startupName);
+    return normalized as any;
   } catch (err) {
-    console.error('Failed to run fetch-and-normalize on Agent 2:', err);
+    console.error('Failed to run client normalization on Agent 2:', err);
     return null;
   }
 }

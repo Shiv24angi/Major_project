@@ -18,6 +18,7 @@ import Footer from '../components/Footer';
 import { navigateTo } from '../shared/preset-site-routing';
 import { addAnalysis, type AnalysisRecord, type AnalysisDocument } from '../services/analysisStorage';
 import { uploadDocumentToSupabaseStorage, syncAnalysisToSupabase } from '../services/supabaseService';
+import { analyzeDocumentsWithAgent1 } from '../services/agent1Service';
 
 interface UploadedFileItem {
   id: string;
@@ -281,6 +282,21 @@ export default function StartupInputPage() {
 
     // Persist analysis to Supabase analyses table
     syncAnalysisToSupabase(newRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
+
+    // Dispatch files to Agent 1 document intelligence & pipeline
+    const allFilesToAnalyze: File[] = [];
+    if (pitchDeck) allFilesToAnalyze.push(pitchDeck);
+    files.forEach((item) => {
+      if (item.fileObj && item.category !== 'Pitch Deck (Primary)') {
+        allFilesToAnalyze.push(item.fileObj);
+      }
+    });
+
+    if (allFilesToAnalyze.length > 0) {
+      analyzeDocumentsWithAgent1(allFilesToAnalyze, analysisId, startupName).catch((err) =>
+        console.warn('[StartupInputPage] Agent 1 pipeline dispatch warning:', err)
+      );
+    }
 
     addAnalysis(newRecord);
     navigateTo('processing', { id: analysisId, mode: 'startup' });
