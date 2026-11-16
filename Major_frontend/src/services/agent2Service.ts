@@ -191,12 +191,29 @@ export interface NormalizedStartupDataset {
   schema_version: string;
 }
 
-export async function checkAgent2Health(): Promise<boolean> {
+export interface Agent2HealthResponse {
+  online: boolean;
+  message?: string;
+}
+
+export async function checkAgent2Health(): Promise<Agent2HealthResponse> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3500);
+
   try {
-    const res = await fetch(`${AGENT2_API_BASE}/health`, { method: 'GET' });
-    return res.ok;
-  } catch {
-    return false;
+    const res = await fetch(`${AGENT2_API_BASE}/health`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      return { online: false, message: `Status ${res.status}` };
+    }
+    const data = await res.json();
+    return { online: true, message: data.status || 'online' };
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    return { online: false, message: err?.message || 'Offline' };
   }
 }
 

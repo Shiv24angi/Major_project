@@ -71,6 +71,8 @@ import Agent6DiligenceView from '../components/Agent6DiligenceView';
 import { checkAgent6Health } from '../services/agent6Service';
 import Agent1DiligenceView from '../components/Agent1DiligenceView';
 import { checkAgent1Health } from '../services/agent1Service';
+import { checkAgent2Health } from '../services/agent2Service';
+import { checkAgent3Health } from '../services/agent3Service';
 import {
   uploadDocumentToSupabaseStorage,
   getAgent1EvaluationByAnalysisId,
@@ -138,9 +140,10 @@ export default function DashboardPage() {
     | 'reports'
   >('dashboard');
 
-  // Agent 1 & Agent 6 backend connectivity status
+  // Agent backend connectivity status
   const [agent1Online, setAgent1Online] = useState(false);
   const [agent6Online, setAgent6Online] = useState(false);
+  const [agent3Online, setAgent3Online] = useState(false);
   const [researchOnline, setResearchOnline] = useState(false);
   const [isRefreshingResearch, setIsRefreshingResearch] = useState(false);
 
@@ -256,13 +259,15 @@ export default function DashboardPage() {
       }
     }).catch((err) => console.warn('[DashboardPage] Supabase fetch warning:', err));
 
-    // Initial check and periodic polling of Agent 1 (port 8001), Agent 6 (port 8000), and Agent-Research (port 8002)
+    // Initial check and periodic polling of Agent 1 (8001), Agent 6 (8000), Agent 3 (8004), Agent-Research (8002)
     checkAgent1Health().then((res) => setAgent1Online(res.online));
     checkAgent6Health().then((res) => setAgent6Online(res.online));
+    checkAgent3Health().then((res) => setAgent3Online(res.online));
     checkResearchHealth().then((res) => setResearchOnline(res.online));
     const healthInterval = setInterval(() => {
       checkAgent1Health().then((res) => setAgent1Online(res.online));
       checkAgent6Health().then((res) => setAgent6Online(res.online));
+      checkAgent3Health().then((res) => setAgent3Online(res.online));
       checkResearchHealth().then((res) => setResearchOnline(res.online));
     }, 8000);
 
@@ -723,6 +728,31 @@ export default function DashboardPage() {
               </span>
               <span className="sm:hidden font-bold">A6</span>
             </button>
+
+            {/* Agent 3 Scoring Engine Status Indicator */}
+            <div
+              title="Agent 3 Multi-Dimensional Scoring Engine Status (Port 8004)"
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                agent3Online
+                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
+                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]'
+              }`}
+            >
+              <span className="relative flex h-2 w-2">
+                {agent3Online && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    agent3Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
+                  }`}
+                />
+              </span>
+              <span className="hidden sm:inline">
+                Agent 3: <strong className="font-bold">{agent3Online ? 'Online (8004)' : 'Standby'}</strong>
+              </span>
+              <span className="sm:hidden font-bold">A3</span>
+            </div>
 
             {/* Notification Bell */}
             <button

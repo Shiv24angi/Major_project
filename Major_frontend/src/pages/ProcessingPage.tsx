@@ -18,6 +18,7 @@ import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
 import { getAnalysisById, setActiveAnalysisId } from '../services/analysisStorage';
 import { analyzeGithubRepo } from '../services/agent6Service';
 import { fetchAndNormalize } from '../services/agent2Service';
+import { evaluateStartup } from '../services/agent3Service';
 import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation } from '../services/supabaseService';
 
 interface PipelineStep {
@@ -196,10 +197,15 @@ export default function ProcessingPage() {
         if (isCancelled) return;
         await new Promise((r) => setTimeout(r, 1500));
 
-        // Step 3: Analytical Scoring & Calibration
+        // Step 3: Analytical Scoring & Calibration (Agent 3)
         setCurrentStepIndex(2);
         setStatusMessage(steps[2].statusText);
-        await new Promise((r) => setTimeout(r, 1200));
+
+        // Triggers Agent 3 Scoring Engine (computes 6 dimensions and persists to Supabase)
+        await evaluateStartup(analysisId, targetTitle);
+
+        if (isCancelled) return;
+        await new Promise((r) => setTimeout(r, 1400));
 
         // Step 4: Insight & Recommendation Generation
         if (steps.length > 3) {
