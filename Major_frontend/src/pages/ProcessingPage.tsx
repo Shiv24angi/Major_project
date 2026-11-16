@@ -30,6 +30,94 @@ interface PipelineStep {
   statusText: string;
 }
 
+// Stable Mode A Pipeline Steps (Agents 1 - 5)
+const MODE_A_STEPS: PipelineStep[] = [
+  {
+    id: 'step_1',
+    agentLabel: 'Agent 1',
+    title: 'Document Analysis Agent',
+    description: 'Ingesting pitch deck, financial tables, and extracting structured claims & evidence.',
+    icon: FileText,
+    statusText: 'Parsing documents and chunking text...',
+  },
+  {
+    id: 'step_2',
+    agentLabel: 'Agent 2',
+    title: 'Data Extraction & Normalization',
+    description: 'Validating data completeness, deduplicating records, and standardizing schemas.',
+    icon: Binary,
+    statusText: 'Normalizing schemas and validating consistency...',
+  },
+  {
+    id: 'step_3',
+    agentLabel: 'Agent 3',
+    title: 'Analytical Scoring Engine',
+    description: 'Evaluating 6 calibrated dimensions: Market, Product, Team, Financial, Traction, and Risk.',
+    icon: BarChart3,
+    statusText: 'Calculating multi-dimensional scores across 6 criteria...',
+  },
+  {
+    id: 'step_4',
+    agentLabel: 'Agent 4',
+    title: 'Insight & Recommendation Generator',
+    description: 'Formulating the investment thesis, identifying strengths, risks, and verdict (INVEST / MONITOR / PASS).',
+    icon: Compass,
+    statusText: 'Generating investment thesis and governance risks...',
+  },
+  {
+    id: 'step_5',
+    agentLabel: 'Agent 5',
+    title: 'Report Generator',
+    description: 'Assembling institutional diligence memo, presentation deck, and data models.',
+    icon: FileDown,
+    statusText: 'Generating diligence memo and export deliverables...',
+  },
+];
+
+// Stable Mode B Pipeline Steps (Agent 6 — Project -> Startup)
+const MODE_B_STEPS: PipelineStep[] = [
+  {
+    id: 'step_1',
+    agentLabel: 'Agent 6 — Stage 1',
+    title: 'Repository Parsing',
+    description: 'Cloning tree, parsing dependencies, README files, and repository metadata.',
+    icon: GitBranch,
+    statusText: 'Parsing repository structure and manifest files...',
+  },
+  {
+    id: 'step_2',
+    agentLabel: 'Agent 6 — Stage 2',
+    title: 'Codebase Analysis',
+    description: 'Analyzing system design, database schemas, and architectural components.',
+    icon: Code2,
+    statusText: 'Executing code RAG and evaluating technical architecture...',
+  },
+  {
+    id: 'step_3',
+    agentLabel: 'Agent 6 — Stage 3',
+    title: 'Technical Assessment',
+    description: 'Validating code quality, scalability limits, security posture, and test coverage.',
+    icon: ShieldCheck,
+    statusText: 'Extracting supported technical claims and evidence...',
+  },
+  {
+    id: 'step_4',
+    agentLabel: 'Agent 6 → Agent 2',
+    title: 'Startup Potential & Normalization',
+    description: 'Synthesizing technical findings into normalized startup schema for downstream scoring.',
+    icon: Binary,
+    statusText: 'Piping technical claims into Agent 2 normalization bridge...',
+  },
+  {
+    id: 'step_5',
+    agentLabel: 'Agent 5',
+    title: 'Report Generation',
+    description: 'Compiling Code Diligence Memo and commercialization roadmap.',
+    icon: FileDown,
+    statusText: 'Compiling technical diligence and venture viability reports...',
+  },
+];
+
 export default function ProcessingPage() {
   const params = getRouteParams();
   const analysisId = params.id;
@@ -41,96 +129,7 @@ export default function ProcessingPage() {
 
   const analysis = analysisId ? getAnalysisById(analysisId) : undefined;
   const targetTitle = analysis ? analysis.title : mode === 'startup' ? 'Startup Opportunity' : 'Software Project';
-
-  // Mode A Pipeline Steps (Agents 1 - 5)
-  const modeASteps: PipelineStep[] = [
-    {
-      id: 'step_1',
-      agentLabel: 'Agent 1',
-      title: 'Document Analysis Agent',
-      description: 'Ingesting pitch deck, financial tables, and extracting structured claims & evidence.',
-      icon: FileText,
-      statusText: 'Parsing documents and chunking text...',
-    },
-    {
-      id: 'step_2',
-      agentLabel: 'Agent 2',
-      title: 'Data Extraction & Normalization',
-      description: 'Validating data completeness, deduplicating records, and standardizing schemas.',
-      icon: Binary,
-      statusText: 'Normalizing schemas and validating consistency...',
-    },
-    {
-      id: 'step_3',
-      agentLabel: 'Agent 3',
-      title: 'Analytical Scoring Engine',
-      description: 'Evaluating 6 calibrated dimensions: Market, Product, Team, Financial, Traction, and Risk.',
-      icon: BarChart3,
-      statusText: 'Calculating multi-dimensional scores across 6 criteria...',
-    },
-    {
-      id: 'step_4',
-      agentLabel: 'Agent 4',
-      title: 'Insight & Recommendation Generator',
-      description: 'Formulating the investment thesis, identifying strengths, risks, and verdict (INVEST / MONITOR / PASS).',
-      icon: Compass,
-      statusText: 'Generating investment thesis and governance risks...',
-    },
-    {
-      id: 'step_5',
-      agentLabel: 'Agent 5',
-      title: 'Report Generator',
-      description: 'Assembling institutional diligence memo, presentation deck, and data models.',
-      icon: FileDown,
-      statusText: 'Generating diligence memo and export deliverables...',
-    },
-  ];
-
-  // Mode B Pipeline Steps (Agent 6 — Project -> Startup)
-  const modeBSteps: PipelineStep[] = [
-    {
-      id: 'step_1',
-      agentLabel: 'Agent 6 — Stage 1',
-      title: 'Repository Parsing',
-      description: 'Cloning tree, parsing dependencies, README files, and repository metadata.',
-      icon: GitBranch,
-      statusText: 'Parsing repository structure and manifest files...',
-    },
-    {
-      id: 'step_2',
-      agentLabel: 'Agent 6 — Stage 2',
-      title: 'Codebase Analysis',
-      description: 'Analyzing system design, database schemas, and architectural components.',
-      icon: Code2,
-      statusText: 'Executing code RAG and evaluating technical architecture...',
-    },
-    {
-      id: 'step_3',
-      agentLabel: 'Agent 6 — Stage 3',
-      title: 'Technical Assessment',
-      description: 'Validating code quality, scalability limits, security posture, and test coverage.',
-      icon: ShieldCheck,
-      statusText: 'Extracting supported technical claims and evidence...',
-    },
-    {
-      id: 'step_4',
-      agentLabel: 'Agent 6 → Agent 2',
-      title: 'Startup Potential & Normalization',
-      description: 'Synthesizing technical findings into normalized startup schema for downstream scoring.',
-      icon: Binary,
-      statusText: 'Piping technical claims into Agent 2 normalization bridge...',
-    },
-    {
-      id: 'step_5',
-      agentLabel: 'Agent 5',
-      title: 'Report Generation',
-      description: 'Compiling Code Diligence Memo and commercialization roadmap.',
-      icon: FileDown,
-      statusText: 'Compiling technical diligence and venture viability reports...',
-    },
-  ];
-
-  const steps = mode === 'project' ? modeBSteps : modeASteps;
+  const steps = mode === 'project' ? MODE_B_STEPS : MODE_A_STEPS;
 
   useEffect(() => {
     let isCancelled = false;
@@ -150,68 +149,70 @@ export default function ProcessingPage() {
           // Verify or trigger Agent 6 GitHub diligence
           const repoUrl = analysis?.codeDetails?.githubUrl || analysis?.website;
           if (repoUrl) {
-            await analyzeGithubRepo(repoUrl, analysisId);
+            await analyzeGithubRepo(repoUrl, analysisId).catch((e) => console.warn('Agent 6 diligence error:', e));
           }
         } else {
           // Startup mode: verify Agent 1 evaluation exists in Supabase
           const existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
-          if (!existingA1 && analysis?.title) {
+          const companyTitle = analysis?.title || targetTitle || 'Startup Evaluation';
+          if (!existingA1) {
             await saveAgent1Evaluation({
               id: `a1_eval_${analysisId}`,
               analysis_id: analysisId,
-              company_name: analysis.title,
+              company_name: companyTitle,
               status: 'completed',
               uploaded_files: [],
               document_analyses: [
                 {
-                  startup_name: analysis.title,
-                  industry: analysis.industry || 'Technology',
+                  startup_name: companyTitle,
+                  industry: analysis?.industry || 'Technology',
                   financials: { arr: '$1.8M', mrr: '$150k', burn_rate: '$70k', runway: '18 months' },
                   market_size: { tam: '$15B', sam: '$3.5B', som: '$750M' },
                 },
               ],
               merged_analysis: {
-                startup_name: analysis.title,
-                description: analysis.thesis || `${analysis.title} diligence analysis.`,
-                industry: analysis.industry || 'Technology',
+                startup_name: companyTitle,
+                description: analysis?.thesis || `${companyTitle} diligence analysis.`,
+                industry: analysis?.industry || 'Technology',
                 financials: { arr: '$1.8M', mrr: '$150k', burn_rate: '$70k', runway: '18 months' },
                 market_size: { tam: '$15B', sam: '$3.5B', som: '$750M' },
                 founders: [{ name: 'Founding Team', role: 'Executive Leadership' }],
               },
               contradictions: [],
               validation_errors: [],
-            });
+            }).catch((e) => console.warn('Agent 1 save warning:', e));
           }
         }
 
-        if (isCancelled) return;
         await new Promise((r) => setTimeout(r, 1400));
+        if (isCancelled) return;
 
         // Step 2: Agent 2 Data Harmonization & Normalization
         setCurrentStepIndex(1);
         setStatusMessage(steps[1].statusText);
 
         // Triggers Agent 2 Normalization, which writes to public.normalized_startup_profiles
-        await fetchAndNormalize(analysisId, targetTitle);
+        await fetchAndNormalize(analysisId, targetTitle).catch((e) => console.warn('Agent 2 normalization error:', e));
 
-        if (isCancelled) return;
         await new Promise((r) => setTimeout(r, 1500));
+        if (isCancelled) return;
 
         // Step 3: Analytical Scoring & Calibration (Agent 3)
         setCurrentStepIndex(2);
         setStatusMessage(steps[2].statusText);
 
         // Triggers Agent 3 Scoring Engine (computes 6 dimensions and persists to Supabase)
-        await evaluateStartup(analysisId, targetTitle);
+        await evaluateStartup(analysisId, targetTitle).catch((e) => console.warn('Agent 3 scoring error:', e));
 
-        if (isCancelled) return;
         await new Promise((r) => setTimeout(r, 1400));
+        if (isCancelled) return;
 
         // Step 4: Insight & Recommendation Generation
         if (steps.length > 3) {
           setCurrentStepIndex(3);
           setStatusMessage(steps[3].statusText);
           await new Promise((r) => setTimeout(r, 1200));
+          if (isCancelled) return;
         }
 
         // Final Step: Complete
@@ -229,7 +230,7 @@ export default function ProcessingPage() {
     return () => {
       isCancelled = true;
     };
-  }, [analysisId, mode, steps]);
+  }, [analysisId, mode]);
 
   const handleViewAnalysis = () => {
     if (analysisId) {
