@@ -1,0 +1,169 @@
+{
+  "id": "norm_d64b02ece6db",
+  "analysis_id": "eval_ecoverse_01",
+  "startup_id": null,
+  "normalization_status": "completed",
+  "overall_confidence_score": 0.7,
+  "startup_profile": {
+    "canonical_name": "EcoVerse",
+    "legal_name": null,
+    "aliases": [],
+    "tagline": null,
+    "description": "EcoVerse technology platform",
+    "primary_industry": "Technology",
+    "sub_sectors": [
+      "Technology"
+    ],
+    "stage": "Seed",
+    "headquarters": null,
+    "founded_year": null,
+    "website": null,
+    "github_url": "https://github.com/Shiv24angi/EcoVerse"
+  },
+  "business_information": {
+    "business_model": "B2B SaaS / Enterprise Subscription",
+    "monetization_structure": [
+      "B2B SaaS / Enterprise Subscription"
+    ],
+    "target_customer_segments": [],
+    "pricing_strategy": null,
+    "sales_motion": null,
+    "competitors": [],
+    "key_differentiators": [],
+    "risk_factors": []
+  },
+  "financial_information": {
+    "currency": "USD",
+    "annual_recurring_revenue": null,
+    "monthly_recurring_revenue": null,
+    "total_capital_raised": null,
+    "last_known_valuation": null,
+    "implied_arr_multiple": null,
+    "monthly_burn_rate": null,
+    "runway_months": null,
+    "gross_margin_percentage": null,
+    "annual_growth_rate_percentage": null,
+    "churn_rate_percentage": null,
+    "cac": null,
+    "ltv": null,
+    "ltv_cac_ratio": null,
+    "capital_efficiency_status": "unverified",
+    "investor_syndicate": [],
+    "raw_statements": {}
+  },
+  "team_information": {
+    "founders": [],
+    "team_size_estimate": 2,
+    "technical_founder_present": false,
+    "team_strengths": []
+  },
+  "traction_information": {
+    "customer_count_estimate": null,
+    "active_pilot_count": null,
+    "retention_health": null,
+    "qualitative_traction": [],
+    "public_metrics": {}
+  },
+  "market_information": {
+    "tam_usd": null,
+    "sam_usd": null,
+    "som_usd": null,
+    "cagr_percentage": null,
+    "market_drivers": [],
+    "market_headwinds": [],
+    "icp_profile": null,
+    "sizing_confidence": 0.85
+  },
+  "technical_information": {
+    "repository_full_name": "Shiv24angi/EcoVerse",
+    "tech_stack_standardized": [],
+    "architecture_pattern": null,
+    "code_maturity_rating": "moderate",
+    "supported_feature_claims": [
+      "Next.js architecture"
+    ],
+    "inferred_feature_claims": [],
+    "unsupported_or_unknown_claims": [],
+    "technical_strengths": [],
+    "technical_risks": [],
+    "files_audited_count": 4,
+    "agent6_verified": true
+  },
+  "project_information": {
+    "is_open_source": true,
+    "problem_statement": null,
+    "primary_solution": null,
+    "commercialization_readiness": "high",
+    "enterprise_gaps": []
+  },
+  "external_research": {},
+  "normalized_metrics": [],
+  "validation_results": [],
+  "duplicate_records": [],
+  "conflicts": [],
+  "missing_fields": [
+    {
+      "field": "team_information.founders",
+      "category": "team",
+      "importance": "critical",
+      "description": "No founder profiles or leadership team members detected.",
+      "downstream_impact": "Agent 3 Team Scoring sub-pillar will be heavily penalized."
+    },
+    {
+      "field": "financial_information.financial_metrics",
+      "category": "financials",
+      "importance": "important",
+      "description": "Core financial indicators (ARR, Burn, Runway) are absent.",
+      "downstream_impact": "Agent 3 Financial Runway & Capital Efficiency score will default to unverified baseline."
+    },
+    {
+      "field": "market_information.tam_usd",
+      "category": "market",
+      "importance": "important",
+      "description": "TAM market sizing estimate is missing.",
+      "downstream_impact": "Agent 3 Market Potential score will lack quantitative benchmark."
+    },
+    {
+      "field": "technical_information.tech_stack_standardized",
+      "category": "technical",
+      "importance": "important",
+      "description": "Standardized technology stack is empty.",
+      "downstream_impact": "Agent 3 Technical Feasibility & Scalability sub-pillar cannot be verified."
+    },
+    {
+      "field": "business_information.competitors",
+      "category": "business",
+      "importance": "optional",
+      "description": "Direct competitors list is empty.",
+      "downstream_impact": "Agent 3 Competitive Moat analysis will depend exclusively on market research models."
+    }
+  ],
+  "source_provenance": [
+    {
+      "field_path": "startup_profile.canonical_name",
+      "source_agent": "synthesized",
+      "document_or_url": null,
+      "location": null,
+      "evidence_snippet": "EcoVerse",
+      "confidence_score": 0.95,
+      "extraction_timestamp": "2026-11-16T10:24:36.230085+00:00"
+    },
+    {
+      "field_path": "business_information.business_model",
+      "source_agent": "synthesized",
+      "document_or_url": null,
+      "location": null,
+      "evidence_snippet": "B2B SaaS / Enterprise Subscription",
+      "confidence_score": 0.88,
+      "extraction_timestamp": "2026-11-16T10:24:36.230085+00:00"
+    }
+  ],
+  "metadata": {
+    "agent1_present": false,
+    "agent6_present": true,
+    "external_research_present": false,
+    "processed_at": "2026-11-16T10:24:26.199153+00:00"
+  },
+  "created_at": "2026-11-16T10:24:26.199153+00:00",
+  "schema_version": "1.0"
+}

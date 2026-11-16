@@ -1,5 +1,5 @@
 {
-  "id": "norm_b37fa33e1297",
+  "id": "norm_82953f26b64c",
   "analysis_id": "test_analysis_101",
   "startup_id": null,
   "normalization_status": "completed",
@@ -338,7 +338,7 @@
       "location": null,
       "evidence_snippet": "CloudMatrix AI",
       "confidence_score": 0.95,
-      "extraction_timestamp": "2026-11-14T11:36:46.006945+00:00"
+      "extraction_timestamp": "2026-11-16T10:22:20.671277+00:00"
     },
     {
       "field_path": "business_information.business_model",
@@ -347,7 +347,7 @@
       "location": null,
       "evidence_snippet": "B2B SaaS / Enterprise Subscription",
       "confidence_score": 0.88,
-      "extraction_timestamp": "2026-11-14T11:36:46.006945+00:00"
+      "extraction_timestamp": "2026-11-16T10:22:20.671836+00:00"
     },
     {
       "field_path": "financial_information.annual_recurring_revenue",
@@ -356,15 +356,15 @@
       "location": null,
       "evidence_snippet": "$2.4M",
       "confidence_score": 0.85,
-      "extraction_timestamp": "2026-11-14T11:36:46.006945+00:00"
+      "extraction_timestamp": "2026-11-16T10:22:20.672273+00:00"
     }
   ],
   "metadata": {
     "agent1_present": true,
     "agent6_present": true,
     "external_research_present": true,
-    "processed_at": "2026-11-14T11:36:46.006945+00:00"
+    "processed_at": "2026-11-16T10:22:20.671277+00:00"
   },
-  "created_at": "2026-11-14T11:36:46.006945+00:00",
+  "created_at": "2026-11-16T10:22:20.671277+00:00",
   "schema_version": "1.0"
 }

@@ -43,7 +43,7 @@ async def normalize_startup_data(request: NormalizationRequest) -> UnifiedStartu
 
 @router.post("/fetch-and-normalize", response_model=UnifiedStartupEvaluationDataset, summary="Auto-fetch and normalize")
 async def fetch_and_normalize(request: FetchAndNormalizeRequest) -> UnifiedStartupEvaluationDataset:
-    """Auto-fetches latest Agent 6 output and Supabase records for analysis_id, then runs normalization."""
+    """Auto-fetches latest Agent 1 and Agent 6 evals records from Supabase for analysis_id, then runs normalization."""
     norm_req = NormalizationRequest(
         analysis_id=request.analysis_id,
         startup_name=request.startup_name,
@@ -53,6 +53,48 @@ async def fetch_and_normalize(request: FetchAndNormalizeRequest) -> UnifiedStart
         return await normalization_service.normalize(norm_req)
     except Exception as e:
         logger.exception(f"Auto-fetch normalization failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sync/agent1/{analysis_id}", response_model=UnifiedStartupEvaluationDataset, summary="Sync Agent 1 Pitch Deck Evals")
+async def sync_agent1(analysis_id: str) -> UnifiedStartupEvaluationDataset:
+    """Fetch Agent 1 pitch deck evaluation from public.agent1_evaluations, normalize, and update normalized_startup_profiles."""
+    norm_req = NormalizationRequest(
+        analysis_id=analysis_id,
+        save_to_database=True,
+    )
+    try:
+        return await normalization_service.normalize(norm_req)
+    except Exception as e:
+        logger.exception(f"Agent 1 sync failed for {analysis_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sync/agent6/{analysis_id}", response_model=UnifiedStartupEvaluationDataset, summary="Sync Agent 6 Code Evals")
+async def sync_agent6(analysis_id: str) -> UnifiedStartupEvaluationDataset:
+    """Fetch Agent 6 repository diligence from public.agent6_evaluations, normalize, and update normalized_startup_profiles."""
+    norm_req = NormalizationRequest(
+        analysis_id=analysis_id,
+        save_to_database=True,
+    )
+    try:
+        return await normalization_service.normalize(norm_req)
+    except Exception as e:
+        logger.exception(f"Agent 6 sync failed for {analysis_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sync/all/{analysis_id}", response_model=UnifiedStartupEvaluationDataset, summary="Sync all upstream evaluations")
+async def sync_all_evaluations(analysis_id: str) -> UnifiedStartupEvaluationDataset:
+    """Fetch both Agent 1 and Agent 6 evaluations from Supabase, harmonize, and update normalized_startup_profiles."""
+    norm_req = NormalizationRequest(
+        analysis_id=analysis_id,
+        save_to_database=True,
+    )
+    try:
+        return await normalization_service.normalize(norm_req)
+    except Exception as e:
+        logger.exception(f"All evaluations sync failed for {analysis_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

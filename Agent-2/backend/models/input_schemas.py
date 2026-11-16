@@ -68,16 +68,20 @@ class Agent1Payload(BaseModel):
 # ==============================================================================
 
 class Agent6FindingInput(BaseModel):
-    category: str = Field(..., description="project | problem | technology | architecture | feature | technical")
-    claim: str
+    category: str = Field(default="feature", description="project | problem | technology | architecture | feature | technical")
+    claim: str = Field(default="")
     status: str = Field(default="supported", description="supported | inferred | unknown")
     evidence: List[str] = Field(default_factory=list)
+
+    model_config = {"extra": "ignore"}
 
 
 class Agent6RepositoryInput(BaseModel):
     owner: Optional[str] = None
     name: Optional[str] = None
     full_name: Optional[str] = None
+
+    model_config = {"extra": "ignore"}
 
 
 class Agent6RawAnalysisInput(BaseModel):
@@ -93,6 +97,8 @@ class Agent6RawAnalysisInput(BaseModel):
     technical_strengths: List[str] = Field(default_factory=list)
     technical_concerns: List[str] = Field(default_factory=list)
 
+    model_config = {"extra": "allow"}
+
 
 class Agent6Payload(BaseModel):
     version: Optional[str] = "1.0"
@@ -106,6 +112,8 @@ class Agent6Payload(BaseModel):
     findings: List[Agent6FindingInput] = Field(default_factory=list)
     raw_analysis: Optional[Agent6RawAnalysisInput] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    model_config = {"extra": "ignore"}
 
 
 # ==============================================================================

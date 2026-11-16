@@ -1,0 +1,181 @@
+{
+  "id": "norm_25dce055ba07",
+  "analysis_id": "eval_mynt_seed",
+  "startup_id": null,
+  "normalization_status": "completed",
+  "overall_confidence_score": 0.78,
+  "startup_profile": {
+    "canonical_name": "mynt",
+    "legal_name": null,
+    "aliases": [],
+    "tagline": "Reinventing paint market",
+    "description": "Reinventing paint market",
+    "primary_industry": "Paint, Home Decoration",
+    "sub_sectors": [
+      "Paint, Home Decoration"
+    ],
+    "stage": "Seed",
+    "headquarters": null,
+    "founded_year": null,
+    "website": null,
+    "github_url": "https://github.com/vanshaggarwal27/EN2H_assignment"
+  },
+  "business_information": {
+    "business_model": "B2B SaaS / Enterprise Subscription",
+    "monetization_structure": [
+      "B2B SaaS / Enterprise Subscription"
+    ],
+    "target_customer_segments": [],
+    "pricing_strategy": null,
+    "sales_motion": null,
+    "competitors": [],
+    "key_differentiators": [],
+    "risk_factors": []
+  },
+  "financial_information": {
+    "currency": "USD",
+    "annual_recurring_revenue": null,
+    "monthly_recurring_revenue": null,
+    "total_capital_raised": null,
+    "last_known_valuation": null,
+    "implied_arr_multiple": null,
+    "monthly_burn_rate": null,
+    "runway_months": null,
+    "gross_margin_percentage": null,
+    "annual_growth_rate_percentage": null,
+    "churn_rate_percentage": null,
+    "cac": null,
+    "ltv": null,
+    "ltv_cac_ratio": null,
+    "capital_efficiency_status": "unverified",
+    "investor_syndicate": [],
+    "raw_statements": {}
+  },
+  "team_information": {
+    "founders": [],
+    "team_size_estimate": 2,
+    "technical_founder_present": false,
+    "team_strengths": []
+  },
+  "traction_information": {
+    "customer_count_estimate": null,
+    "active_pilot_count": null,
+    "retention_health": null,
+    "qualitative_traction": [],
+    "public_metrics": {}
+  },
+  "market_information": {
+    "tam_usd": null,
+    "sam_usd": null,
+    "som_usd": null,
+    "cagr_percentage": null,
+    "market_drivers": [],
+    "market_headwinds": [],
+    "icp_profile": null,
+    "sizing_confidence": 0.85
+  },
+  "technical_information": {
+    "repository_full_name": "vanshaggarwal27/EN2H_assignment",
+    "tech_stack_standardized": [],
+    "architecture_pattern": null,
+    "code_maturity_rating": "high",
+    "supported_feature_claims": [
+      "The project is a RESTful Booking API platform named en2h-booking-api built for service management and service booking.",
+      "The project provides a backend solution allowing authenticated users to manage service listings while allowing public customers to create bookings with duplicate prevention.",
+      "The stack uses NestJS v11 framework, Prisma v7.8.0 ORM with PostgreSQL using the @prisma/adapter-pg driver adapter, Passport JWT, class-validator, and Docker.",
+      "The application follows NestJS modular architecture, organizing business logic into core modules including PrismaModule, AuthModule, ServicesModule, and BookingsModule.",
+      "Authentication features endpoints for user registration, user login, and access token refreshing using JWT.",
+      "Interactive OpenAPI documentation is configured via Swagger and served at /api/docs.",
+      "Global exception handling maps Prisma error codes P2002 to 409 HTTP Conflict and P2025 to 404 HTTP Not Found.",
+      "PrismaService configures PostgreSQL connectivity using pg.Pool adapter wrapped inside PrismaPg adapter.",
+      "Database seed script creates a default admin user with plain-text password 'password123' and two initial services.",
+      "AuthModule includes a fallback string 'super-secret' if JWT_SECRET environment variable is not defined.",
+      "The Dockerfile employs a two-stage Alpine build process that executes Prisma migrations on container deployment."
+    ],
+    "inferred_feature_claims": [
+      "Complete implementation source code for AuthService, ServicesModule controllers/services, and BookingsModule controllers/services is missing from the supplied file context."
+    ],
+    "unsupported_or_unknown_claims": [],
+    "technical_strengths": [],
+    "technical_risks": [],
+    "files_audited_count": 12,
+    "agent6_verified": true
+  },
+  "project_information": {
+    "is_open_source": true,
+    "problem_statement": "Reinventing paint market",
+    "primary_solution": null,
+    "commercialization_readiness": "high",
+    "enterprise_gaps": []
+  },
+  "external_research": {},
+  "normalized_metrics": [],
+  "validation_results": [],
+  "duplicate_records": [],
+  "conflicts": [],
+  "missing_fields": [
+    {
+      "field": "team_information.founders",
+      "category": "team",
+      "importance": "critical",
+      "description": "No founder profiles or leadership team members detected.",
+      "downstream_impact": "Agent 3 Team Scoring sub-pillar will be heavily penalized."
+    },
+    {
+      "field": "financial_information.financial_metrics",
+      "category": "financials",
+      "importance": "important",
+      "description": "Core financial indicators (ARR, Burn, Runway) are absent.",
+      "downstream_impact": "Agent 3 Financial Runway & Capital Efficiency score will default to unverified baseline."
+    },
+    {
+      "field": "market_information.tam_usd",
+      "category": "market",
+      "importance": "important",
+      "description": "TAM market sizing estimate is missing.",
+      "downstream_impact": "Agent 3 Market Potential score will lack quantitative benchmark."
+    },
+    {
+      "field": "technical_information.tech_stack_standardized",
+      "category": "technical",
+      "importance": "important",
+      "description": "Standardized technology stack is empty.",
+      "downstream_impact": "Agent 3 Technical Feasibility & Scalability sub-pillar cannot be verified."
+    },
+    {
+      "field": "business_information.competitors",
+      "category": "business",
+      "importance": "optional",
+      "description": "Direct competitors list is empty.",
+      "downstream_impact": "Agent 3 Competitive Moat analysis will depend exclusively on market research models."
+    }
+  ],
+  "source_provenance": [
+    {
+      "field_path": "startup_profile.canonical_name",
+      "source_agent": "synthesized",
+      "document_or_url": null,
+      "location": null,
+      "evidence_snippet": "mynt",
+      "confidence_score": 0.95,
+      "extraction_timestamp": "2026-11-16T10:24:25.499858+00:00"
+    },
+    {
+      "field_path": "business_information.business_model",
+      "source_agent": "synthesized",
+      "document_or_url": null,
+      "location": null,
+      "evidence_snippet": "B2B SaaS / Enterprise Subscription",
+      "confidence_score": 0.88,
+      "extraction_timestamp": "2026-11-16T10:24:25.501285+00:00"
+    }
+  ],
+  "metadata": {
+    "agent1_present": true,
+    "agent6_present": true,
+    "external_research_present": false,
+    "processed_at": "2026-11-16T10:24:14.997915+00:00"
+  },
+  "created_at": "2026-11-16T10:24:14.997915+00:00",
+  "schema_version": "1.0"
+}

@@ -73,35 +73,55 @@ class NormalizationService:
         conflicts = []
 
         # ----------------------------------------------------------------------
-        # 1. Ingest & Auto-Fetch Upstream Inputs if missing
+        # 1. Ingest & Auto-Fetch Upstream Inputs from Supabase / Siblings
         # ----------------------------------------------------------------------
         a1 = request.agent1_data
         a6 = request.agent6_data
         ext = request.external_research_data
 
-        # Auto-fetch Agent 6 if not provided in payload
+        # Check existing normalized profile in Supabase to enable incremental updates
+        existing_norm = None
+        if supabase_client.is_configured() and not analysis_id.startswith("test_"):
+            try:
+                existing_norm = await supabase_client.get_normalized_profile(analysis_id)
+                if existing_norm and existing_norm.get("id"):
+                    norm_id = existing_norm["id"]
+            except Exception as e:
+                logger.debug(f"Could not check existing normalized profile: {e}")
+
+        # Fetch from Supabase tables (agent1_evaluations, agent6_evaluations, research_evaluations)
+        if not a1 or not a6 or not ext:
+            a1_db, a6_db, ext_db = await supabase_client.fetch_upstream_evaluations(analysis_id)
+            if not a1 and a1_db:
+                try:
+                    a1 = Agent1Payload(**a1_db)
+                    logger.info(f"Successfully ingested Agent 1 data from Supabase for analysis {analysis_id}.")
+                except Exception as e:
+                    logger.debug(f"Could not parse fetched Agent 1 data: {e}")
+
+            if not a6 and a6_db:
+                try:
+                    a6 = Agent6Payload(**a6_db)
+                    logger.info(f"Successfully ingested Agent 6 data from Supabase for analysis {analysis_id}.")
+                except Exception as e:
+                    logger.debug(f"Could not parse fetched Agent 6 data: {e}")
+
+            if not ext and ext_db:
+                try:
+                    ext = ExternalResearchPayload(**ext_db)
+                    logger.info(f"Successfully ingested External Research data from Supabase for analysis {analysis_id}.")
+                except Exception as e:
+                    logger.debug(f"Could not parse fetched External Research data: {e}")
+
+        # Local fallback for Agent 6 if still missing
         if not a6:
             a6_raw = await agent6_fetcher.fetch_latest()
             if a6_raw:
                 try:
                     a6 = Agent6Payload(**a6_raw)
-                    logger.info("Successfully ingested Agent 6 data via fetcher.")
+                    logger.info("Successfully ingested Agent 6 data via local fetcher fallback.")
                 except Exception as e:
-                    logger.debug(f"Could not parse fetched Agent 6 data: {e}")
-
-        # Auto-fetch Agent 1 / External research from Supabase if not provided
-        if not a1 or not ext:
-            a1_db, ext_db = await supabase_client.fetch_upstream_evaluations(analysis_id)
-            if not a1 and a1_db:
-                try:
-                    a1 = Agent1Payload(**a1_db)
-                except Exception:
-                    pass
-            if not ext and ext_db:
-                try:
-                    ext = ExternalResearchPayload(**ext_db)
-                except Exception:
-                    pass
+                    logger.debug(f"Could not parse local Agent 6 data: {e}")
 
         # ----------------------------------------------------------------------
         # 2. Canonical Startup Identity & Harmonization
@@ -430,6 +450,37 @@ class NormalizationService:
             commercialization_readiness="high" if supported_claims and business_model else "moderate",
         )
 
+        # Carry over Agent 1 fields from existing normalized profile if a1 was not in this run
+        if not a1 and existing_norm:
+            if existing_norm.get("financial_information") and isinstance(existing_norm["financial_information"], dict):
+                try:
+                    financial_info = FinancialInformation(**existing_norm["financial_information"])
+                except Exception:
+                    pass
+            if existing_norm.get("team_information") and isinstance(existing_norm["team_information"], dict):
+                try:
+                    team_info = TeamInformation(**existing_norm["team_information"])
+                except Exception:
+                    pass
+            if existing_norm.get("market_information") and isinstance(existing_norm["market_information"], dict):
+                try:
+                    market_info = MarketInformation(**existing_norm["market_information"])
+                except Exception:
+                    pass
+            if existing_norm.get("traction_information") and isinstance(existing_norm["traction_information"], dict):
+                try:
+                    traction_info = TractionInformation(**existing_norm["traction_information"])
+                except Exception:
+                    pass
+
+        # Carry over Agent 6 fields from existing normalized profile if a6 was not in this run
+        if not a6 and existing_norm:
+            if existing_norm.get("technical_information") and isinstance(existing_norm["technical_information"], dict):
+                try:
+                    tech_info = TechnicalInformation(**existing_norm["technical_information"])
+                except Exception:
+                    pass
+
         # ----------------------------------------------------------------------
         # 10. Data Validation Checks & Completeness Audit
         # ----------------------------------------------------------------------
@@ -528,7 +579,7 @@ class NormalizationService:
             db_record = {
                 "id": norm_id,
                 "analysis_id": analysis_id,
-                "startup_id": request.startup_id,
+                "startup_id": request.startup_id or (existing_norm.get("startup_id") if existing_norm else None),
                 "canonical_name": startup_profile.canonical_name,
                 "primary_industry": startup_profile.primary_industry,
                 "stage": startup_profile.stage,
@@ -551,7 +602,7 @@ class NormalizationService:
                 "source_provenance": dataset_dict["source_provenance"],
                 "metadata": dataset_dict["metadata"],
                 "schema_version": "1.0",
-                "created_at": now_iso,
+                "created_at": (existing_norm.get("created_at") if existing_norm else None) or now_iso,
                 "updated_at": now_iso,
             }
             await supabase_client.save_normalized_profile(db_record)
