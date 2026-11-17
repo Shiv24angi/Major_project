@@ -144,14 +144,14 @@ export default function Agent1DiligenceView({
 
     setErrorMsg(null);
     setIsAnalyzing(true);
-    setAnalyzeStep('Uploading files to Agent 1 engine...');
+    setAnalyzeStep('Uploading documents for processing...');
 
     const stepTimer1 = setTimeout(() => {
       setAnalyzeStep('Extracting text and structure (PyMuPDF / docx / pptx)...');
     }, 1200);
 
     const stepTimer2 = setTimeout(() => {
-      setAnalyzeStep('Invoking LangGraph multi-document intelligence graph...');
+      setAnalyzeStep('Invoking multi-document intelligence graph...');
     }, 3200);
 
     const stepTimer3 = setTimeout(() => {
@@ -171,12 +171,12 @@ export default function Agent1DiligenceView({
 
       if (res.success && res.result) {
         setAnalysisResult(res.result);
-        setAnalyzeStep('Analysis complete and synced to Supabase!');
+        setAnalyzeStep('Analysis complete and synced to database!');
       } else {
-        setErrorMsg(res.error || 'Agent 1 analysis failed.');
+        setErrorMsg(res.error || 'Document analysis failed.');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Error communicating with Agent 1.');
+      setErrorMsg(err.message || 'Error communicating with document engine.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -207,17 +207,17 @@ export default function Agent1DiligenceView({
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EEECFC] text-[#5028E0] tracking-wider uppercase">
-              Agent 1 • Multi-Document Ingestion
+              Document Intelligence Engine
             </span>
             {health.online ? (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                 <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-                Backend Online (Port 8001)
+                Engine Active
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
                 <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
-                Backend Standby (Port 8001)
+                Engine Standby
               </span>
             )}
             {isSupabaseConnected() && (
@@ -242,7 +242,7 @@ export default function Agent1DiligenceView({
             onClick={verifyHealth}
             disabled={isCheckingHealth}
             className="p-2 text-[#64748B] hover:text-[#5028E0] hover:bg-[#F8F9FE] rounded-xl border border-[#E2E8F0] transition-colors cursor-pointer"
-            title="Refresh Agent 1 Status"
+            title="Refresh Engine Status"
           >
             <RotateCw className={`w-4 h-4 ${isCheckingHealth ? 'animate-spin' : ''}`} />
           </button>
@@ -263,13 +263,10 @@ export default function Agent1DiligenceView({
         <div className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] p-4 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
           <div className="text-xs space-y-1">
-            <p className="font-bold text-[#92400E]">Agent 1 FastAPI Backend is not detected on port 8001.</p>
+            <p className="font-bold text-[#92400E]">Document analysis service is in standby mode.</p>
             <p className="text-[#B45309]">
-              To launch the live LangGraph document analyzer, run this command in your terminal:
+              The document processing engine is initializing or offline. Historical analyses and evaluations saved to the database remain fully accessible.
             </p>
-            <code className="block bg-[#FEF3C7] text-[#78350F] px-2.5 py-1.5 rounded-lg font-mono text-[11px] select-all">
-              cd Agent1/Agent_1/backend; ..\..\..\Agent-6\backend\venv\Scripts\uvicorn app.main:app --port 8001 --reload
-            </code>
           </div>
         </div>
       )}
@@ -282,7 +279,7 @@ export default function Agent1DiligenceView({
             <div>
               <h2 className="text-base font-bold text-[#1E1B2E]">Ingest Documents for Analysis</h2>
               <p className="text-xs text-[#64748B]">
-                Upload 1 or more documents (.pdf, .pptx, .docx). Agent 1 will extract facts, cross-examine claims, and detect contradictions.
+                Upload 1 or more documents (.pdf, .pptx, .docx) to extract facts, cross-examine claims, and detect contradictions.
               </p>
             </div>
             <span className="text-xs font-bold text-[#5028E0] bg-[#F4F1FD] px-2.5 py-1 rounded-lg">
@@ -405,7 +402,7 @@ export default function Agent1DiligenceView({
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-[#1E1B2E] flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#5028E0]" />
-              <span>Agent 1 Architecture</span>
+              <span>Document Diligence Architecture</span>
             </h3>
             <ul className="text-xs text-[#64748B] space-y-2.5 divide-y divide-[#F1F5F9]">
               <li className="pt-1.5 flex justify-between">
@@ -414,7 +411,7 @@ export default function Agent1DiligenceView({
               </li>
               <li className="pt-1.5 flex justify-between">
                 <span>Orchestration:</span>
-                <strong className="text-[#1E1B2E]">LangGraph Multi-Workflow</strong>
+                <strong className="text-[#1E1B2E]">Multi-Document Workflow Graph</strong>
               </li>
               <li className="pt-1.5 flex justify-between">
                 <span>Parsers:</span>
@@ -422,11 +419,11 @@ export default function Agent1DiligenceView({
               </li>
               <li className="pt-1.5 flex justify-between">
                 <span>Database:</span>
-                <strong className="text-[#10B981]">Supabase (agent1_evaluations)</strong>
+                <strong className="text-[#10B981]">Supabase Cloud</strong>
               </li>
               <li className="pt-1.5 flex justify-between">
-                <span>Port:</span>
-                <strong className="text-[#5028E0]">8001 (FastAPI)</strong>
+                <span>Execution:</span>
+                <strong className="text-[#5028E0]">Asynchronous Pipeline</strong>
               </li>
             </ul>
           </div>
@@ -437,7 +434,7 @@ export default function Agent1DiligenceView({
               <span>Contradiction Detection</span>
             </div>
             <p>
-              When multiple documents are provided (e.g. pitch deck vs. investor update), Agent 1 highlights discrepancy risks such as ARR inconsistencies or altered churn numbers.
+              When multiple documents are provided (e.g. pitch deck vs. investor update), the engine highlights discrepancy risks such as ARR inconsistencies or altered churn numbers.
             </p>
           </div>
         </div>
@@ -518,7 +515,7 @@ export default function Agent1DiligenceView({
               <div className="flex items-center gap-2.5 text-[#166534]">
                 <Database className="w-4 h-4 text-[#16A34A] shrink-0" />
                 <span>
-                  <strong>Supabase Verified:</strong> Evaluation stored in <code className="bg-[#DCFCE7] px-1.5 py-0.5 rounded text-[11px] font-mono">agent1_evaluations</code> ({analysisResult.evaluation_id || 'active'}).
+                  <strong>Supabase Verified:</strong> Evaluation records securely indexed ({analysisResult.evaluation_id || 'active'}).
                 </span>
               </div>
               {analysisResult.uploaded_files && analysisResult.uploaded_files.length > 0 && (
@@ -886,7 +883,7 @@ export default function Agent1DiligenceView({
         </div>
       ) : dbLoading ? (
         <div className="p-12 text-center text-xs text-[#64748B] bg-white rounded-2xl border border-[#EAEBF2]">
-          Checking Supabase for existing Agent 1 evaluations...
+          Checking database for existing document evaluations...
         </div>
       ) : null}
     </div>

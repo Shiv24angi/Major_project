@@ -551,8 +551,8 @@ export default function DashboardPage() {
           <nav className="space-y-0.5">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'agent1', label: 'Agent 1 Document Diligence', icon: FileText, badge: agent1Online ? 'Online' : 'Ready' },
-              { id: 'agent6', label: 'Agent 6 Code Diligence', icon: Code2, badge: agent6Online ? 'Online' : 'Ready' },
+              { id: 'agent1', label: 'Document Diligence', icon: FileText, badge: agent1Online ? 'Active' : 'Ready' },
+              { id: 'agent6', label: 'Code Diligence', icon: Code2, badge: agent6Online ? 'Active' : 'Ready' },
               { id: 'new-analysis', label: 'New Analysis', icon: PlusCircle, isAction: true },
               { id: 'my-analyses', label: 'My Analyses', icon: Folder },
               { id: 'documents', label: 'Documents', icon: FileText },
@@ -707,11 +707,11 @@ export default function DashboardPage() {
 
           {/* User Profile & Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Agent 1 Backend Status Indicator */}
+            {/* Document Diligence Status Indicator */}
             <button
               type="button"
               onClick={() => setCurrentTab('agent1')}
-              title="Agent 1 Document Diligence Engine Status (Port 8001)"
+              title="Document Diligence Engine Status"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                 agent1Online
                   ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
@@ -729,16 +729,16 @@ export default function DashboardPage() {
                 />
               </span>
               <span className="hidden sm:inline">
-                Agent 1: <strong className="font-bold">{agent1Online ? 'Online (8001)' : 'Standby'}</strong>
+                Documents: <strong className="font-bold">{agent1Online ? 'Active' : 'Standby'}</strong>
               </span>
-              <span className="sm:hidden font-bold">A1</span>
+              <span className="sm:hidden font-bold">Docs</span>
             </button>
 
-            {/* Agent 6 Backend Status Indicator */}
+            {/* Code Diligence Status Indicator */}
             <button
               type="button"
               onClick={() => setCurrentTab('agent6')}
-              title="Agent 6 Code Diligence Engine Status (Port 8000)"
+              title="Codebase Diligence Engine Status"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                 agent6Online
                   ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
@@ -756,14 +756,14 @@ export default function DashboardPage() {
                 />
               </span>
               <span className="hidden sm:inline">
-                Agent 6: <strong className="font-bold">{agent6Online ? 'Online (8000)' : 'Standby'}</strong>
+                Codebase: <strong className="font-bold">{agent6Online ? 'Active' : 'Standby'}</strong>
               </span>
-              <span className="sm:hidden font-bold">A6</span>
+              <span className="sm:hidden font-bold">Code</span>
             </button>
 
-            {/* Agent 3 Scoring Engine Status Indicator */}
+            {/* Scoring Engine Status Indicator */}
             <div
-              title="Agent 3 Multi-Dimensional Scoring Engine Status (Port 8004)"
+              title="Multidimensional Scoring Engine Status"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                 agent3Online
                   ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
@@ -781,14 +781,14 @@ export default function DashboardPage() {
                 />
               </span>
               <span className="hidden sm:inline">
-                Agent 3: <strong className="font-bold">{agent3Online ? 'Online (8004)' : 'Standby'}</strong>
+                Scoring: <strong className="font-bold">{agent3Online ? 'Active' : 'Standby'}</strong>
               </span>
-              <span className="sm:hidden font-bold">A3</span>
+              <span className="sm:hidden font-bold">Score</span>
             </div>
 
-            {/* Agent 4 Recommendation Engine Status Indicator */}
+            {/* Investment Thesis Engine Status Indicator */}
             <div
-              title="Agent 4 Insight & Recommendation Generator Status (Port 8005)"
+              title="Investment Thesis Engine Status"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                 agent4Online
                   ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
@@ -806,9 +806,9 @@ export default function DashboardPage() {
                 />
               </span>
               <span className="hidden sm:inline">
-                Agent 4: <strong className="font-bold">{agent4Online ? 'Online (8005)' : 'Standby'}</strong>
+                Thesis: <strong className="font-bold">{agent4Online ? 'Active' : 'Standby'}</strong>
               </span>
-              <span className="sm:hidden font-bold">A4</span>
+              <span className="sm:hidden font-bold">Thesis</span>
             </div>
 
             {/* Notification Bell */}
@@ -1000,7 +1000,7 @@ export default function DashboardPage() {
                             </span>
                             <span className="rounded-full bg-[#EEECFC] text-[#5028E0] border border-[#DDD6FE] px-2.5 py-0.5 text-[11px] font-semibold flex items-center gap-1">
                               <Zap className="w-3 h-3 text-[#5028E0]" />
-                              <span>Agent 6 Verified</span>
+                              <span>Codebase Verified</span>
                             </span>
                           </>
                         ) : (
@@ -1016,7 +1016,7 @@ export default function DashboardPage() {
                         {agent1Eval && (
                           <span className="rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] px-2.5 py-0.5 text-[11px] font-semibold flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3 text-[#059669]" />
-                            <span>Agent 1 Document Verified</span>
+                            <span>Document Intelligence Verified</span>
                           </span>
                         )}
                         {activeAnalysis.codeDetails?.githubUrl && (
@@ -1157,17 +1157,17 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Agent 1 Live Intelligence Banner (When evaluation exists in Supabase) */}
+                {/* Document Intelligence Live Banner (When evaluation exists in Supabase) */}
                 {agent1Eval && (
                   <div className="rounded-xl border border-[#DDD6FE] bg-gradient-to-r from-[#F8F9FE] to-[#F4F1FD] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start sm:items-center gap-3">
                       <div className="w-9 h-9 rounded-lg bg-[#5028E0] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-                        A1
+                        DOC
                       </div>
                       <div className="space-y-0.5">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-xs font-bold text-[#1E1B2E]">
-                            Agent 1 Document Intelligence
+                            Document Intelligence
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                             Live Synthesized ({agent1Eval.uploaded_files?.length || 1} doc)
@@ -1184,7 +1184,7 @@ export default function DashboardPage() {
                         </div>
                         <p className="text-xs text-[#64748B] line-clamp-1">
                           {agent1Eval.merged_analysis?.description ||
-                            'Multi-document findings and claims verified by LangGraph engine.'}
+                            'Multi-document findings and claims verified by diligence engine.'}
                         </p>
                       </div>
                     </div>
@@ -1194,7 +1194,7 @@ export default function DashboardPage() {
                       onClick={() => setCurrentTab('agent1')}
                       className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#5028E0] text-white hover:bg-[#4320BD] shrink-0 transition-all cursor-pointer shadow-2xs"
                     >
-                      <span>Inspect Agent 1 Diligence</span>
+                      <span>Inspect Document Diligence</span>
                       <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
@@ -1210,8 +1210,8 @@ export default function DashboardPage() {
                       <Sparkles className="w-4 h-4 text-[#5028E0]" />
                       <span>
                         {activeAnalysis.mode === 'project'
-                          ? 'Analysis Pipeline (Agent 6 Code Diligence → Agent 2)'
-                          : 'Analysis Pipeline (Startup Evaluation)'}
+                          ? 'Analysis Pipeline (Code Diligence → Normalization)'
+                          : 'Comprehensive Venture Diligence Pipeline'}
                       </span>
                     </div>
                     <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[11px] font-medium text-[#059669]">
@@ -1224,18 +1224,18 @@ export default function DashboardPage() {
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
                     {(activeAnalysis.mode === 'project'
                       ? [
-                          { step: 'Repo AST Parsing', agent: 'Agent 6 — Stage 1' },
-                          { step: 'Codebase Analysis', agent: 'Agent 6 — Stage 2' },
-                          { step: 'Technical Claims', agent: 'Agent 6 — Stage 3' },
-                          { step: 'Data Normalization', agent: 'Agent 6 → Agent 2' },
-                          { step: 'Venture Diligence', agent: 'Agent 5' },
+                          { step: 'Repo AST Parsing', agent: 'Stage 1 • Code' },
+                          { step: 'Codebase Analysis', agent: 'Stage 2 • Quality' },
+                          { step: 'Technical Claims', agent: 'Stage 3 • Architecture' },
+                          { step: 'Data Normalization', agent: 'Stage 4 • Normalization' },
+                          { step: 'Venture Diligence', agent: 'Stage 5 • Synthesis' },
                         ]
                       : [
-                          { step: 'Document Analysis', agent: 'Agent 1' },
-                          { step: 'Data Normalization', agent: 'Agent 2' },
-                          { step: 'Scoring Engine', agent: 'Agent 3' },
-                          { step: 'Insights & Recommendation', agent: 'Agent 4' },
-                          { step: 'Report Generation', agent: 'Agent 5' },
+                          { step: 'Document Analysis', agent: 'Stage 1 • Extraction' },
+                          { step: 'Data Normalization', agent: 'Stage 2 • Normalization' },
+                          { step: 'Scoring Engine', agent: 'Stage 3 • Scoring' },
+                          { step: 'Insights & Thesis', agent: 'Stage 4 • Thesis' },
+                          { step: 'Report Generation', agent: 'Stage 5 • Deliverables' },
                         ]
                     ).map((item, idx, arr) => (
                       <React.Fragment key={item.step}>
@@ -1318,7 +1318,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* AGENT 6 CODE DILIGENCE HIGHLIGHT BANNER (PROJECT MODE) */}
+              {/* CODE DILIGENCE HIGHLIGHT BANNER (PROJECT MODE) */}
               {(activeAnalysis.mode === 'project' || activeAnalysis.codeDetails) && (
                 <div className="rounded-2xl border border-[#DDD6FE] bg-gradient-to-r from-[#F4F1FD] via-white to-[#F8F9FE] p-6 shadow-2xs">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1326,7 +1326,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2">
                         <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#5028E0] text-white flex items-center gap-1.5 shadow-2xs">
                           <Code2 className="w-3.5 h-3.5" />
-                          <span>Agent 6 Code Intelligence Active</span>
+                          <span>Code Intelligence Active</span>
                         </span>
                         <span className="text-xs text-[#64748B] font-mono">
                           {activeAnalysis.codeDetails?.filesDiscovered || 58} Files Discovered • {activeAnalysis.codeDetails?.filesRead || 15} Files Audited
@@ -1336,7 +1336,7 @@ export default function DashboardPage() {
                         Codebase Verified: {activeAnalysis.title}
                       </h3>
                       <p className="text-xs text-[#64748B] max-w-3xl">
-                        Agent 6 audited the repository AST and extracted verified architectural claims, evidence-backed capabilities, and security posture for venture due diligence.
+                        The system audited the repository AST and extracted verified architectural claims, evidence-backed capabilities, and security posture for venture due diligence.
                       </p>
                       {/* Tech Stack Chips */}
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
@@ -1357,7 +1357,7 @@ export default function DashboardPage() {
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#5028E0] hover:bg-[#4320BD] text-white text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0"
                     >
                       <Zap className="w-4 h-4" />
-                      <span>Open Agent 6 Inspector</span>
+                      <span>Open Code Inspector</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -1389,7 +1389,7 @@ export default function DashboardPage() {
                           />
                           <span>
                             {researchOnline
-                              ? 'Agent-Research Online (Port 8002)'
+                              ? 'Live Intelligence Online'
                               : 'Zero-Cost Research Mode'}
                           </span>
                         </span>
@@ -1416,10 +1416,10 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-1 bg-[#F8F9FE] p-1 rounded-xl border border-[#EAEBF2] overflow-x-auto">
                       {[
                         { id: 'overview', label: 'Summary', icon: Sparkles },
-                        { id: 'market', label: 'Market & Industry', badge: 'Task 6', icon: Globe },
-                        { id: 'competitors', label: 'Competitors', badge: 'Task 7', icon: Target },
-                        { id: 'financials', label: 'Financial & Funding', badge: 'Task 8', icon: DollarSign },
-                        { id: 'news', label: 'News & Milestones', badge: 'Task 9', icon: Newspaper },
+                        { id: 'market', label: 'Market & Industry', badge: 'Active', icon: Globe },
+                        { id: 'competitors', label: 'Competitors', badge: 'Active', icon: Target },
+                        { id: 'financials', label: 'Financial & Funding', badge: 'Active', icon: DollarSign },
+                        { id: 'news', label: 'News & Milestones', badge: 'Active', icon: Newspaper },
                       ].map((tab) => {
                         const Icon = tab.icon;
                         const isActive = insightsTab === tab.id;
@@ -2614,7 +2614,7 @@ export default function DashboardPage() {
                     className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[#EEECFC] text-[#5028E0] hover:bg-[#DDD6FE] px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
                   >
                     <FileText className="w-3.5 h-3.5" />
-                    <span>Cross-Examine with Agent 1 →</span>
+                    <span>Cross-Examine Documents →</span>
                   </button>
                 </div>
 
@@ -3325,7 +3325,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-[#1E1B2E]">
-                    Investment Memo & Agent 5 Reports
+                    Investment Memo & Deliverable Reports
                   </h2>
                   <p className="text-xs text-[#64748B]">
                     Export verified institutional briefs for {activeAnalysis.title}

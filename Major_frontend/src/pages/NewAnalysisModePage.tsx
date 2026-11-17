@@ -99,7 +99,7 @@ export default function NewAnalysisModePage() {
                 {/* Architecture badge */}
                 <div className="flex items-center gap-2 text-xs font-mono text-white/60 mb-8">
                   <Layers className="h-3.5 w-3.5" />
-                  <span>Powered by Agents 1–5 (Ingestion, Normalization, Scoring, Insights & Reports)</span>
+                  <span>Full-Spectrum AI Due Diligence (Document Intelligence, Market Sizing & Valuation)</span>
                 </div>
               </div>
 
@@ -165,7 +165,7 @@ export default function NewAnalysisModePage() {
                 {/* Architecture badge */}
                 <div className="flex items-center gap-2 text-xs font-mono text-white/60 mb-8">
                   <Layers className="h-3.5 w-3.5" />
-                  <span>Powered by Agent 6 (Code Diligence) piping into Agent 2 Normalization</span>
+                  <span>Automated Technical Diligence (AST Code Analysis & Architecture Verification)</span>
                 </div>
               </div>
 

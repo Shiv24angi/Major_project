@@ -140,7 +140,7 @@ export default function Agent6DiligenceView({
 
     setAnalyzeError(null);
     setIsAnalyzing(true);
-    setAnalyzeStep('Connecting to Agent 6 FastAPI engine (port 8000)...');
+    setAnalyzeStep('Connecting to technical diligence engine...');
 
     try {
       // Step feedback simulation while waiting for API
@@ -158,7 +158,7 @@ export default function Agent6DiligenceView({
       clearTimeout(stepTimer2);
 
       if (result.success && result.payload) {
-        setAnalyzeStep('Validated findings & saving Agent 2 handoff schema...');
+        setAnalyzeStep('Validating codebase findings and structuring schema...');
         setCurrentPayload(result.payload);
         setSelectedRunId(result.payload.run_id);
 
@@ -218,7 +218,7 @@ export default function Agent6DiligenceView({
           <div className="flex items-center gap-2 mb-1.5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#5028E0]/10 text-[#5028E0] border border-[#5028E0]/20">
               <Zap className="w-3.5 h-3.5" />
-              <span>AGENT 6 CODE DILIGENCE</span>
+              <span>CODE DILIGENCE ENGINE</span>
             </span>
             <span className="text-xs text-[#94A3B8] font-mono">AST & Code RAG Engine</span>
           </div>
@@ -226,7 +226,7 @@ export default function Agent6DiligenceView({
             Project → Startup Technical Intelligence
           </h1>
           <p className="text-sm text-[#64748B] mt-1">
-            Evaluates repository architecture, verifies claims against codebase evidence, and pipes normalized data into Agent 2.
+            Evaluates repository architecture, verifies claims against codebase evidence, and structures verified technical intelligence.
           </p>
         </div>
 
@@ -246,7 +246,7 @@ export default function Agent6DiligenceView({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-[#1E1B2E]">
-                  {health.online ? 'Agent 6 Backend Online' : 'Backend Standby (Port 8000)'}
+                  {health.online ? 'Technical Engine Active' : 'Technical Engine Standby'}
                 </span>
                 {health.online && (
                   <span className="text-[10px] font-mono bg-[#E8F8F0] text-[#059669] px-1.5 py-0.2 rounded font-semibold">
@@ -255,7 +255,7 @@ export default function Agent6DiligenceView({
                 )}
               </div>
               <span className="text-[11px] text-[#64748B] block font-mono">
-                {health.endpoint} • {health.online ? 'REST & Graph Ready' : 'FastAPI Offline'}
+                {health.online ? 'AST & Code Analysis Engine Active' : 'Service Initializing / Standby'}
               </span>
             </div>
           </div>
@@ -278,9 +278,9 @@ export default function Agent6DiligenceView({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-bold text-[#1E1B2E]">
             <FolderGit2 className="w-4.5 h-4.5 text-[#5028E0]" />
-            <span>Evaluate GitHub Repository with Agent 6</span>
+            <span>Evaluate GitHub Repository</span>
           </div>
-          <span className="text-xs text-[#94A3B8]">Direct user input sent to Agent 6 backend</span>
+          <span className="text-xs text-[#94A3B8]">Automated codebase analysis and claim extraction</span>
         </div>
 
         <form onSubmit={handleRunAnalysis} className="flex flex-col md:flex-row items-stretch gap-3">
@@ -309,7 +309,7 @@ export default function Agent6DiligenceView({
             ) : (
               <>
                 <Play className="w-4 h-4 fill-white" />
-                <span>Run Agent 6 Pipeline</span>
+                <span>Analyze Repository</span>
               </>
             )}
           </button>
@@ -350,11 +350,6 @@ export default function Agent6DiligenceView({
               <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>{analyzeError}</span>
             </div>
-            {!health.online && (
-              <span className="font-mono text-[11px] bg-white px-2 py-0.5 rounded border border-[#FECACA]">
-                Tip: Start `uvicorn app.main:app --port 8000`
-              </span>
-            )}
           </div>
         )}
       </div>
@@ -364,7 +359,7 @@ export default function Agent6DiligenceView({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#64748B]">
             <Layers className="w-4 h-4 text-[#5028E0]" />
-            <span>Agent 6 Evaluation Runs ({runs.length})</span>
+            <span>Technical Diligence Runs ({runs.length})</span>
           </div>
           <button
             type="button"
@@ -480,7 +475,7 @@ export default function Agent6DiligenceView({
             {[
               { id: 'findings', label: `Technical Findings (${findings.length})`, icon: CheckCircle2 },
               { id: 'architecture', label: 'Tech Stack & Architecture', icon: Code2 },
-              { id: 'handoff', label: 'Agent 6 → Agent 2 Schema', icon: Terminal },
+              { id: 'handoff', label: 'Technical Diligence Schema', icon: Terminal },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -701,10 +696,10 @@ export default function Agent6DiligenceView({
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-[#1E1B2E] block">
-                  Agent 6 → Agent 2 Handoff Payload
+                  Standardized Technical Diligence Payload
                 </span>
                 <span className="text-[11px] text-[#64748B]">
-                  Target: {currentPayload?.target_agent || 'agent_2_data_normalization'} • Run ID:{' '}
+                  Pipeline: Standardized Venture Evaluation Data • Run ID:{' '}
                   {currentPayload?.run_id}
                 </span>
               </div>

@@ -31,88 +31,88 @@ interface PipelineStep {
   statusText: string;
 }
 
-// Stable Mode A Pipeline Steps (Agents 1 - 5)
+// Stable Mode A Pipeline Steps (Document Intelligence Diligence)
 const MODE_A_STEPS: PipelineStep[] = [
   {
     id: 'step_1',
-    agentLabel: 'Agent 1',
-    title: 'Document Analysis Agent',
+    agentLabel: 'Stage 1',
+    title: 'Document Intelligence & Extraction',
     description: 'Ingesting pitch deck, financial tables, and extracting structured claims & evidence.',
     icon: FileText,
     statusText: 'Parsing documents and chunking text...',
   },
   {
     id: 'step_2',
-    agentLabel: 'Agent 2',
-    title: 'Data Extraction & Normalization',
+    agentLabel: 'Stage 2',
+    title: 'Data Verification & Normalization',
     description: 'Validating data completeness, deduplicating records, and standardizing schemas.',
     icon: Binary,
     statusText: 'Normalizing schemas and validating consistency...',
   },
   {
     id: 'step_3',
-    agentLabel: 'Agent 3',
-    title: 'Analytical Scoring Engine',
+    agentLabel: 'Stage 3',
+    title: 'Venture Scoring Engine',
     description: 'Evaluating 6 calibrated dimensions: Market, Product, Team, Financial, Traction, and Risk.',
     icon: BarChart3,
     statusText: 'Calculating multi-dimensional scores across 6 criteria...',
   },
   {
     id: 'step_4',
-    agentLabel: 'Agent 4',
-    title: 'Insight & Recommendation Generator',
+    agentLabel: 'Stage 4',
+    title: 'Strategic Insights & Recommendations',
     description: 'Formulating the investment thesis, identifying strengths, risks, and verdict (INVEST / MONITOR / PASS).',
     icon: Compass,
     statusText: 'Generating investment thesis and governance risks...',
   },
   {
     id: 'step_5',
-    agentLabel: 'Agent 5',
-    title: 'Report Generator',
+    agentLabel: 'Stage 5',
+    title: 'Diligence Memo Compilation',
     description: 'Assembling institutional diligence memo, presentation deck, and data models.',
     icon: FileDown,
     statusText: 'Generating diligence memo and export deliverables...',
   },
 ];
 
-// Stable Mode B Pipeline Steps (Agent 6 — Project -> Startup)
+// Stable Mode B Pipeline Steps (Project -> Startup Code Diligence)
 const MODE_B_STEPS: PipelineStep[] = [
   {
     id: 'step_1',
-    agentLabel: 'Agent 6 — Stage 1',
-    title: 'Repository Parsing',
+    agentLabel: 'Stage 1',
+    title: 'Repository AST & File Diligence',
     description: 'Cloning tree, parsing dependencies, README files, and repository metadata.',
     icon: GitBranch,
     statusText: 'Parsing repository structure and manifest files...',
   },
   {
     id: 'step_2',
-    agentLabel: 'Agent 6 — Stage 2',
-    title: 'Codebase Analysis',
+    agentLabel: 'Stage 2',
+    title: 'Architecture & Stack Analysis',
     description: 'Analyzing system design, database schemas, and architectural components.',
     icon: Code2,
     statusText: 'Executing code RAG and evaluating technical architecture...',
   },
   {
     id: 'step_3',
-    agentLabel: 'Agent 6 — Stage 3',
-    title: 'Technical Assessment',
+    agentLabel: 'Stage 3',
+    title: 'Feature Claim Verification',
     description: 'Validating code quality, scalability limits, security posture, and test coverage.',
     icon: ShieldCheck,
     statusText: 'Extracting supported technical claims and evidence...',
   },
   {
     id: 'step_4',
-    agentLabel: 'Agent 6 → Agent 2',
-    title: 'Startup Potential & Normalization',
+    agentLabel: 'Stage 4',
+    title: 'Technical Data Normalization',
     description: 'Synthesizing technical findings into normalized startup schema for downstream scoring.',
     icon: Binary,
-    statusText: 'Piping technical claims into Agent 2 normalization bridge...',
+    statusText: 'Standardizing technical claims and calibrating metrics...',
   },
   {
     id: 'step_5',
-    agentLabel: 'Agent 5',
-    title: 'Report Generation',
+    agentLabel: 'Stage 5',
+    title: 'Diligence Report Generation',
     description: 'Compiling Code Diligence Memo and commercialization roadmap.',
     icon: FileDown,
     statusText: 'Compiling technical diligence and venture viability reports...',
@@ -228,7 +228,7 @@ export default function ProcessingPage() {
 
         // Final Step: Complete
         setCurrentStepIndex(steps.length - 1);
-        setStatusMessage('Analysis complete! All agent findings normalized and synced to Supabase.');
+        setStatusMessage('Analysis complete! All findings synthesized and verified.');
         setIsCompleted(true);
       } catch (err) {
         console.warn('[ProcessingPage] Pipeline execution warning:', err);
@@ -300,8 +300,8 @@ export default function ProcessingPage() {
               </div>
               <h2 className="text-2xl font-bold text-emerald-950 mb-2">Analysis Complete</h2>
               <p className="text-sm text-emerald-800 max-w-lg mx-auto mb-6">
-                All multi-agent outputs, multi-dimensional scores, risk concerns, and due-diligence
-                findings have been synthesized into your dashboard.
+                All evaluation findings, multi-dimensional scores, risk concerns, and due-diligence
+                metrics have been synthesized into your dashboard.
               </p>
               <button
                 type="button"
@@ -402,13 +402,13 @@ export default function ProcessingPage() {
           <div className="mt-8 rounded-2xl border border-black/10 bg-white/70 p-4 text-center text-xs text-black/60">
             {mode === 'project' ? (
               <span>
-                <strong>Agent 6 — Project → Startup Agent</strong> parses code structure, dependencies,
-                and technical claims. Scores are evaluated analytically without fabricating external signals.
+                <strong>Technical Diligence Engine</strong> parses code structure, dependencies,
+                and architectural claims. Scores are evaluated analytically without fabricating external signals.
               </span>
             ) : (
               <span>
                 Analysis is grounded in submitted pitch decks and financial documents. Scoring dimensions
-                (Market, Product, Team, Financial, Traction, Risk) are evaluated by Agent 3.
+                (Market, Product, Team, Financial, Traction, Risk) are evaluated analytically with full evidence attribution.
               </span>
             )}
           </div>

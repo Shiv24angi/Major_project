@@ -24,7 +24,7 @@ export default function MultiAgentSection() {
   const agents = [
     {
       id: '01',
-      agentNum: 'Agent 1',
+      agentNum: 'Stage 01',
       title: 'DOCUMENT ANALYSIS',
       role: 'Document Analysis & Structured Extraction',
       description:
@@ -33,7 +33,7 @@ export default function MultiAgentSection() {
       icon: <FileText className="h-6 w-6 text-white/90" />,
       tag: 'Step 01 • Ingestion',
       isSeparatePath: false,
-      downstream: 'Pipes structured data to Agent 2',
+      downstream: 'Pipes structured findings to data normalization',
       detailsTitle: 'Information Extracted:',
       items: [
         'Startup information & overview',
@@ -47,11 +47,11 @@ export default function MultiAgentSection() {
         'Risks & competitor mentions',
         'Key performance metrics',
       ],
-      notice: 'Document Analysis & Structured Information Extraction (not a generic research agent).',
+      notice: 'Document Analysis & Structured Information Extraction with primary source attribution.',
     },
     {
       id: '02',
-      agentNum: 'Agent 2',
+      agentNum: 'Stage 02',
       title: 'DATA NORMALIZATION',
       role: 'Data Extraction & Schema Normalization',
       description:
@@ -60,7 +60,7 @@ export default function MultiAgentSection() {
       icon: <Binary className="h-6 w-6 text-cyan-300" />,
       tag: 'Step 02 • Pipeline',
       isSeparatePath: false,
-      downstream: 'Prepares consistent data for Agent 3',
+      downstream: 'Prepares standardized schema for scoring engine',
       detailsTitle: 'Core Responsibilities:',
       items: [
         'Normalize extracted data into uniform schemas',
@@ -68,13 +68,13 @@ export default function MultiAgentSection() {
         'Deduplicate conflicting information',
         'Structure data for downstream scoring',
         'Prepare consistent inputs for analysis',
-        'Ingests technical findings from Agent 6 (Code Analysis)',
+        'Ingests technical findings from Codebase Diligence Engine',
       ],
-      notice: 'Takes extracted data and structures it for scoring and downstream analysis.',
+      notice: 'Structures and normalizes heterogeneous inputs into clean venture evaluation profiles.',
     },
     {
       id: '03',
-      agentNum: 'Agent 3',
+      agentNum: 'Stage 03',
       title: 'SCORING',
       role: 'Analytical Scoring Engine',
       description:
@@ -83,7 +83,7 @@ export default function MultiAgentSection() {
       icon: <BarChart3 className="h-6 w-6 text-purple-300" />,
       tag: 'Step 03 • Scoring',
       isSeparatePath: false,
-      downstream: 'Pushes calibrated scores to Agent 4',
+      downstream: 'Pushes calibrated scores to investment thesis generator',
       detailsTitle: 'Actual Scoring Dimensions:',
       items: [
         'Market Score',
@@ -94,11 +94,11 @@ export default function MultiAgentSection() {
         'Risk Score',
       ],
       notice:
-        'Handled by the Scoring Engine — these are 6 scoring dimensions, NOT separate AI agents.',
+        'Unified Scoring Engine evaluates 6 quantitative and qualitative dimensions with full evidence grounding.',
     },
     {
       id: '04',
-      agentNum: 'Agent 4',
+      agentNum: 'Stage 04',
       title: 'INSIGHTS & RECOMMENDATION',
       role: 'Insight & Recommendation Generator',
       description:
@@ -107,7 +107,7 @@ export default function MultiAgentSection() {
       icon: <Compass className="h-6 w-6 text-emerald-300" />,
       tag: 'Step 04 • Synthesis',
       isSeparatePath: false,
-      downstream: 'Sends thesis & synthesis to Agent 5',
+      downstream: 'Sends investment thesis to institutional report engine',
       detailsTitle: 'Actual System Outputs:',
       items: [
         'Investment Thesis formulation',
@@ -124,7 +124,7 @@ export default function MultiAgentSection() {
     },
     {
       id: '05',
-      agentNum: 'Agent 5',
+      agentNum: 'Stage 05',
       title: 'REPORT GENERATION',
       role: 'Report Generator',
       description:
@@ -145,16 +145,16 @@ export default function MultiAgentSection() {
     },
     {
       id: '06',
-      agentNum: 'Agent 6',
+      agentNum: 'Technical Diligence',
       title: 'PROJECT → STARTUP',
-      role: 'Project → Startup Agent (Separate Path)',
+      role: 'Code Intelligence & Technical Diligence',
       description:
         'Analyzes an existing software project or GitHub repository using code analysis and Code RAG to evaluate its technical and startup potential.',
       gradient: 'from-[#3B2236] via-[#2D1929] to-[#1C0E1A]',
       icon: <Code2 className="h-6 w-6 text-amber-300" />,
       tag: 'Separate Path • Code Diligence',
       isSeparatePath: true,
-      downstream: 'Feeds technical findings directly into Agent 2',
+      downstream: 'Pipes verified technical claims into normalization pipeline',
       detailsTitle: 'Code Evaluation Capabilities:',
       items: [
         'Code analysis & Code RAG',
@@ -472,12 +472,12 @@ export default function MultiAgentSection() {
               <Layers className="h-5 w-5" />
             </div>
             <h3 className="mb-2 text-base font-semibold text-black">
-              Sequential Document Workflow (Agents 1–5)
+              Comprehensive Document Diligence Workflow
             </h3>
             <p className="text-xs leading-relaxed text-black/70">
-              Startup documents undergo structured extraction (Agent 1), data normalization and
-              deduplication (Agent 2), multidimensional scoring (Agent 3), thesis & recommendation
-              generation (Agent 4), and publication into PDF, PPT, and spreadsheet reports (Agent 5).
+              Startup documents undergo structured extraction, data normalization and
+              deduplication, multidimensional scoring, thesis & recommendation
+              generation, and publication into institutional PDF, PPT, and spreadsheet reports.
             </p>
           </div>
 
@@ -486,12 +486,12 @@ export default function MultiAgentSection() {
               <GitBranch className="h-5 w-5 text-amber-300" />
             </div>
             <h3 className="mb-2 text-base font-semibold text-black">
-              Project → Startup Path (Agent 6)
+              Automated Technical & Code Diligence
             </h3>
             <p className="text-xs leading-relaxed text-black/70">
               An independent code evaluation pipeline analyzing software projects and GitHub
               repositories using Code RAG and architecture parsing to assess scalability, security,
-              maturity, and commercial startup potential—directly feeding technical claims into Agent 2.
+              maturity, and commercial startup potential—directly feeding technical claims into the evaluation pipeline.
             </p>
           </div>
 
@@ -500,11 +500,11 @@ export default function MultiAgentSection() {
               <ShieldCheck className="h-5 w-5 text-emerald-400" />
             </div>
             <h3 className="mb-2 text-base font-semibold text-black">
-              Scoring Dimensions vs. Agents
+              Multidimensional Scoring Methodology
             </h3>
             <p className="text-xs leading-relaxed text-black/70">
               Market, Product, Team, Financial, Traction, and Risk are analytical scoring dimensions
-              evaluated by the Scoring Engine (Agent 3)—not separate AI agents. Recommendations
+              evaluated by the Multidimensional Scoring Engine with complete provenance traceability. Recommendations
               (INVEST, MONITOR / CONSIDER, PASS) assist human investment committees.
             </p>
           </div>

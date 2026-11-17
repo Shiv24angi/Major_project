@@ -67,7 +67,7 @@ export default function InvestmentScoreSection() {
                 <span className="text-xl text-black/40">/ 100</span>
               </div>
               <p className="mt-2 text-xs text-black/60">
-                Calculated across 6 analytical dimensions by the Agent 3 Scoring Engine.
+                Calculated across 6 analytical dimensions by the Multidimensional Scoring Engine.
               </p>
             </div>
 
@@ -81,7 +81,7 @@ export default function InvestmentScoreSection() {
                 </span>
               </div>
               <p className="mt-2 text-xs text-black/60">
-                Actual system outputs: INVEST, MONITOR / CONSIDER, or PASS based on Agent 4 insight synthesis.
+                Actual system outputs: INVEST, MONITOR / CONSIDER, or PASS based on comprehensive insight synthesis.
               </p>
             </div>
 

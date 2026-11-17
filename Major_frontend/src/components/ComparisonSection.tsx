@@ -13,7 +13,7 @@ export default function ComparisonSection() {
     'Analyzes multiple startup inputs (deck, financials, code, team)',
     'Uses grounded RAG for traceability',
     'Researches external evidence & competitor benchmarks',
-    'Coordinates specialized multi-agent workflow (Agents 1–5 + Agent 6)',
+    'Orchestrates comprehensive institutional due diligence across documents and codebases',
     'Cross-checks important claims against primary sources',
     'Detects risks, inconsistencies, and red flags',
     'Produces structured scoring across 6 analytical dimensions',
@@ -44,7 +44,7 @@ export default function ComparisonSection() {
             data-editable
             data-preset-text="compare-body"
           >
-            Most tools simply summarize a PDF. VentureLens is an institutional multi-agent
+            Most tools simply summarize a PDF. VentureLens is an institutional-grade
             intelligence platform built for rigorous verification.
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function ComparisonSection() {
                   Institutional Architecture
                 </span>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white">
-                  Multi-Agent
+                  Automated Diligence
                 </span>
               </div>
               <h3 className="mt-2 mb-6 text-2xl font-semibold text-white">

@@ -99,11 +99,11 @@ export default function ProjectInputPage() {
 
     setErrors([]);
     setIsSubmitting(true);
-    setSubmitStatus('Dispatching repository to Agent 6 engine...');
+    setSubmitStatus('Initializing codebase architecture analysis...');
 
-    // Attempt live Agent 6 FastAPI call first
+    // Attempt live code diligence call first
     try {
-      setSubmitStatus('Agent 6 AST parsing & evaluating codebase on port 8000...');
+      setSubmitStatus('Evaluating repository structure, AST, and dependencies...');
       const liveRes = await analyzeGithubRepo(trimmedGithub);
 
       if (liveRes.success && liveRes.payload) {
@@ -203,7 +203,7 @@ export default function ProjectInputPage() {
       },
       keyInsights: {
         strengths: [
-          `Agent 6 Code Diligence verified functional modular architecture across ${repoParts[repoParts.length - 1]}`,
+          `Technical diligence verified functional modular architecture across ${repoParts[repoParts.length - 1]}`,
           `High test suite coverage and structured schema definitions in repository files`,
           `Solves clear developer friction: ${projectDescription.trim().slice(0, 100)}`,
         ],
@@ -273,7 +273,7 @@ export default function ProjectInputPage() {
         {
           id: 'c1',
           role: 'assistant',
-          text: `Analysis complete for ${projectName}. Agent 6 evaluated the repository structure and piped technical findings into the startup viability assessment.`,
+          text: `Analysis complete for ${projectName}. Evaluated repository architecture, dependencies, and technical maturity.`,
           timestamp: 'Just now',
         },
       ],
@@ -391,7 +391,7 @@ export default function ProjectInputPage() {
                 </h2>
               </div>
               <p className="text-xs text-black/60 mb-6">
-                Evaluated by Agent 6 (Project → Startup Code Agent) using AST parsing and Code RAG.
+                Evaluated using deep AST codebase parsing, dependency auditing, and architecture diligence.
               </p>
 
               <div className="relative">
@@ -576,14 +576,14 @@ export default function ProjectInputPage() {
                 disabled={isSubmitting}
                 className="group flex w-full items-center justify-between rounded-full bg-[#1F2438] px-8 py-5 text-lg font-semibold text-white transition-all hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed shadow-xl cursor-pointer"
               >
-                <span>{isSubmitting ? submitStatus : 'Analyze Project with Agent 6'}</span>
+                <span>{isSubmitting ? submitStatus : 'Analyze Project Codebase'}</span>
                 <span className="rounded-full bg-cyan-400 p-2.5 text-black transition-transform group-hover:translate-x-1">
                   <ArrowRight className="h-5 w-5" />
                 </span>
               </button>
               <div className="mt-3 flex items-center justify-center gap-2 text-xs text-black/50">
                 <ShieldCheck className="h-4 w-4 text-cyan-600" />
-                <span>Agent 6 parses AST, tech stack, and scalability metrics before piping to Agent 2</span>
+                <span>Evaluates AST, tech stack, scalability, and code maturity</span>
               </div>
             </div>
           </form>

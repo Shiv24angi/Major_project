@@ -431,7 +431,7 @@ export default function StartupInputPage() {
                 </h2>
               </div>
               <p className="text-xs text-black/60 mb-6">
-                Supported formats: PDF, PPT, PPTX. Evaluated by Agent 1 (Document Analysis & Extraction).
+                Supported formats: PDF, PPT, PPTX. Evaluated using automated document intelligence and claim cross-verification.
               </p>
 
               <input
@@ -660,7 +660,7 @@ export default function StartupInputPage() {
               </button>
               <div className="mt-3 flex items-center justify-center gap-2 text-xs text-black/50">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                <span>Documents are encrypted and processed through the 5-Agent VentureLens pipeline</span>
+                <span>Documents are encrypted and processed through the VentureLens evaluation pipeline</span>
               </div>
             </div>
           </form>
