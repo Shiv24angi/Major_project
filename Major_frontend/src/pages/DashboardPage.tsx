@@ -3200,27 +3200,8 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Session Switcher Dropdown & Back Button */}
+                {/* Back to Dashboard Button */}
                 <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
-                  <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                    <span className="font-medium hidden md:inline">Venture:</span>
-                    <select
-                      value={activeAnalysis.id}
-                      onChange={(e) => {
-                        const selected = analyses.find((a) => a.id === e.target.value);
-                        if (selected) {
-                          selectAnalysis(selected);
-                        }
-                      }}
-                      className="text-xs bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl px-2.5 py-1.5 text-[#1E1B2E] font-semibold focus:outline-none focus:border-[#5028E0] cursor-pointer"
-                    >
-                      {analyses.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.title} {a.isDemo ? '(Demo)' : '(Uploaded)'}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
                   <button
                     type="button"
                     onClick={() => setCurrentTab('dashboard')}

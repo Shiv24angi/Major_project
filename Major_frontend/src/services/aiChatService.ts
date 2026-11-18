@@ -9,19 +9,25 @@ import type { AnalysisRecord, ChatMessage } from './analysisStorage';
 import type { Agent1EvaluationRecord } from './supabaseService';
 import { AGENT6_API_BASE } from './agent6Service';
 
-const RAW_GEMINI_KEY = (import.meta.env.GEMINI_API_KEY as string) || '';
+const RAW_GEMINI_KEY =
+  (import.meta.env.VITE_GEMINI_API_KEY as string) ||
+  (import.meta.env.GEMINI_API_KEY as string) ||
+  '';
 
 export function isGeminiKeyValid(key?: string): boolean {
   if (!key) return false;
   const trimmed = key.trim();
-  // Valid Google AI Studio Gemini API keys start with AIza
-  return trimmed.startsWith('AIza') && trimmed.length >= 35;
+  // Valid Google AI Studio Gemini API keys start with AIza or AQ.
+  return (trimmed.startsWith('AIza') || trimmed.startsWith('AQ.')) && trimmed.length >= 25;
 }
 
 const FALLBACK_MODELS = [
-  (import.meta.env.GEMINI_MODEL as string) || 'gemini-2.5-flash',
-  'gemini-3.5-flash',
+  (import.meta.env.VITE_GEMINI_MODEL as string) ||
+    (import.meta.env.GEMINI_MODEL as string) ||
+    'gemini-2.5-flash',
   'gemini-flash-latest',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-pro',
 ];
 
 export interface SessionDocumentInfo {
@@ -620,7 +626,7 @@ export function synthesizeRepositoryResponse(
 
   // Append informative note if Google API key is missing or invalid format
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key (\`AIzaSy...\`) to \`Major_frontend/.env\` as \`GEMINI_API_KEY\`.*`;
+    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key to \`Major_frontend/.env\` as \`VITE_GEMINI_API_KEY\`.*`;
   }
 
   return body;
@@ -675,7 +681,7 @@ export function synthesizeStartupDiligenceResponse(
   }
 
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified session intelligence for \`${companyTitle}\`. To enable live Gemini LLM multi-turn reasoning, configure your Google AI Studio API key (\`AIzaSy...\`) in \`Major_frontend/.env\`.*`;
+    body += `\n\n---\n*💡 Grounded in verified session intelligence for \`${companyTitle}\`. To enable live Gemini LLM multi-turn reasoning, configure your Google AI Studio API key in \`Major_frontend/.env\` as \`VITE_GEMINI_API_KEY\`.*`;
   }
 
   return body;
@@ -689,13 +695,13 @@ async function callGeminiDirect(
   pdfBase64?: string | null
 ): Promise<string> {
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    throw new Error('No valid Google AI Studio Gemini API Key provided (must start with AIza).');
+    throw new Error('No valid Google AI Studio Gemini API Key provided.');
   }
 
   let lastError: any = null;
 
   for (const model of FALLBACK_MODELS) {
-    if (!model || model.includes('1.5') || model.includes('2.0')) continue;
+    if (!model) continue;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${RAW_GEMINI_KEY.trim()}`;
     try {
