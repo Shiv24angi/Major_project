@@ -655,7 +655,15 @@ export async function runClientNormalization(
     overall_confidence_score: isEmptyRepo ? 0.40 : 0.88,
     startup_profile: {
       canonical_name: canonicalName,
-      tagline: parentAnalysis?.tagline || `${canonicalName} Platform`,
+      tagline: (
+        parentAnalysis?.tagline &&
+        !parentAnalysis.tagline.includes('Enterprise SaaS / AI') &&
+        !parentAnalysis.tagline.startsWith('Next-generation')
+      )
+        ? parentAnalysis.tagline
+        : mergedA1.product
+        ? (mergedA1.product.length > 120 ? mergedA1.product.slice(0, 117) + '...' : mergedA1.product)
+        : `${canonicalName} ${industry} Platform`,
       description: description,
       primary_industry: industry,
       sub_sectors: [industry],

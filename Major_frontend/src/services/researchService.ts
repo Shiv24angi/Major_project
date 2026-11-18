@@ -80,6 +80,12 @@ export async function checkResearchHealth(): Promise<ResearchHealthResponse> {
   return { online: false, activeProvider: 'offline', zeroCostMode: true };
 }
 
+export function sanitizeCompanyName(name: string): string {
+  if (!name) return '';
+  // Collapse excessive repeating characters: e.g. "swwwiiiiiigggggggyyyyy" -> "swiggy"
+  return name.replace(/(.)\1{2,}/gi, '$1$1').trim();
+}
+
 /**
  * Executes live web search via Tavily and synthesizes structured diligence via Gemini.
  */
@@ -92,12 +98,13 @@ async function runLiveWebResearch(params: {
   knownCompetitors?: string[];
   claimedArr?: string;
 }): Promise<ExternalResearchData | null> {
+  const cleanName = sanitizeCompanyName(params.startupName);
   let searchSnippets = '';
 
   // 1. Query Tavily Search API for real-time web context
   if (TAVILY_KEY) {
     try {
-      const query = `${params.startupName} ${params.industry || ''} market size TAM competitors revenue funding 2025 2026`.trim();
+      const query = `${cleanName} ${params.industry || ''} market size TAM competitors revenue funding 2024 2025`.trim();
       const tavilyRes = await fetch('https://api.tavily.com/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,15 +133,20 @@ async function runLiveWebResearch(params: {
 
   // 2. Synthesize with Gemini
   if (GEMINI_KEY) {
-    const prompt = `You are a premier venture capital research analyst. Synthesize external diligence intelligence for "${params.startupName}" operating in the "${params.industry || 'Technology'}" sector.
-Company Description / Claims: ${params.projectDescription || params.startupName}.
+    const competitorsHint = (params.knownCompetitors && params.knownCompetitors.length > 0)
+      ? `Key verified competitors to evaluate: ${params.knownCompetitors.join(', ')}.`
+      : '';
+
+    const prompt = `You are a premier venture capital research analyst. Synthesize external diligence intelligence for "${cleanName}" operating in the "${params.industry || 'Technology'}" sector.
+Company Description / Claims: ${params.projectDescription || cleanName}.
 Stage: ${params.currentStage || 'Seed / Growth'}.
 ${params.claimedArr ? `Claimed Revenue: ${params.claimedArr}.` : ''}
+${competitorsHint}
 
 ${searchSnippets ? `Live Web Search Intelligence:\n${searchSnippets}\n` : 'Synthesize realistic, grounded benchmarks for this market.'}
 
 CRITICAL RULES:
-1. Ground figures in reality for "${params.startupName}". If it is a large or public company (e.g. Pinterest, Uber, Airbnb, Stripe), reflect its true multi-billion TAM, actual revenue, and real-world competitors. If early-stage, benchmark realistic startup metrics.
+1. Ground figures in reality for "${cleanName}". If it is a large or public company (e.g. Swiggy, Pinterest, Zomato, Uber, Airbnb, Stripe), reflect its true multi-billion TAM, actual revenue, and real-world competitors (e.g. Zomato, Blinkit, Zepto for Swiggy; Instagram, TikTok for Pinterest). If early-stage, benchmark realistic startup metrics.
 2. NEVER return "N/A" or "Data not provided" or placeholders like "Apex Systems".
 3. Provide real named competitors in this exact space with real websites and threat levels ("High" | "Medium" | "Low").
 4. News events must be real or plausible recent developments with dates, headlines, and sources.

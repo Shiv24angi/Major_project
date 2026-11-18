@@ -29,11 +29,30 @@ interface UploadedFileItem {
   fileObj?: File;
 }
 
+const INDUSTRY_SECTORS = [
+  'Food Delivery / Quick Commerce / Hyperlocal',
+  'E-Commerce / Direct-to-Consumer (DTC) / Retail',
+  'Logistics / Supply Chain & Freight',
+  'Social Media / Visual Discovery / Content & Creator',
+  'Enterprise SaaS / B2B Software / AI',
+  'FinTech / Payments & Banking',
+  'HealthTech / BioTech / Digital Health',
+  'Climate Tech / Clean Energy & Sustainability',
+  'DevTools / Cloud Infrastructure & CyberSecurity',
+  'EdTech / Workforce & Learning',
+  'Gaming / Media & Entertainment',
+  'PropTech / Real Estate',
+  'Hardware / Robotics & DeepTech',
+  'Mobility / Autonomous Vehicles & Transportation',
+  'Consumer Tech / Apps & Marketplaces',
+  'Multi-Sector Conglomerate / Other',
+];
+
 export default function StartupInputPage() {
   // Form fields
   const [startupName, setStartupName] = useState('');
   const [tagline, setTagline] = useState('');
-  const [industry, setIndustry] = useState('Enterprise SaaS / AI');
+  const [industry, setIndustry] = useState('Enterprise SaaS / B2B Software / AI');
   const [website, setWebsite] = useState('');
   const [founderInfo, setFounderInfo] = useState('');
   const [pitchDeck, setPitchDeck] = useState<File | null>(null);
@@ -200,7 +219,7 @@ export default function StartupInputPage() {
       id: analysisId,
       title: startupName.trim(),
       mode: 'startup',
-      tagline: tagline.trim() || `Next-generation ${industry} platform`,
+      tagline: tagline.trim() || `${startupName.trim()} ${industry} Platform`,
       industry,
       website: website.trim() || undefined,
       stage: 'Seed',
@@ -401,12 +420,11 @@ export default function StartupInputPage() {
                     onChange={(e) => setIndustry(e.target.value)}
                     className="w-full rounded-xl border border-black/15 bg-[#FBFBFB] px-4 py-3 text-sm text-black focus:border-black focus:outline-none"
                   >
-                    <option value="Enterprise SaaS / AI">Enterprise SaaS / AI</option>
-                    <option value="Climate Tech / Clean Energy">Climate Tech / Clean Energy</option>
-                    <option value="FinTech / Payments">FinTech / Payments</option>
-                    <option value="HealthTech / Bio">HealthTech / Bio</option>
-                    <option value="DevTools / Infrastructure">DevTools / Infrastructure</option>
-                    <option value="Consumer / Marketplaces">Consumer / Marketplaces</option>
+                    {INDUSTRY_SECTORS.map((sec) => (
+                      <option key={sec} value={sec}>
+                        {sec}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

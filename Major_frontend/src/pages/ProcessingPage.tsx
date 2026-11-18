@@ -19,7 +19,7 @@ import {
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
-import { getAnalysisById, setActiveAnalysisId } from '../services/analysisStorage';
+import { getAnalysisById, setActiveAnalysisId, addAnalysis } from '../services/analysisStorage';
 import { analyzeGithubRepo } from '../services/agent6Service';
 import { fetchAndNormalize } from '../services/agent2Service';
 import { evaluateStartup } from '../services/agent3Service';
@@ -221,7 +221,28 @@ export default function ProcessingPage() {
         setStatusMessage(steps[1].statusText);
 
         // Triggers Agent 2 Normalization, which writes to public.normalized_startup_profiles
-        await fetchAndNormalize(analysisId, targetTitle).catch((e) => console.warn('Agent 2 normalization error:', e));
+        const normDataset = await fetchAndNormalize(analysisId, targetTitle).catch((e) => {
+          console.warn('Agent 2 normalization error:', e);
+          return null;
+        });
+
+        if (normDataset) {
+          const currentRec = getAnalysisById(analysisId);
+          if (currentRec) {
+            const canonical = normDataset.canonical_name || normDataset.startup_profile?.canonical_name;
+            const updated = {
+              ...currentRec,
+              title: canonical && canonical.length > 0 && canonical !== 'Unknown' ? canonical : currentRec.title,
+              stage: normDataset.stage || currentRec.stage,
+              industry: normDataset.primary_industry || currentRec.industry,
+              tagline: normDataset.startup_profile?.tagline && !normDataset.startup_profile.tagline.includes('Enterprise SaaS / AI')
+                ? normDataset.startup_profile.tagline
+                : currentRec.tagline,
+              normalizedData: normDataset,
+            };
+            addAnalysis(updated);
+          }
+        }
 
         await new Promise((r) => setTimeout(r, 1500));
         if (isCancelled) return;
@@ -242,9 +263,27 @@ export default function ProcessingPage() {
           setStatusMessage(steps[3].statusText);
 
           // Triggers Agent 4 Insight & Recommendation Generator
-          await generateInsightsAndRecommendations(analysisId, targetTitle).catch((e) =>
-            console.warn('Agent 4 recommendation error:', e)
-          );
+          const recOut = await generateInsightsAndRecommendations(analysisId, targetTitle).catch((e) => {
+            console.warn('Agent 4 recommendation error:', e);
+            return null;
+          });
+
+          if (recOut) {
+            const currentRec = getAnalysisById(analysisId);
+            if (currentRec) {
+              const updated = {
+                ...currentRec,
+                thesis: recOut.investment_thesis || currentRec.thesis,
+                recommendation: (recOut.recommendation as any) || currentRec.recommendation,
+                confidence: (recOut.confidence as any) || currentRec.confidence,
+                overallScore: recOut.overall_score || currentRec.overallScore,
+                scores: recOut.dimension_scores ? { ...currentRec.scores, ...recOut.dimension_scores } : currentRec.scores,
+                keyInsights: recOut.key_insights || currentRec.keyInsights,
+                dueDiligenceQuestions: recOut.due_diligence_questions || currentRec.dueDiligenceQuestions,
+              };
+              addAnalysis(updated);
+            }
+          }
 
           await new Promise((r) => setTimeout(r, 1400));
           if (isCancelled) return;

@@ -77,7 +77,7 @@ import Agent6DiligenceView from '../components/Agent6DiligenceView';
 import { checkAgent6Health } from '../services/agent6Service';
 import Agent1DiligenceView from '../components/Agent1DiligenceView';
 import { checkAgent1Health } from '../services/agent1Service';
-import { checkAgent2Health } from '../services/agent2Service';
+import { checkAgent2Health, getNormalizedDataset } from '../services/agent2Service';
 import { checkAgent3Health } from '../services/agent3Service';
 import { checkAgent4Health, getAgent4Recommendations } from '../services/agent4Service';
 import {
@@ -432,12 +432,25 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!activeAnalysis?.id || activeAnalysis.researchData) return;
     let isMounted = true;
+    const targetName = activeAnalysis.normalizedData?.canonical_name || activeAnalysis.title;
+    const cleanName = targetName.replace(/(.)\1{2,}/gi, '$1$1').trim();
+    const normBI = activeAnalysis.normalizedData?.business_information;
+    const normFI = activeAnalysis.normalizedData?.financial_information;
+    const knownCompetitors = normBI?.competitors || [];
+    const claimedArr = normFI?.annual_recurring_revenue
+      ? normFI.currency === 'INR'
+        ? `₹${(normFI.annual_recurring_revenue / 100_000_000).toFixed(0)} Cr`
+        : `$${(normFI.annual_recurring_revenue / 1_000_000).toFixed(1)}M`
+      : undefined;
+
     runFullDiligenceResearch({
-      startupName: activeAnalysis.title,
-      industry: activeAnalysis.industry,
+      startupName: cleanName,
+      industry: activeAnalysis.normalizedData?.primary_industry || activeAnalysis.industry,
       projectDescription: activeAnalysis.thesis || activeAnalysis.tagline,
-      website: activeAnalysis.website,
-      currentStage: activeAnalysis.stage,
+      website: activeAnalysis.normalizedData?.startup_profile?.website || activeAnalysis.website,
+      currentStage: activeAnalysis.normalizedData?.stage || activeAnalysis.stage,
+      knownCompetitors,
+      claimedArr,
       analysisId: activeAnalysis.id,
     }).then((fresh) => {
       if (!isMounted || !fresh) return;
@@ -451,7 +464,39 @@ export default function DashboardPage() {
     return () => {
       isMounted = false;
     };
-  }, [activeAnalysis?.id, activeAnalysis?.title]);
+  }, [activeAnalysis?.id, activeAnalysis?.title, activeAnalysis?.normalizedData?.canonical_name]);
+
+  // Sync Agent 2 Normalized Startup Profile from Supabase
+  useEffect(() => {
+    if (!activeAnalysis?.id) return;
+    let isMounted = true;
+    getNormalizedDataset(activeAnalysis.id).then((dataset) => {
+      if (!isMounted || !dataset) return;
+      setActiveAnalysis((prev) => {
+        if (!prev || prev.id !== activeAnalysis.id) return prev;
+        const canonical = dataset.canonical_name || dataset.startup_profile?.canonical_name;
+        const normStage = dataset.stage || dataset.startup_profile?.stage;
+        const normIndustry = dataset.primary_industry || dataset.startup_profile?.primary_industry;
+        const normTagline = dataset.startup_profile?.tagline && !dataset.startup_profile.tagline.includes('Enterprise SaaS / AI')
+          ? dataset.startup_profile.tagline
+          : prev.tagline;
+        const normWebsite = dataset.startup_profile?.website || prev.website;
+
+        return {
+          ...prev,
+          title: canonical && canonical.length > 0 && canonical !== 'Unknown' ? canonical : prev.title,
+          stage: normStage || prev.stage,
+          industry: normIndustry || prev.industry,
+          tagline: normTagline || prev.tagline,
+          website: normWebsite || prev.website,
+          normalizedData: dataset,
+        };
+      });
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [activeAnalysis?.id]);
 
   // Sync Agent 4 recommendations and due diligence questions whenever active venture changes
   useEffect(() => {
@@ -594,12 +639,25 @@ export default function DashboardPage() {
     setIsRefreshingResearch(true);
     try {
       toast.info('Querying Agent-Research Engine (Tasks 5–9)...');
+      const targetName = activeAnalysis.normalizedData?.canonical_name || activeAnalysis.title;
+      const cleanName = targetName.replace(/(.)\1{2,}/gi, '$1$1').trim();
+      const normBI = activeAnalysis.normalizedData?.business_information;
+      const normFI = activeAnalysis.normalizedData?.financial_information;
+      const knownCompetitors = normBI?.competitors || [];
+      const claimedArr = normFI?.annual_recurring_revenue
+        ? normFI.currency === 'INR'
+          ? `₹${(normFI.annual_recurring_revenue / 100_000_000).toFixed(0)} Cr`
+          : `$${(normFI.annual_recurring_revenue / 1_000_000).toFixed(1)}M`
+        : undefined;
+
       const fresh = await runFullDiligenceResearch({
-        startupName: activeAnalysis.title,
-        industry: activeAnalysis.industry,
+        startupName: cleanName,
+        industry: activeAnalysis.normalizedData?.primary_industry || activeAnalysis.industry,
         projectDescription: activeAnalysis.thesis || activeAnalysis.tagline,
-        website: activeAnalysis.website,
-        currentStage: activeAnalysis.stage,
+        website: activeAnalysis.normalizedData?.startup_profile?.website || activeAnalysis.website,
+        currentStage: activeAnalysis.normalizedData?.stage || activeAnalysis.stage,
+        knownCompetitors,
+        claimedArr,
         analysisId: activeAnalysis.id,
       });
       if (fresh) {
