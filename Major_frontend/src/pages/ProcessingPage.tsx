@@ -11,6 +11,10 @@ import {
   Code2,
   ShieldCheck,
   GitBranch,
+  FileSpreadsheet,
+  Share2,
+  Sparkles,
+  Download,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -21,6 +25,12 @@ import { fetchAndNormalize } from '../services/agent2Service';
 import { evaluateStartup } from '../services/agent3Service';
 import { generateInsightsAndRecommendations } from '../services/agent4Service';
 import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation, supabase } from '../services/supabaseService';
+import {
+  exportAnalysisToPDF,
+  exportAnalysisToPPT,
+  exportAnalysisToExcel,
+  generateShareLink,
+} from '../services/exportReportService';
 
 interface PipelineStep {
   id: string;
@@ -232,9 +242,19 @@ export default function ProcessingPage() {
           if (isCancelled) return;
         }
 
+        // Step 5: Diligence Deliverables & Report Generation (Agent 5)
+        if (steps.length > 4) {
+          setCurrentStepIndex(4);
+          setStatusMessage(steps[4].statusText);
+
+          // Prepare export deliverables
+          await new Promise((r) => setTimeout(r, 1200));
+          if (isCancelled) return;
+        }
+
         // Final Step: Complete
         setCurrentStepIndex(steps.length - 1);
-        setStatusMessage('Analysis complete! All findings synthesized and verified.');
+        setStatusMessage('Analysis complete! All deliverables synthesized and verified.');
         setIsCompleted(true);
       } catch (err) {
         console.warn('[ProcessingPage] Pipeline execution warning:', err);
@@ -307,16 +327,64 @@ export default function ProcessingPage() {
               <h2 className="text-2xl font-bold text-emerald-950 mb-2">Analysis Complete</h2>
               <p className="text-sm text-emerald-800 max-w-lg mx-auto mb-6">
                 All evaluation findings, multi-dimensional scores, risk concerns, and due-diligence
-                metrics have been synthesized into your dashboard.
+                metrics have been synthesized into your dashboard and export deliverables.
               </p>
-              <button
-                type="button"
-                onClick={handleViewAnalysis}
-                className="group inline-flex items-center gap-3 rounded-full bg-black px-8 py-4 text-base font-semibold text-white shadow-xl hover:bg-gray-800 transition-colors cursor-pointer"
-              >
-                <span>View Analysis</span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </button>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+                <button
+                  type="button"
+                  onClick={handleViewAnalysis}
+                  className="group inline-flex items-center gap-3 rounded-full bg-black px-8 py-3.5 text-base font-semibold text-white shadow-xl hover:bg-gray-800 transition-colors cursor-pointer"
+                >
+                  <span>Open Full Dashboard</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+
+              {/* AGENT 5 EXPORT TOOLS BAR (MATCHING SYSTEM DESIGN DIAGRAM) */}
+              <div className="pt-6 border-t border-emerald-200/80">
+                <div className="flex items-center justify-center gap-2 text-xs font-bold text-emerald-900 uppercase tracking-wider mb-3">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Agent 5 • Export Deliverables</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl mx-auto">
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToPDF(analysis)}
+                    className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 text-xs font-bold text-[#1E1B2E] hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4 text-rose-600" />
+                    <span>PDF Memo</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToPPT(analysis)}
+                    className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 text-xs font-bold text-[#1E1B2E] hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <FileDown className="w-4 h-4 text-amber-600" />
+                    <span>PPT Slides</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToExcel(analysis)}
+                    className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 text-xs font-bold text-[#1E1B2E] hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                    <span>Excel Model</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => generateShareLink(analysisId, targetTitle)}
+                    className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-emerald-200 hover:border-emerald-400 text-xs font-bold text-[#1E1B2E] hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <Share2 className="w-4 h-4 text-[#5028E0]" />
+                    <span>Share Link</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

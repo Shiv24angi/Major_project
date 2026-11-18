@@ -87,6 +87,12 @@ import {
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
 import { queryVentureAiChat, getSessionPitchDeck, getSessionRepositoryInfo } from '../services/aiChatService';
+import {
+  exportAnalysisToPDF,
+  exportAnalysisToPPT,
+  exportAnalysisToExcel,
+  generateShareLink,
+} from '../services/exportReportService';
 
 // VentureLens Aperture Facet Logo
 function VentureLensLogo({ className = 'w-7 h-7' }: { className?: string }) {
@@ -854,6 +860,20 @@ export default function DashboardPage() {
               </span>
               <span className="sm:hidden font-bold">Thesis</span>
             </div>
+
+            {/* Agent 5: Deliverables & Export Indicator */}
+            <button
+              type="button"
+              onClick={() => setCurrentTab('reports')}
+              title="Agent 5: Export Tools (PDF, PPT, Excel, Share Link)"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-[#DCD6FA] bg-[#EEECFB] text-[#5028E0] hover:bg-[#E0DBFA] transition-all cursor-pointer"
+            >
+              <FileDown className="w-3.5 h-3.5 text-[#5028E0]" />
+              <span className="hidden sm:inline">
+                Agent 5: <strong className="font-bold">Exports Ready</strong>
+              </span>
+              <span className="sm:hidden font-bold">Export</span>
+            </button>
 
             {/* Notification Bell */}
             <button
@@ -3515,40 +3535,103 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  {
-                    title: 'Full Investment Memo (PDF)',
-                    desc: '18-page comprehensive diligence report with risk assessment',
-                  },
-                  {
-                    title: 'IC Presentation Deck (PPTX)',
-                    desc: 'Executive 10-slide summary formatted for partner meetings',
-                  },
-                  {
-                    title: 'Normalized Financial Model (XLSX)',
-                    desc: 'Standardized 3-statement forecast with sensitivity matrix',
-                  },
-                ].map((rep) => (
-                  <div
-                    key={rep.title}
-                    className="p-5 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] flex flex-col justify-between"
-                  >
-                    <div>
-                      <FileSpreadsheet className="w-7 h-7 text-[#5028E0] mb-2" />
-                      <h4 className="font-bold text-sm text-[#1E1B2E]">{rep.title}</h4>
-                      <p className="text-xs text-[#64748B] mt-1">{rep.desc}</p>
+              {/* 4 Agent 5 Deliverables (Matching System Design Diagram: PDF, PPT, Excel, Share Link) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 1. PDF Investment Memo */}
+                <div className="p-5 rounded-2xl border border-[#EAEBF2] bg-[#F8F9FE] flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-3">
+                      <FileText className="w-5 h-5" />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => alert(`Downloading ${rep.title}...`)}
-                      className="mt-4 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] cursor-pointer"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download Report</span>
-                    </button>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                      Print-Ready PDF
+                    </span>
+                    <h4 className="font-bold text-sm text-[#1E1B2E] mt-2">Full Investment Memo</h4>
+                    <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                      Comprehensive diligence report with calibrated scorecards, risk matrix, and investment thesis.
+                    </p>
                   </div>
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToPDF(activeAnalysis)}
+                    className="mt-5 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 cursor-pointer shadow-xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download PDF</span>
+                  </button>
+                </div>
+
+                {/* 2. PPT Presentation Deck */}
+                <div className="p-5 rounded-2xl border border-[#EAEBF2] bg-[#F8F9FE] flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-3">
+                      <FileDown className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                      Slide Deck
+                    </span>
+                    <h4 className="font-bold text-sm text-[#1E1B2E] mt-2">IC Presentation Deck</h4>
+                    <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                      Executive 4-slide diligence briefing deck formatted for partner meetings and IC votes.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToPPT(activeAnalysis)}
+                    className="mt-5 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 cursor-pointer shadow-xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download Slides</span>
+                  </button>
+                </div>
+
+                {/* 3. Excel Financial Model */}
+                <div className="p-5 rounded-2xl border border-[#EAEBF2] bg-[#F8F9FE] flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
+                      <FileSpreadsheet className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      Excel / CSV
+                    </span>
+                    <h4 className="font-bold text-sm text-[#1E1B2E] mt-2">Financial & Diligence Model</h4>
+                    <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                      Normalized metrics, dimension weights, sensitivity tables, and due-diligence questions.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => exportAnalysisToExcel(activeAnalysis)}
+                    className="mt-5 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 cursor-pointer shadow-xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export Model</span>
+                  </button>
+                </div>
+
+                {/* 4. Shareable Diligence Link */}
+                <div className="p-5 rounded-2xl border border-[#EAEBF2] bg-[#F8F9FE] flex flex-col justify-between hover:shadow-md transition-shadow">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 text-[#5028E0] flex items-center justify-center mb-3">
+                      <Share2 className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#5028E0] bg-[#EEECFB] px-2 py-0.5 rounded-full border border-[#DCD6FA]">
+                      Direct Link
+                    </span>
+                    <h4 className="font-bold text-sm text-[#1E1B2E] mt-2">Shareable Report Link</h4>
+                    <p className="text-xs text-[#64748B] mt-1 leading-relaxed">
+                      One-click clipboard link for sharing live diligence findings with co-investors and partners.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => generateShareLink(activeAnalysis?.id, activeAnalysis?.title)}
+                    className="mt-5 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] cursor-pointer shadow-xs transition-colors"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>Copy Share Link</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}
