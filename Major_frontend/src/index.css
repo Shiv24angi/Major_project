@@ -150,8 +150,12 @@ html.lenis, html.lenis body {
   overscroll-behavior: contain;
 }
 
+html.lenis-stopped,
+html.lenis.lenis-stopped,
+body.lenis-stopped,
 .lenis.lenis-stopped {
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 .lenis.lenis-scrolling iframe {

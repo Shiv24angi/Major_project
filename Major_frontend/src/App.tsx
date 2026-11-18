@@ -29,36 +29,51 @@ export default function App() {
 
     applyPresetHashOnLoad();
 
-    // Initialize Lenis for silky-smooth, inertia scrolling across the entire site
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1.05,
-      touchMultiplier: 1.8,
-      infinite: false,
-    });
+    let lenis: Lenis | null = null;
+    let rafId: number | null = null;
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
+    const startLenis = () => {
+      if (lenis) return;
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1.05,
+        touchMultiplier: 1.8,
+        infinite: false,
+      });
+
+      function raf(time: number) {
+        lenis?.raf(time);
+        rafId = requestAnimationFrame(raf);
+      }
       rafId = requestAnimationFrame(raf);
-    }
+    };
 
-    rafId = requestAnimationFrame(raf);
+    const stopLenis = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      if (lenis) {
+        lenis.destroy();
+        lenis = null;
+      }
+      document.documentElement.classList.remove('lenis', 'lenis-smooth', 'lenis-stopped', 'lenis-scrolling');
+      document.body.classList.remove('lenis', 'lenis-smooth', 'lenis-stopped', 'lenis-scrolling');
+    };
 
-    // Smoothly scroll to in-page hash anchors via Lenis
+    // Smoothly scroll to in-page hash anchors via Lenis when on landing
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
       if (anchor) {
         const href = anchor.getAttribute('href');
         if (href && href.startsWith('#') && href !== '#') {
-          // If anchor matches an on-page ID element, scroll to it
           const targetEl = document.querySelector<HTMLElement>(href);
-          if (targetEl) {
+          if (targetEl && lenis) {
             e.preventDefault();
             lenis.scrollTo(targetEl, { offset: -90, duration: 1.2 });
           }
@@ -66,38 +81,23 @@ export default function App() {
       }
     };
 
-    // Synchronize Lenis state: Pause Lenis on fixed app/dashboard layouts so native mouse wheel scrolling works effortlessly everywhere
-    const fixedRoutes = [
-      'auth',
-      'login',
-      'signup',
-      'new-analysis',
-      'analyze-startup',
-      'analyze-project',
-      'processing',
-      'dashboard',
-      'my-analyses',
-      'documents',
-      'reports',
-    ];
-
-    const syncLenisMode = () => {
+    // Lenis is only needed on the landing page for inertia marquee scrolling.
+    // All app pages (new-analysis, analyze-startup, dashboard, etc.) use 100% native browser scrolling.
+    const syncScrollMode = () => {
       const path = getPresetRoutePath();
-      if (fixedRoutes.includes(path)) {
-        lenis.stop();
-        window.scrollTo(0, 0);
+      if (!path || path === '' || path === 'home') {
+        startLenis();
       } else {
-        lenis.start();
+        stopLenis();
       }
     };
 
-    syncLenisMode();
+    syncScrollMode();
 
-    // Scroll to top and sync Lenis on route navigation
     const handleHashChange = () => {
-      syncLenisMode();
+      syncScrollMode();
       const path = getPresetRoutePath();
-      if (fixedRoutes.includes(path)) {
+      if (path && path !== '' && path !== 'home') {
         window.scrollTo(0, 0);
       }
     };
@@ -106,10 +106,9 @@ export default function App() {
     window.addEventListener('hashchange', handleHashChange);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      stopLenis();
       document.removeEventListener('click', handleAnchorClick);
       window.removeEventListener('hashchange', handleHashChange);
-      lenis.destroy();
     };
   }, []);
 
