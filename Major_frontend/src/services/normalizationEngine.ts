@@ -382,7 +382,14 @@ export async function runClientNormalization(
     'Evaluated Startup'
   ).trim();
 
-  const industry = mergedA1.industry || mergedA1.sector || parentAnalysis?.industry || 'Technology';
+  const rawInd =
+    (mergedA1.sector && mergedA1.sector !== 'Technology')
+      ? mergedA1.sector
+      : (mergedA1.industry && mergedA1.industry !== 'Technology')
+      ? mergedA1.industry
+      : mergedA1.sector || mergedA1.industry || parentAnalysis?.industry || 'Technology';
+
+  const industry = rawInd;
   const isProjectMode = parentAnalysis?.mode === 'project' || (!a1Data && Boolean(a6Data));
 
   // Determine if corporate / public enterprise
@@ -393,8 +400,9 @@ export async function runClientNormalization(
   const isCorporateOrPublic =
     docAnalysis0.is_startup_document === false ||
     docAnalysis0.document_category?.toLowerCase().includes('corporate') ||
+    docAnalysis0.document_category?.toLowerCase().includes('investor presentation') ||
     Boolean(canonicalName.toLowerCase().includes('nyse') || canonicalName.toLowerCase().includes('nasdaq')) ||
-    a1Evidence.some((e: any) => /nyse|nasdaq|publicly traded|public company/i.test(e.claim || ''));
+    a1Evidence.some((e: any) => /nyse|nasdaq|publicly traded|public company|investor presentation/i.test(e.claim || ''));
 
   // Determine if repository is empty or unverified
   const isEmptyRepo = Boolean(

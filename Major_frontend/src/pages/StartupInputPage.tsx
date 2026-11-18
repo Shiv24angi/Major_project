@@ -37,6 +37,7 @@ export default function StartupInputPage() {
   const [website, setWebsite] = useState('');
   const [founderInfo, setFounderInfo] = useState('');
   const [pitchDeck, setPitchDeck] = useState<File | null>(null);
+  const [isPitchDragging, setIsPitchDragging] = useState(false);
 
   // Files state
   const [files, setFiles] = useState<UploadedFileItem[]>([]);
@@ -60,19 +61,31 @@ export default function StartupInputPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  const handlePitchDeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const processPitchDeckFile = (file: File) => {
     if (!file) return;
 
     const validExtensions = ['.pdf', '.ppt', '.pptx'];
     const hasValidExt = validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext));
 
     if (!hasValidExt) {
-      setErrors((prev) => [...prev.filter((err) => !err.includes('deck')), 'Unsupported pitch deck format. Please upload PDF, PPT, or PPTX.']);
+      setErrors((prev) => [
+        ...prev.filter((err) => !err.includes('deck')),
+        'Unsupported pitch deck format. Please upload PDF, PPT, or PPTX.',
+      ]);
       return;
     }
 
     setPitchDeck(file);
+    // Auto-populate venture title from filename if title is still empty
+    if (!startupName.trim()) {
+      const guessed = file.name
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[-_]pitch[-_]?deck/i, '')
+        .replace(/[-_]/g, ' ')
+        .trim();
+      if (guessed) setStartupName(guessed);
+    }
+
     // Add to unified documents list
     const newItem: UploadedFileItem = {
       id: `pitch_${Date.now()}`,
@@ -80,9 +93,17 @@ export default function StartupInputPage() {
       category: 'Pitch Deck (Primary)',
       size: formatFileSize(file.size),
       type: file.type || 'application/pdf',
+      fileObj: file,
     };
     setFiles((prev) => [newItem, ...prev.filter((f) => f.category !== 'Pitch Deck (Primary)')]);
-    setErrors((prev) => prev.filter((err) => !err.includes('deck')));
+    setErrors((prev) => prev.filter((err) => !err.includes('deck') && !err.includes('primary pitch deck')));
+  };
+
+  const handlePitchDeckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processPitchDeckFile(file);
+    }
   };
 
   const handleGenericFileUpload = (
@@ -445,20 +466,54 @@ export default function StartupInputPage() {
               {!pitchDeck ? (
                 <div
                   onClick={() => pitchInputRef.current?.click()}
-                  className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/20 bg-[#F9F9FB] p-8 text-center transition-colors hover:border-black/50 hover:bg-[#F0F1F5] cursor-pointer"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPitchDragging(true);
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPitchDragging(true);
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPitchDragging(false);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPitchDragging(false);
+                    const droppedFile = e.dataTransfer.files?.[0];
+                    if (droppedFile) {
+                      processPitchDeckFile(droppedFile);
+                    }
+                  }}
+                  className={`flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition-all cursor-pointer ${
+                    isPitchDragging
+                      ? 'border-[#5028E0] bg-[#F5F3FF] ring-4 ring-[#5028E0]/15 scale-[1.01]'
+                      : 'border-black/20 bg-[#F9F9FB] hover:border-black/50 hover:bg-[#F0F1F5]'
+                  }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/5 mb-3 text-black">
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-full mb-3 transition-colors ${
+                      isPitchDragging ? 'bg-[#5028E0] text-white' : 'bg-black/5 text-black'
+                    }`}
+                  >
                     <Upload className="h-6 w-6" />
                   </div>
                   <p className="text-sm font-semibold text-black mb-1">
-                    Click to browse or drag & drop your Pitch Deck
+                    {isPitchDragging ? 'Drop your Pitch Deck here!' : 'Click to browse or drag & drop your Pitch Deck'}
                   </p>
                   <p className="text-xs text-black/50">PDF, PPT, or PPTX up to 50MB</p>
                   <button
                     type="button"
-                    className="mt-4 rounded-full bg-black px-6 py-2 text-xs font-semibold text-white pointer-events-none"
+                    className={`mt-4 rounded-full px-6 py-2 text-xs font-semibold text-white pointer-events-none transition-colors ${
+                      isPitchDragging ? 'bg-[#5028E0]' : 'bg-black'
+                    }`}
                   >
-                    Upload Pitch Deck
+                    {isPitchDragging ? 'Drop to Upload' : 'Upload Pitch Deck'}
                   </button>
                 </div>
               ) : (
