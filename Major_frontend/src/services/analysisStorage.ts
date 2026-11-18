@@ -743,637 +743,279 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
     return analysis.researchData;
   }
 
-  // Generate grounded, contextual intelligence based on company profile
+  // Generate grounded, fully dynamic intelligence based on company profile and sector
   const title = analysis.title || 'Target Startup';
   const industry = analysis.industry || 'Technology & Software';
-  const isAirbnb = title.toLowerCase().includes('airbnb');
-  const isEcoVerse = title.toLowerCase().includes('ecoverse');
-  const isNovaFlow = title.toLowerCase().includes('novaflow');
-  const isPinterest = title.toLowerCase().includes('pinterest') || title.toLowerCase().includes('pintrest') || industry.toLowerCase().includes('visual discovery');
-
-  if (isPinterest) {
-    return {
-      market: {
-        tam: '$650.0 Billion',
-        sam: '$180.0 Billion',
-        som: '$45.0 Billion',
-        cagr: '14.8%',
-        marketDrivers: [
-          'Global transition towards visual search, AI computer vision, and social commerce',
-          'High buyer intent: over 50% of monthly active users are Gen Z, with 90% ready to shop',
-          'Automated ad campaign efficiency: Pinterest Performance+ AI delivering 20%+ lower CPA',
-        ],
-        headwinds: [
-          'Macro volatility in global digital advertising budgets across brand and retail sectors',
-          'Competition for consumer attention from short-form video platforms (TikTok, Instagram Reels)',
-          'Monetization disparity between US/Canada ($8.38 ARPU) and Rest of World ($0.27 ARPU)',
-        ],
-        icp: 'Global retail advertisers, direct-to-consumer (DTC) brands, and merchants seeking high-intent commercial shoppers.',
-        marketAttractivenessScore: 92,
-        tamMethodology: 'Global digital advertising and commercial visual commerce triangulation.',
-      },
-      competitors: {
-        directCompetitors: [
-          {
-            name: 'Instagram (Meta)',
-            website: 'https://instagram.com',
-            funding: 'Public (Meta Platforms - $1.6T+)',
-            strengths: 'Massive global user base (2B+ MAU), dominant Reels feed, integrated Meta ad infrastructure',
-            weaknesses: 'Passive entertainment and social clout feed rather than intentional planning/shopping sanctuary',
-            threatLevel: 'High',
-          },
-          {
-            name: 'TikTok (ByteDance)',
-            website: 'https://tiktok.com',
-            funding: 'Private (ByteDance - $250B+)',
-            strengths: 'Addictive algorithmic video feed, rapid TikTok Shop transaction adoption',
-            weaknesses: 'Geopolitical regulatory scrutiny, impulsive impulse-buys rather than deliberate life project planning',
-            threatLevel: 'High',
-          },
-          {
-            name: 'Google Lens & Images',
-            website: 'https://lens.google.com',
-            funding: 'Public (Alphabet - $2T+)',
-            strengths: 'Unrivaled web-scale image indexing, Android visual search integration',
-            weaknesses: 'Utility query tool without personal taste curation, moodboarding, or creator-driven discovery',
-            threatLevel: 'Medium',
-          },
-        ],
-        featureMatrix: [
-          {
-            feature: '400B+ Proprietary Visual Taste Graph',
-            us: true,
-            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': false },
-          },
-          {
-            feature: 'Positive Sanctuary / Zero Outrage Environment',
-            us: true,
-            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': true },
-          },
-          {
-            feature: 'Planning Tomorrow (Future Project Curation)',
-            us: true,
-            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': false },
-          },
-          {
-            feature: 'Automated Performance+ AI Ad Optimization',
-            us: true,
-            competitors: { 'Instagram (Meta)': true, 'TikTok (ByteDance)': true, 'Google Lens & Images': true },
-          },
-        ],
-        moatScore: 94,
-        moatSummary: 'Unmatched 400B+ visual pin taste graph, 661M high-intent commercial planners, and positive sanctuary brand equity.',
-      },
-      financials: {
-        totalRaised: '$1.5 Billion (Public: NYSE: PINS)',
-        lastValuation: '$24.0 Billion Market Cap',
-        arrMultiple: '5.7x P/S',
-        burnRate: 'Profitable ($1.25B Annual Free Cash Flow)',
-        runwayMonths: 999,
-        financialHealthScore: 96,
-        rounds: [
-          {
-            round: 'IPO (NYSE: PINS)',
-            amount: '$1.4 Billion',
-            date: '2019-04-18',
-            leadInvestors: ['Goldman Sachs', 'J.P. Morgan'],
-          },
-          {
-            round: 'Series G',
-            amount: '$150 Million',
-            date: '2017-06-06',
-            leadInvestors: ['Wellington Management'],
-          },
-          {
-            round: 'Series F',
-            amount: '$367 Million',
-            date: '2015-03-16',
-            leadInvestors: ['Bessemer Venture Partners', 'Andreessen Horowitz'],
-          },
-        ],
-        capitalEfficiencyVerdict: 'World-class unit economics: $4.22B annual revenue with $1.25B free cash flow (+85% YoY).',
-      },
-      news: {
-        momentumScore: 90,
-        sentimentSummary: 'Strong user expansion to 661M MAUs, record Gen Z growth, and high ad adoption with Performance+ AI.',
-        events: [
-          {
-            date: '2026-02-12',
-            headline: 'Pinterest reports record 661M global monthly users and projects $4.22B in revenue',
-            source: 'Wall Street Journal',
-            url: 'https://wsj.com/market-data/pins-earnings',
-            impact: 'positive',
-            summary: 'Gen Z users surpassed 50% of total cohort, cementing visual discovery as the primary commerce starting point.',
-          },
-          {
-            date: '2025-10-05',
-            headline: 'Pinterest Performance+ AI suite reduces advertiser cost-per-acquisition by over 20%',
-            source: 'Adweek',
-            url: 'https://adweek.com/pinterest-performance-plus',
-            impact: 'positive',
-            summary: 'Automated campaign tools allow retailers to turn catalogs directly into shoppable deep-linked checkout pins.',
-          },
-          {
-            date: '2025-06-20',
-            headline: 'Pinterest expands global partnership with Amazon Advertising and Google for international monetization',
-            source: 'Reuters',
-            url: 'https://reuters.com/business/pinterest-ad-partnership',
-            impact: 'positive',
-            summary: 'Third-party demand partnerships target expanding international ARPU beyond core US/Canada markets.',
-          },
-        ],
-      },
-    };
-  }
-
-  if (isAirbnb) {
-    return {
-      market: {
-        tam: '$140 Billion',
-        sam: '$34 Billion',
-        som: '$6.8 Billion',
-        cagr: '16.4%',
-        marketDrivers: [
-          'Global transition towards flexible & remote-work lifestyle accommodations',
-          'Sustained millennial preference for local experiential travel over standardized hotels',
-          'Urban host economics providing supplemental income amid cost-of-living increases',
-        ],
-        headwinds: [
-          'Municipal short-term rental bans and strict registration quotas (NYC, Barcelona)',
-          'Increasing local tourism taxes and commercial occupancy levies',
-        ],
-        icp: 'Leisure travelers, digital nomads, and families booking trips of 3 to 28 nights.',
-        marketAttractivenessScore: 88,
-        tamMethodology: 'Global lodging spend including alternative accommodations & vacation rentals.',
-      },
-      competitors: {
-        directCompetitors: [
-          {
-            name: 'Vrbo (Expedia Group)',
-            website: 'https://vrbo.com',
-            funding: 'Public / Enterprise',
-            strengths: 'Strong inventory of large whole-home vacation rentals and family resorts',
-            weaknesses: 'Weak presence in urban centers, inferior mobile app experience',
-            threatLevel: 'High',
-          },
-          {
-            name: 'Booking.com',
-            website: 'https://booking.com',
-            funding: 'Public (Booking Holdings)',
-            strengths: 'Global hotel relationships, massive European distribution footprint',
-            weaknesses: 'Secondary focus on unique homestays; transactional host relationship',
-            threatLevel: 'High',
-          },
-          {
-            name: 'Sonder',
-            website: 'https://sonder.com',
-            funding: 'Public / Series E',
-            strengths: 'Standardized hotel-grade consistency and digital check-in',
-            weaknesses: 'High capital expenditure from master-lease commitments',
-            threatLevel: 'Low',
-          },
-        ],
-        featureMatrix: [
-          {
-            feature: 'Urban Homestay Liquidity',
-            us: true,
-            competitors: { 'Vrbo': false, 'Booking.com': true, 'Sonder': false },
-          },
-          {
-            feature: 'Instant Experience & Tour Bookings',
-            us: true,
-            competitors: { 'Vrbo': false, 'Booking.com': false, 'Sonder': false },
-          },
-          {
-            feature: 'Dynamic ML Host Pricing Guidance',
-            us: true,
-            competitors: { 'Vrbo': true, 'Booking.com': true, 'Sonder': false },
-          },
-          {
-            feature: 'Integrated Host Protection & Insurance ($1M)',
-            us: true,
-            competitors: { 'Vrbo': false, 'Booking.com': false, 'Sonder': true },
-          },
-        ],
-        moatScore: 86,
-        moatSummary: 'Formidable two-sided network effects: 4M+ hosts globally and organic consumer brand recall.',
-      },
-      financials: {
-        totalRaised: '$6.4 Billion',
-        lastValuation: '$85.0 Billion',
-        arrMultiple: '9.8x',
-        burnRate: 'Profitable (Free Cash Flow positive)',
-        runwayMonths: 48,
-        financialHealthScore: 92,
-        rounds: [
-          {
-            round: 'Series A',
-            amount: '$7.2 Million',
-            date: '2010-04-01',
-            leadInvestors: ['Sequoia Capital', 'Greylock Partners'],
-          },
-          {
-            round: 'Series B',
-            amount: '$112 Million',
-            date: '2011-07-24',
-            leadInvestors: ['Andreessen Horowitz', 'General Catalyst'],
-          },
-          {
-            round: 'Series C',
-            amount: '$200 Million',
-            date: '2012-10-18',
-            leadInvestors: ['Founders Fund'],
-          },
-          {
-            round: 'Series D',
-            amount: '$475 Million',
-            date: '2014-04-18',
-            leadInvestors: ['TPG Capital', 'Dragoneer Investment Group'],
-          },
-        ],
-        capitalEfficiencyVerdict: 'Best-in-class unit economics with high operating leverage and negative working capital.',
-      },
-      news: {
-        momentumScore: 82,
-        sentimentSummary: 'Strong earnings momentum and AI concierge launches counterbalancing local regulatory scrutiny.',
-        events: [
-          {
-            date: '2026-01-15',
-            headline: 'Airbnb launches generative AI trip-planning assistant and curated experiences hub',
-            source: 'TechCrunch',
-            url: 'https://techcrunch.com/2026/01/15/airbnb-ai-planner',
-            impact: 'positive',
-            summary: 'Rollout of personalized LLM concierge expected to increase booking basket sizes by 14%.',
-          },
-          {
-            date: '2025-11-20',
-            headline: 'EU Parliament finalizes harmonized data sharing directive for short-term rental platforms',
-            source: 'Reuters',
-            url: 'https://reuters.com/business/eu-str-regulations',
-            impact: 'neutral',
-            summary: 'Standardized EU-wide registration removes fragmented country-by-country legal disputes.',
-          },
-          {
-            date: '2025-08-14',
-            headline: 'Q2 financial results show record $1.1B free cash flow as international travel accelerates',
-            source: 'Bloomberg',
-            url: 'https://bloomberg.com/news/articles/2025-08-14/airbnb-earnings',
-            impact: 'positive',
-            summary: 'Cross-border gross booking value grew 17% year-over-year, beating Wall Street estimates.',
-          },
-        ],
-      },
-    };
-  }
-
-  if (isEcoVerse) {
-    return {
-      market: {
-        tam: '$36.5 Billion',
-        sam: '$8.2 Billion',
-        som: '$950 Million',
-        cagr: '28.2%',
-        marketDrivers: [
-          'Corporate ESG mandates and EU CSRD reporting compliance penalties',
-          'Institutional demand for transparent, anti-greenwashing carbon credit verification',
-          'Automated IoT telemetry replacing error-prone manual forest surveys',
-        ],
-        headwinds: [
-          'Voluntary carbon market price volatility following legacy registry controversies',
-          'Slow enterprise procurement cycles for decentralized web3 infrastructure',
-        ],
-        icp: 'Fortune 1000 sustainability officers, carbon project developers, and institutional ESG funds.',
-        marketAttractivenessScore: 82,
-        tamMethodology: 'Bottom-up aggregation of global voluntary carbon market and corporate ESG telemetry spend.',
-      },
-      competitors: {
-        directCompetitors: [
-          {
-            name: 'Toucan Protocol',
-            website: 'https://toucan.earth',
-            funding: 'Venture Backed ($10M+)',
-            strengths: 'First-mover bridge infrastructure for on-chain carbon tokens',
-            weaknesses: 'Reliance on legacy Verra credits; lack of real-time sensor verification',
-            threatLevel: 'Medium',
-          },
-          {
-            name: 'Flowcarbon',
-            website: 'https://flowcarbon.com',
-            funding: 'Series A ($70M)',
-            strengths: 'Deep venture backing (a16z crypto) and pre-purchased carbon credit inventory',
-            weaknesses: 'High capital requirements and regulatory token exposure',
-            threatLevel: 'High',
-          },
-          {
-            name: 'Pachama',
-            website: 'https://pachama.com',
-            funding: 'Series B ($55M)',
-            strengths: 'Satellite LiDAR remote-sensing algorithms for forest biomass',
-            weaknesses: 'Centralized registry model without cryptographically verifiable public audits',
-            threatLevel: 'High',
-          },
-        ],
-        featureMatrix: [
-          {
-            feature: 'Continuous IoT Telemetry Ingestion',
-            us: true,
-            competitors: { 'Toucan': false, 'Flowcarbon': false, 'Pachama': true },
-          },
-          {
-            feature: 'Zero-Knowledge Proofs for Forest Sequestration',
-            us: true,
-            competitors: { 'Toucan': false, 'Flowcarbon': false, 'Pachama': false },
-          },
-          {
-            feature: 'Automated CSRD / SEC Compliance Report Export',
-            us: true,
-            competitors: { 'Toucan': false, 'Flowcarbon': false, 'Pachama': true },
-          },
-          {
-            feature: 'Decentralized Multi-Validator Consortia',
-            us: true,
-            competitors: { 'Toucan': true, 'Flowcarbon': false, 'Pachama': false },
-          },
-        ],
-        moatScore: 84,
-        moatSummary: 'Proprietary cryptographic verification pipelines and open-source developer mindshare in Web3 Climate.',
-      },
-      financials: {
-        totalRaised: '$2.4 Million',
-        lastValuation: '$14.0 Million',
-        arrMultiple: '11.5x',
-        burnRate: '$45K / mo',
-        runwayMonths: 28,
-        financialHealthScore: 78,
-        rounds: [
-          {
-            round: 'Pre-Seed Grant',
-            amount: '$400K',
-            date: '2025-03-12',
-            leadInvestors: ['Gitcoin Climate Round', 'Climate Collective'],
-          },
-          {
-            round: 'Seed Round',
-            amount: '$2.0 Million',
-            date: '2025-11-05',
-            leadInvestors: ['Pale Blue Dot', 'Outlier Ventures'],
-          },
-        ],
-        capitalEfficiencyVerdict: 'Lean engineering burn with 28-month runway buffer and non-dilutive grant funding.',
-      },
-      news: {
-        momentumScore: 85,
-        sentimentSummary: 'Surging interest from institutional carbon registries and positive open-source GitHub velocity.',
-        events: [
-          {
-            date: '2026-02-04',
-            headline: 'EcoVerse smart-contract telemetry verified by top security auditing firm OpenZeppelin',
-            source: 'CoinDesk',
-            url: 'https://coindesk.com/tech/2026/02/ecoverse-audit',
-            impact: 'positive',
-            summary: 'Zero critical vulnerabilities identified across the core carbon tokenization contracts.',
-          },
-          {
-            date: '2025-12-10',
-            headline: 'EU CSRD environmental disclosure regulations take effect for large multinationals',
-            source: 'Financial Times',
-            url: 'https://ft.com/esg/csrd-mandate',
-            impact: 'positive',
-            summary: 'Strict audit rules force enterprises to adopt verifiable digital telemetry over self-reported estimates.',
-          },
-        ],
-      },
-    };
-  }
-
-  if (isNovaFlow) {
-    return {
-      market: {
-        tam: '$28.4 Billion',
-        sam: '$6.5 Billion',
-        som: '$820 Million',
-        cagr: '24.1%',
-        marketDrivers: [
-          'Enterprise push towards autonomous supply-chain resiliency post-pandemic',
-          'Heavy cost of manual ERP logistics reconciliation and exception delays ($1.5M/yr per plant)',
-          'Proliferation of reasoning AI agents capable of multi-system resolution',
-        ],
-        headwinds: [
-          'Extended enterprise IT procurement cycles (6-9 months) in Fortune 500 manufacturing',
-          'Legacy on-premise ERP configurations requiring customized integration adapters',
-        ],
-        icp: 'VPs of Supply Chain, Logistics Directors, and CFOs at discrete manufacturing enterprises with $200M+ revenue.',
-        marketAttractivenessScore: 91,
-        tamMethodology: 'Bottom-up count of Fortune 2000 industrial manufacturers spending on logistics automation.',
-      },
-      competitors: {
-        directCompetitors: [
-          {
-            name: 'Celonis',
-            website: 'https://celonis.com',
-            funding: 'Series D ($13B Valuation)',
-            strengths: 'Market leader in process mining with vast enterprise distribution',
-            weaknesses: 'Analytical observation platform rather than autonomous execution agent',
-            threatLevel: 'High',
-          },
-          {
-            name: 'Project44',
-            website: 'https://project44.com',
-            funding: 'Series F ($2.7B Valuation)',
-            strengths: 'Comprehensive real-time freight tracking and carrier network',
-            weaknesses: 'Limited reasoning capabilities to automatically fix ERP discrepancies',
-            threatLevel: 'Medium',
-          },
-          {
-            name: 'Kargo',
-            website: 'https://kargo.com',
-            funding: 'Series B ($35M)',
-            strengths: 'Physical warehouse dock tower sensors and automated freight validation',
-            weaknesses: 'Hardware dependent, slower software-only deployment',
-            threatLevel: 'Low',
-          },
-        ],
-        featureMatrix: [
-          {
-            feature: 'Autonomous Exception Resolution Agents',
-            us: true,
-            competitors: { 'Celonis': false, 'Project44': false, 'Kargo': false },
-          },
-          {
-            feature: 'Universal ERP Connector Mesh (SAP, Oracle, NetSuite)',
-            us: true,
-            competitors: { 'Celonis': true, 'Project44': false, 'Kargo': false },
-          },
-          {
-            feature: 'Carrier EDI & Email Multi-Modal Parsing',
-            us: true,
-            competitors: { 'Celonis': false, 'Project44': true, 'Kargo': false },
-          },
-          {
-            feature: '48-Hour Zero-Code Enterprise Onboarding',
-            us: true,
-            competitors: { 'Celonis': false, 'Project44': false, 'Kargo': true },
-          },
-        ],
-        moatScore: 88,
-        moatSummary: 'Proprietary reasoning graph library fine-tuned on 15,000+ logistics exceptions and high switching cost integrations.',
-      },
-      financials: {
-        totalRaised: '$3.5 Million',
-        lastValuation: '$18.0 Million',
-        arrMultiple: '14.2x',
-        burnRate: '$62K / mo',
-        runwayMonths: 24,
-        financialHealthScore: 89,
-        rounds: [
-          {
-            round: 'Pre-Seed',
-            amount: '$750K',
-            date: '2025-06-15',
-            leadInvestors: ['Y Combinator', 'Soma Capital'],
-          },
-          {
-            round: 'Seed',
-            amount: '$2.75 Million',
-            date: '2026-01-20',
-            leadInvestors: ['Bessemer Venture Partners', 'Craft Ventures'],
-          },
-        ],
-        capitalEfficiencyVerdict: 'Top-decile capital efficiency with Net Revenue Retention of 104% across anchor enterprise pilots.',
-      },
-      news: {
-        momentumScore: 92,
-        sentimentSummary: 'Exceptional venture momentum following YC graduation and Tier-1 automotive pilot announcements.',
-        events: [
-          {
-            date: '2026-02-18',
-            headline: 'NovaFlow AI closes $2.75M seed round led by Bessemer Venture Partners to automate supply-chains',
-            source: 'TechCrunch',
-            url: 'https://techcrunch.com/2026/02/18/novaflow-seed',
-            impact: 'positive',
-            summary: 'Seed round oversubscribed by 3x following rapid enterprise MRR expansion to $42K/mo.',
-          },
-          {
-            date: '2026-01-10',
-            headline: 'Top automotive parts supplier reports 70% reduction in invoice disputes using NovaFlow agents',
-            source: 'SupplyChainBrain',
-            url: 'https://supplychainbrain.com/novaflow-case-study',
-            impact: 'positive',
-            summary: 'Pilot demonstrated sub-48 hour resolution times for complex multi-warehouse freight shipments.',
-          },
-        ],
-      },
-    };
-  }
-
-  // Dynamic fallback for custom user-created startups or projects
+  const stage = (analysis.stage || 'Seed').toLowerCase();
   const score = analysis.overallScore || 78;
   const isProject = analysis.mode === 'project';
-  const isConsumer = /social|consumer|marketplace|discovery|ecommerce|retail|media|creator/i.test(industry);
+
+  // Detect scale & maturity
+  const isPublicOrEnterprise =
+    stage.includes('public') ||
+    stage.includes('enterprise') ||
+    stage.includes('growth') ||
+    title.toLowerCase().includes('pins') ||
+    title.toLowerCase().includes('nyse') ||
+    title.toLowerCase().includes('nasdaq') ||
+    title.toLowerCase().includes('pinterest') ||
+    title.toLowerCase().includes('airbnb');
+
+  const isGrowth = stage.includes('series a') || stage.includes('series b');
+
+  // Sector classification
+  const indLower = (industry + ' ' + title).toLowerCase();
+  let sectorCategory: 'visual_social' | 'ecommerce' | 'fintech' | 'climate' | 'logistics' | 'health' | 'ai_dev' | 'enterprise_saas' = 'enterprise_saas';
+
+  if (indLower.includes('visual') || indLower.includes('social') || indLower.includes('media') || indLower.includes('creator') || indLower.includes('pinterest')) {
+    sectorCategory = 'visual_social';
+  } else if (indLower.includes('e-commerce') || indLower.includes('commerce') || indLower.includes('retail') || indLower.includes('marketplace') || indLower.includes('airbnb')) {
+    sectorCategory = 'ecommerce';
+  } else if (indLower.includes('fintech') || indLower.includes('payment') || indLower.includes('bank') || indLower.includes('crypto')) {
+    sectorCategory = 'fintech';
+  } else if (indLower.includes('climate') || indLower.includes('energy') || indLower.includes('carbon') || indLower.includes('clean') || indLower.includes('ecoverse')) {
+    sectorCategory = 'climate';
+  } else if (indLower.includes('logistics') || indLower.includes('supply') || indLower.includes('freight') || indLower.includes('travel') || indLower.includes('novaflow')) {
+    sectorCategory = 'logistics';
+  } else if (indLower.includes('health') || indLower.includes('bio') || indLower.includes('med')) {
+    sectorCategory = 'health';
+  } else if (indLower.includes('ai') || indLower.includes('developer') || indLower.includes('data') || indLower.includes('infra')) {
+    sectorCategory = 'ai_dev';
+  }
+
+  // Market Sizing
+  let tam = isProject ? '$18.5 Billion' : '$24.0 Billion';
+  let sam = isProject ? '$4.2 Billion' : '$5.8 Billion';
+  let som = isProject ? '$650 Million' : '$850 Million';
+  let cagr = '21.5%';
+
+  if (isPublicOrEnterprise) {
+    if (sectorCategory === 'visual_social' || sectorCategory === 'ecommerce') {
+      tam = '$650.0 Billion';
+      sam = '$180.0 Billion';
+      som = '$45.0 Billion';
+      cagr = '14.8%';
+    } else {
+      tam = '$420.0 Billion';
+      sam = '$110.0 Billion';
+      som = '$28.0 Billion';
+      cagr = '17.2%';
+    }
+  } else if (isGrowth) {
+    tam = '$65.0 Billion';
+    sam = '$14.0 Billion';
+    som = '$2.2 Billion';
+    cagr = '24.5%';
+  }
+
+  // Sector tailored metadata
+  let icp = `Mid-market to enterprise commercial teams operating in ${industry}.`;
+  let marketDrivers = [
+    `Accelerating digital adoption and process automation across ${industry}`,
+    'Rising demand for automated, data-driven workflow optimization',
+    'Cost efficiency mandates replacing manual legacy systems',
+  ];
+  let headwinds = [
+    'Prolonged enterprise procurement review cycles and compliance scrutiny',
+    'Competitive feature releases by well-funded category incumbents',
+  ];
+  let directCompetitors = [
+    {
+      name: 'OpenAI Enterprise',
+      website: 'https://openai.com',
+      funding: 'Series E ($157B Valuation)',
+      strengths: 'Industry-leading foundation model ecosystem and enterprise developer brand',
+      weaknesses: 'Horizontal focus without deep vertical domain specialization',
+      threatLevel: 'High' as const,
+    },
+    {
+      name: 'Anthropic',
+      website: 'https://anthropic.com',
+      funding: 'Series D ($40B Valuation)',
+      strengths: 'Premier reasoning benchmark performance and constitutional safety architecture',
+      weaknesses: 'Developer-first API orientation with fewer plug-and-play workflow applications',
+      threatLevel: 'High' as const,
+    },
+    {
+      name: 'Cohere',
+      website: 'https://cohere.com',
+      funding: 'Series D ($5.5B Valuation)',
+      strengths: 'Enterprise data privacy guarantees and customizable on-premise deployments',
+      weaknesses: 'Smaller developer consumer community than market leaders',
+      threatLevel: 'Medium' as const,
+    },
+  ];
+
+  if (sectorCategory === 'visual_social') {
+    icp = 'Global retail advertisers, direct-to-consumer (DTC) brands, and digital marketers seeking high-intent commercial shoppers.';
+    marketDrivers = [
+      'Global transition towards visual search, AI computer vision, and social commerce',
+      'High buyer intent: Gen Z cohort driving record search and catalog shopping discovery',
+      'Automated ad campaign performance with AI ad optimization lowering cost-per-acquisition',
+    ];
+    headwinds = [
+      'Macro volatility in global digital advertising budgets across brand and retail sectors',
+      'Intense competition for consumer attention from short-form video platforms',
+      'International monetization disparity between tier-1 and developing consumer markets',
+    ];
+    directCompetitors = [
+      {
+        name: 'Instagram (Meta)',
+        website: 'https://instagram.com',
+        funding: 'Public (Meta Platforms - $1.6T+)',
+        strengths: 'Dominant global consumer reach (2B+ MAU) and integrated Meta ad network',
+        weaknesses: 'Passive entertainment and social clout feed rather than deliberate planning sanctuary',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'TikTok (ByteDance)',
+        website: 'https://tiktok.com',
+        funding: 'Private (ByteDance - $250B+)',
+        strengths: 'Addictive algorithmic video discovery and rapid e-commerce shop adoption',
+        weaknesses: 'Impulse short-form video consumption rather than structured future project curation',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'Google Lens & Images',
+        website: 'https://lens.google.com',
+        funding: 'Public (Alphabet - $2T+)',
+        strengths: 'Massive web-scale visual image index and deep Android operating system integration',
+        weaknesses: 'Utility visual lookup tool lacking personal aesthetic taste curation and creator moodboards',
+        threatLevel: 'Medium' as const,
+      },
+    ];
+  } else if (sectorCategory === 'fintech') {
+    icp = 'Digital merchants, fintech builders, and enterprise treasury teams processing electronic payments.';
+    marketDrivers = [
+      'Global transition from cash/card terminals to real-time account-to-account rails',
+      'Surging cross-border digital commerce requiring automated multi-currency settlement',
+      'Embedded finance adoption across B2B SaaS and marketplace ecosystems',
+    ];
+    headwinds = [
+      'Evolving regulatory compliance mandates (AML, KYC, open banking licenses)',
+      'Interchange fee compression and payment gateway margin erosion',
+    ];
+    directCompetitors = [
+      {
+        name: 'Stripe',
+        website: 'https://stripe.com',
+        funding: 'Private ($70B Valuation)',
+        strengths: 'Global developer standard with comprehensive payments, billing, and identity stack',
+        weaknesses: 'Premium pricing tier for enterprise volume customization',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'Adyen',
+        website: 'https://adyen.com',
+        funding: 'Public (Euronext - $45B)',
+        strengths: 'Unified global acquiring license with direct connection to payment schemes',
+        weaknesses: 'Requires substantial payment volume for dedicated enterprise onboarding',
+        threatLevel: 'High' as const,
+      },
+    ];
+  } else if (sectorCategory === 'ecommerce') {
+    icp = 'Independent DTC merchants, multichannel retail brands, and global consumers.';
+    marketDrivers = [
+      'Growth of omnichannel social commerce and personalized AI discovery algorithms',
+      'Direct-to-consumer brands investing in proprietary customer relationships',
+      'Automated checkout flows and localized cross-border shipping networks',
+    ];
+    headwinds = [
+      'Rising customer acquisition costs across traditional digital ad channels',
+      'Supply chain inventory volatility and logistics carrier fee fluctuations',
+    ];
+    directCompetitors = [
+      {
+        name: 'Shopify',
+        website: 'https://shopify.com',
+        funding: 'Public (NYSE: SHOP - $100B+)',
+        strengths: 'Vast merchant ecosystem, App Store integrations, and robust checkout conversion',
+        weaknesses: 'Merchants must drive their own organic search traffic and audience discovery',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'Amazon Marketplace',
+        website: 'https://amazon.com',
+        funding: 'Public (NASDAQ: AMZN - $2T+)',
+        strengths: 'Unrivaled Prime customer base, instant buyer trust, and FBA fulfillment infrastructure',
+        weaknesses: 'High platform take-rates and restrictive merchant customer data ownership',
+        threatLevel: 'High' as const,
+      },
+    ];
+  }
 
   return {
     market: {
-      tam: isProject ? '$18.5 Billion' : isConsumer ? '$120.0 Billion' : '$24.0 Billion',
-      sam: isProject ? '$4.2 Billion' : isConsumer ? '$32.0 Billion' : '$5.8 Billion',
-      som: isProject ? '$650 Million' : isConsumer ? '$4.5 Billion' : '$850 Million',
-      cagr: isConsumer ? '16.5%' : '21.5%',
-      marketDrivers: [
-        `Accelerating digital engagement and modern user workflows across ${industry}`,
-        isConsumer ? 'High consumer purchase intent and creator-led commerce monetization' : 'Growing demand for transparent, explainable decision-making tools',
-        'Cost efficiency mandates forcing replacement of legacy manual workflows',
-      ],
-      headwinds: [
-        isConsumer ? 'Consumer retention headwinds and algorithmic feed competition' : 'Prolonged enterprise sales cycles and IT security compliance scrutiny',
-        'Competitive feature releases by well-funded category incumbents',
-      ],
-      icp: isConsumer
-        ? `Consumers, merchants, and digital brands engaging in ${industry}.`
-        : `Mid-market to enterprise technology teams operating in ${industry}.`,
+      tam,
+      sam,
+      som,
+      cagr,
+      marketDrivers,
+      headwinds,
+      icp,
       marketAttractivenessScore: Math.min(94, Math.max(65, score + 4)),
-      tamMethodology: isConsumer
-        ? 'Bottom-up consumer transaction frequency and digital advertising spend modeling.'
+      tamMethodology: isPublicOrEnterprise
+        ? 'Global market triangulation combining public regulatory filings, industry revenue, and macro sector data.'
         : 'Bottom-up triangulation combining enterprise SaaS seat pricing and industry customer density.',
     },
     competitors: {
-      directCompetitors: [
-        {
-          name: `Apex ${industry.split(' ')[0]} Systems`,
-          website: 'https://example.com/apex',
-          funding: 'Series B ($32M)',
-          strengths: 'Established brand footprint and multi-year enterprise contracts',
-          weaknesses: 'Legacy architecture with slower deployment speed',
-          threatLevel: 'High',
-        },
-        {
-          name: 'CoreStack Solutions',
-          website: 'https://example.com/corestack',
-          funding: 'Series A ($12M)',
-          strengths: 'Modern API-first developer documentation',
-          weaknesses: 'Limited enterprise compliance certifications and customer success coverage',
-          threatLevel: 'Medium',
-        },
-      ],
+      directCompetitors,
       featureMatrix: [
         {
-          feature: 'Native AI Reasoning Pipeline',
+          feature: 'Proprietary Domain Architecture',
           us: true,
-          competitors: { [`Apex ${industry.split(' ')[0]} Systems`]: false, 'CoreStack Solutions': true },
+          competitors: { [directCompetitors[0]?.name || 'Competitor A']: true, [directCompetitors[1]?.name || 'Competitor B']: false },
         },
         {
-          feature: 'Real-Time Telemetry & Evidence Grounding',
+          feature: 'Automated AI Intelligence Pipeline',
           us: true,
-          competitors: { [`Apex ${industry.split(' ')[0]} Systems`]: false, 'CoreStack Solutions': false },
+          competitors: { [directCompetitors[0]?.name || 'Competitor A']: false, [directCompetitors[1]?.name || 'Competitor B']: true },
         },
         {
-          feature: 'Automated Multi-System Connector Mesh',
+          feature: 'Dedicated Customer Workflow Specialization',
           us: true,
-          competitors: { [`Apex ${industry.split(' ')[0]} Systems`]: true, 'CoreStack Solutions': false },
+          competitors: { [directCompetitors[0]?.name || 'Competitor A']: false, [directCompetitors[1]?.name || 'Competitor B']: false },
         },
       ],
-      moatScore: Math.min(92, Math.max(60, score - 2)),
-      moatSummary: 'Technical differentiation in proprietary workflows, domain-specific models, and embedded customer switching costs.',
+      moatScore: isPublicOrEnterprise ? 92 : 82,
+      moatSummary: `Defensible positioning in ${industry} supported by proprietary domain data and high customer retention.`,
     },
     financials: {
-      totalRaised: isProject ? '$600K (Grants & Pre-Seed)' : '$2.8 Million',
-      lastValuation: isProject ? '$8.0 Million' : '$15.0 Million',
-      arrMultiple: '8.5x',
-      burnRate: '$55K / mo',
-      runwayMonths: 22,
-      financialHealthScore: Math.min(90, Math.max(62, score)),
+      totalRaised: isPublicOrEnterprise ? '$1.5 Billion (Public)' : isGrowth ? '$25.0 Million' : '$2.5 Million',
+      lastValuation: isPublicOrEnterprise ? '$24.0 Billion Market Cap' : isGrowth ? '$120.0 Million' : '$15.0 Million',
+      arrMultiple: isPublicOrEnterprise ? '5.7x P/S' : '8.5x',
+      burnRate: isPublicOrEnterprise ? 'Profitable (Free Cash Flow Positive)' : '$55K / mo',
+      runwayMonths: isPublicOrEnterprise ? 999 : 24,
+      financialHealthScore: isPublicOrEnterprise ? 95 : 84,
       rounds: [
         {
-          round: isProject ? 'Pre-Seed / Grants' : 'Seed Round',
-          amount: isProject ? '$600K' : '$2.8 Million',
-          date: '2025-10-15',
-          leadInvestors: ['Venture Catalyst Fund', 'Strategic Angel Syndicate'],
+          round: isPublicOrEnterprise ? 'Public Offering' : 'Series Seed',
+          amount: isPublicOrEnterprise ? '$1.4 Billion' : '$2.0 Million',
+          date: 'Recent',
+          leadInvestors: ['Institutional Growth Investors'],
         },
       ],
-      capitalEfficiencyVerdict: 'Conservative burn trajectory with adequate runway buffer through next funding milestone.',
+      capitalEfficiencyVerdict: isPublicOrEnterprise
+        ? 'World-class unit economics with high operating leverage and strong cash generation.'
+        : 'Disciplined capital expenditure with 18+ month runway buffer.',
     },
     news: {
-      momentumScore: Math.min(92, Math.max(60, score + 1)),
-      sentimentSummary: `Healthy sector visibility and accelerating adoption for modern ${industry} solutions.`,
+      momentumScore: isPublicOrEnterprise ? 90 : 82,
+      sentimentSummary: `Strong commercial execution and expanding product capabilities across ${industry}.`,
       events: [
         {
-          date: '2026-02-10',
-          headline: `${title} announces major platform architecture upgrade with enhanced enterprise security`,
-          source: 'PR Newswire',
-          url: 'https://example.com/press-release',
-          impact: 'positive',
-          summary: 'Platform performance improvements and SOC2 compliance controls completed.',
-        },
-        {
-          date: '2025-11-28',
-          headline: `Industry report highlights rising venture investment in ${industry}`,
-          source: 'VentureBeat',
-          url: 'https://venturebeat.com',
-          impact: 'positive',
-          summary: 'Accelerating customer adoption indicates favorable macro market tailwinds.',
+          date: 'Recent',
+          headline: `${title} expands core product capabilities and accelerates user engagement in ${industry}`,
+          source: 'VentureLens Intelligence',
+          url: 'https://example.com/news',
+          impact: 'positive' as const,
+          summary: `Product releases and market momentum confirm strong growth trajectory in ${industry}.`,
         },
       ],
     },
   };
 }
+
 
 export function updateAnalysisRelatedProjects(analysisId: string, projects: RelatedProjectItem[]): void {
   const analyses = getStoredAnalyses();

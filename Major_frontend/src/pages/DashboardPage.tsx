@@ -428,6 +428,31 @@ export default function DashboardPage() {
     });
   }, [activeAnalysis?.id]);
 
+  // Auto-fetch live internet research via Tavily & Gemini for any company
+  useEffect(() => {
+    if (!activeAnalysis?.id || activeAnalysis.researchData) return;
+    let isMounted = true;
+    runFullDiligenceResearch({
+      startupName: activeAnalysis.title,
+      industry: activeAnalysis.industry,
+      projectDescription: activeAnalysis.thesis || activeAnalysis.tagline,
+      website: activeAnalysis.website,
+      currentStage: activeAnalysis.stage,
+      analysisId: activeAnalysis.id,
+    }).then((fresh) => {
+      if (!isMounted || !fresh) return;
+      setActiveAnalysis((prev) => {
+        if (!prev || prev.id !== activeAnalysis.id) return prev;
+        const updated = { ...prev, researchData: fresh };
+        addAnalysis(updated);
+        return updated;
+      });
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [activeAnalysis?.id, activeAnalysis?.title]);
+
   // Sync Agent 4 recommendations and due diligence questions whenever active venture changes
   useEffect(() => {
     if (!activeAnalysis?.id) return;
