@@ -69,6 +69,27 @@ interface SectorProfile {
 function getSectorProfile(industry: string): SectorProfile {
   const ind = (industry || '').toLowerCase();
   if (
+    ind.includes('food') ||
+    ind.includes('delivery') ||
+    ind.includes('quick commerce') ||
+    ind.includes('instamart') ||
+    ind.includes('hyperlocal') ||
+    ind.includes('grocery') ||
+    ind.includes('dining')
+  ) {
+    return {
+      tamBase: 280_000_000_000,
+      cagrBase: 24.0,
+      marginBase: 42.0,
+      ltvCacBase: 3.8,
+      growthMoMBase: 22.0,
+      activeCustomersBase: 25_000_000,
+      churnBase: 3.5,
+      burnBase: 0,
+      defaultCompetitors: ['Zomato', 'Blinkit', 'Zepto', 'Dunzo / Tata Neu', 'DoorDash / Uber Eats'],
+    };
+  }
+  if (
     ind.includes('visual') ||
     ind.includes('discovery') ||
     ind.includes('consumer') ||
@@ -190,12 +211,14 @@ export function parseCurrencyAmount(raw: any): { value: number | null; currency:
   let multiplier = 1;
   const lower = s.toLowerCase();
   if (/cr|crore/i.test(lower)) multiplier = 10_000_000;
-  else if (/lakh|lac/i.test(lower)) multiplier = 100_000;
+  else if (/lakh|lac|\bl\b/i.test(lower)) multiplier = 100_000;
   else if (/b|billion/i.test(lower)) multiplier = 1_000_000_000;
   else if (/m|million/i.test(lower)) multiplier = 1_000_000;
   else if (/k|thousand/i.test(lower)) multiplier = 1_000;
 
-  const numMatch = s.match(/([0-9]+(?:\.[0-9]+)?)/);
+  // Strip commas before numeric match (e.g. ₹24,315 Cr -> 24315)
+  const cleanStr = s.replace(/,/g, '');
+  const numMatch = cleanStr.match(/([0-9]+(?:\.[0-9]+)?)/);
   if (!numMatch) return { value: null, currency };
 
   const baseNum = parseFloat(numMatch[1]);
@@ -233,11 +256,14 @@ export function parseNumericCount(raw: any): number | null {
   const s = String(raw).trim();
   const lower = s.toLowerCase();
   let multiplier = 1;
-  if (/b|billion/i.test(lower)) multiplier = 1_000_000_000;
+  if (/cr|crore/i.test(lower)) multiplier = 10_000_000;
+  else if (/lakh|lac|\bl\b/i.test(lower)) multiplier = 100_000;
+  else if (/b|billion/i.test(lower)) multiplier = 1_000_000_000;
   else if (/m|million/i.test(lower)) multiplier = 1_000_000;
   else if (/k|thousand/i.test(lower)) multiplier = 1_000;
 
-  const numMatch = s.match(/([0-9]+(?:\.[0-9]+)?)/);
+  const cleanStr = s.replace(/,/g, '');
+  const numMatch = cleanStr.match(/([0-9]+(?:\.[0-9]+)?)/);
   if (!numMatch) return null;
   return Math.round(parseFloat(numMatch[1]) * multiplier);
 }
@@ -401,8 +427,8 @@ export async function runClientNormalization(
     docAnalysis0.is_startup_document === false ||
     docAnalysis0.document_category?.toLowerCase().includes('corporate') ||
     docAnalysis0.document_category?.toLowerCase().includes('investor presentation') ||
-    Boolean(canonicalName.toLowerCase().includes('nyse') || canonicalName.toLowerCase().includes('nasdaq')) ||
-    a1Evidence.some((e: any) => /nyse|nasdaq|publicly traded|public company|investor presentation/i.test(e.claim || ''));
+    Boolean(canonicalName.toLowerCase().includes('nyse') || canonicalName.toLowerCase().includes('nasdaq') || canonicalName.toLowerCase().includes('nse') || canonicalName.toLowerCase().includes('bse') || canonicalName.toLowerCase().includes('ltd')) ||
+    a1Evidence.some((e: any) => /nyse|nasdaq|nse|bse|lse|publicly traded|public company|investor presentation|ltd\b/i.test(e.claim || '') || /nyse|nasdaq|nse|bse|lse/i.test(e.supporting_text || ''));
 
   // Determine if repository is empty or unverified
   const isEmptyRepo = Boolean(
