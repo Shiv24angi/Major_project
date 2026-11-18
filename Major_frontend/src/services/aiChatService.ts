@@ -10,8 +10,8 @@ import type { Agent1EvaluationRecord } from './supabaseService';
 import { AGENT6_API_BASE } from './agent6Service';
 
 const RAW_GEMINI_KEY =
-  (import.meta.env.VITE_GEMINI_API_KEY as string) ||
   (import.meta.env.GEMINI_API_KEY as string) ||
+  (import.meta.env.VITE_GEMINI_API_KEY as string) ||
   '';
 
 export function isGeminiKeyValid(key?: string): boolean {
@@ -626,7 +626,7 @@ export function synthesizeRepositoryResponse(
 
   // Append informative note if Google API key is missing or invalid format
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key to \`Major_frontend/.env\` as \`VITE_GEMINI_API_KEY\`.*`;
+    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key to \`Major_frontend/.env\` or Vercel environment variables as \`GEMINI_API_KEY\`.*`;
   }
 
   return body;
@@ -681,7 +681,7 @@ export function synthesizeStartupDiligenceResponse(
   }
 
   if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified session intelligence for \`${companyTitle}\`. To enable live Gemini LLM multi-turn reasoning, configure your Google AI Studio API key in \`Major_frontend/.env\` as \`VITE_GEMINI_API_KEY\`.*`;
+    body += `\n\n---\n*💡 Grounded in verified session intelligence for \`${companyTitle}\`. To enable live Gemini LLM multi-turn reasoning, configure your Google AI Studio API key in \`Major_frontend/.env\` or Vercel environment variables as \`GEMINI_API_KEY\`.*`;
   }
 
   return body;

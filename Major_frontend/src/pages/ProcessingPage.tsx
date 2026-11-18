@@ -171,9 +171,17 @@ export default function ProcessingPage() {
         } else {
           // Startup mode: verify Agent 1 evaluation exists in Supabase
           let existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
-          // Wait up to 6 seconds if background document processing is active
-          for (let poll = 0; poll < 5 && !existingA1; poll++) {
-            await new Promise((r) => setTimeout(r, 1200));
+          // Wait up to 24 seconds for deep document intelligence to complete
+          for (
+            let poll = 0;
+            poll < 12 &&
+            (!existingA1 ||
+              (Array.isArray(existingA1.uploaded_files) &&
+                existingA1.uploaded_files.length === 0 &&
+                !existingA1.merged_analysis?.traction));
+            poll++
+          ) {
+            await new Promise((r) => setTimeout(r, 2000));
             if (isCancelled) return;
             existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
           }

@@ -472,15 +472,20 @@ export async function getAgent1EvaluationByAnalysisId(
       .from('agent1_evaluations')
       .select('*')
       .eq('analysis_id', analysisId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order('created_at', { ascending: false });
 
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
       return null;
     }
 
-    return data as Agent1EvaluationRecord;
+    // Prioritize record with real uploaded files and extracted traction data over hollow stubs
+    const recordWithFiles = (data as Agent1EvaluationRecord[]).find(
+      (r) =>
+        (Array.isArray(r.uploaded_files) && r.uploaded_files.length > 0) ||
+        Boolean((r.merged_analysis as any)?.traction)
+    );
+
+    return (recordWithFiles || data[0]) as Agent1EvaluationRecord;
   } catch (err) {
     console.warn('[Supabase Service] getAgent1EvaluationByAnalysisId error:', err);
     return null;
