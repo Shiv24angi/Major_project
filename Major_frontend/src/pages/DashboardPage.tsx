@@ -49,7 +49,9 @@ import {
   LogOut,
   User,
   FileDown,
+  Compass,
 } from 'lucide-react';
+import DashboardTourModal from '../components/DashboardTourModal';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getStoredAnalyses,
@@ -175,6 +177,9 @@ export default function DashboardPage() {
   const { user, profile, signOut } = useAuth();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Guided Diligence Platform Tour Modal
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
@@ -763,6 +768,14 @@ export default function DashboardPage() {
           <div className="space-y-0.5">
             <button
               type="button"
+              onClick={() => setIsTourOpen(true)}
+              className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#5028E0] bg-[#EEECFC] hover:bg-[#E0DBFA] transition-colors cursor-pointer mb-1 shadow-2xs"
+            >
+              <Compass className="w-4 h-4 shrink-0 text-[#5028E0]" />
+              <span>Platform Tour</span>
+            </button>
+            <button
+              type="button"
               onClick={() => alert('Settings configuration modal')}
               className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#64748B] hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors cursor-pointer"
             >
@@ -834,6 +847,18 @@ export default function DashboardPage() {
 
           {/* User Profile & Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Guided Platform Tour Button */}
+            <button
+              type="button"
+              onClick={() => setIsTourOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EEECFC] text-[#5028E0] hover:bg-[#E0DBFA] border border-[#DCD6FA] text-xs font-semibold transition-all cursor-pointer shadow-2xs hover:shadow-xs group"
+              title="Interactive Platform Tour — Learn what all scores mean in plain English"
+            >
+              <Compass className="w-3.5 h-3.5 text-[#5028E0] group-hover:rotate-45 transition-transform duration-300" />
+              <span className="hidden sm:inline">Platform Tour</span>
+              <span className="sm:hidden">Tour</span>
+            </button>
+
             {/* Notification Bell */}
             <button
               type="button"
@@ -1207,7 +1232,17 @@ export default function DashboardPage() {
                   <div className="lg:col-span-8 flex flex-col md:flex-row items-center gap-8 py-2">
                     {/* Circular Score Gauge */}
                     <div className="flex flex-col items-center shrink-0">
-                      <span className="text-xs font-semibold text-[#64748B] mb-2">Overall Score</span>
+                      <span className="text-xs font-semibold text-[#64748B] mb-2 flex items-center gap-1">
+                        Overall Score
+                        <button
+                          type="button"
+                          onClick={() => setIsTourOpen(true)}
+                          className="text-[#5028E0] hover:text-[#4320BD] hover:underline cursor-pointer"
+                          title="Click to learn how Overall Score and all 6 dimensions are calculated in simple words"
+                        >
+                          <HelpCircle className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
                       <div className="relative w-24 h-24 flex items-center justify-center">
                         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 88 88">
                           {/* Background Ring */}
@@ -3521,6 +3556,13 @@ export default function DashboardPage() {
           )}
         </main>
       </div>
+
+      {/* Interactive Layman's Diligence Tour Modal */}
+      <DashboardTourModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onNavigateTab={(tab) => setCurrentTab(tab as any)}
+      />
     </div>
   );
 }
