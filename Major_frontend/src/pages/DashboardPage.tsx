@@ -834,124 +834,6 @@ export default function DashboardPage() {
 
           {/* User Profile & Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Document Diligence Status Indicator */}
-            <button
-              type="button"
-              onClick={() => setCurrentTab('agent1')}
-              title="Document Diligence Engine Status"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
-                agent1Online
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
-                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E] hover:bg-[#FEF3C7]'
-              }`}
-            >
-              <span className="relative flex h-2 w-2">
-                {agent1Online && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-                )}
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    agent1Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
-                  }`}
-                />
-              </span>
-              <span className="hidden sm:inline">
-                Documents: <strong className="font-bold">{agent1Online ? 'Active' : 'Standby'}</strong>
-              </span>
-              <span className="sm:hidden font-bold">Docs</span>
-            </button>
-
-            {/* Code Diligence Status Indicator */}
-            <button
-              type="button"
-              onClick={() => setCurrentTab('agent6')}
-              title="Codebase Diligence Engine Status"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
-                agent6Online
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46] hover:bg-[#D1FAE5]'
-                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E] hover:bg-[#FEF3C7]'
-              }`}
-            >
-              <span className="relative flex h-2 w-2">
-                {agent6Online && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-                )}
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    agent6Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
-                  }`}
-                />
-              </span>
-              <span className="hidden sm:inline">
-                Codebase: <strong className="font-bold">{agent6Online ? 'Active' : 'Standby'}</strong>
-              </span>
-              <span className="sm:hidden font-bold">Code</span>
-            </button>
-
-            {/* Scoring Engine Status Indicator */}
-            <div
-              title="Multidimensional Scoring Engine Status"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                agent3Online
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
-                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]'
-              }`}
-            >
-              <span className="relative flex h-2 w-2">
-                {agent3Online && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-                )}
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    agent3Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
-                  }`}
-                />
-              </span>
-              <span className="hidden sm:inline">
-                Scoring: <strong className="font-bold">{agent3Online ? 'Active' : 'Standby'}</strong>
-              </span>
-              <span className="sm:hidden font-bold">Score</span>
-            </div>
-
-            {/* Investment Thesis Engine Status Indicator */}
-            <div
-              title="Investment Thesis Engine Status"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                agent4Online
-                  ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#065F46]'
-                  : 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]'
-              }`}
-            >
-              <span className="relative flex h-2 w-2">
-                {agent4Online && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-                )}
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    agent4Online ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
-                  }`}
-                />
-              </span>
-              <span className="hidden sm:inline">
-                Thesis: <strong className="font-bold">{agent4Online ? 'Active' : 'Standby'}</strong>
-              </span>
-              <span className="sm:hidden font-bold">Thesis</span>
-            </div>
-
-            {/* Agent 5: Deliverables & Export Indicator */}
-            <button
-              type="button"
-              onClick={() => setCurrentTab('reports')}
-              title="Agent 5: Export Tools (PDF, PPT, Excel, Share Link)"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-[#DCD6FA] bg-[#EEECFB] text-[#5028E0] hover:bg-[#E0DBFA] transition-all cursor-pointer"
-            >
-              <FileDown className="w-3.5 h-3.5 text-[#5028E0]" />
-              <span className="hidden sm:inline">
-                Agent 5: <strong className="font-bold">Exports Ready</strong>
-              </span>
-              <span className="sm:hidden font-bold">Export</span>
-            </button>
-
             {/* Notification Bell */}
             <button
               type="button"
@@ -2602,135 +2484,60 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* BOTTOM ROW: RECENT ANALYSES TABLE & QUICK ACTIONS */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Recent Analyses Table (8 cols) */}
-                <div className="lg:col-span-8 rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 font-bold text-sm text-[#1E1B2E]">
-                      <FileSpreadsheet className="w-4 h-4 text-[#5028E0]" />
-                      <span>Recent Analyses</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentTab('my-analyses')}
-                      className="text-xs font-semibold text-[#5028E0] hover:underline cursor-pointer"
-                    >
-                      View all →
-                    </button>
-                  </div>
+              {/* BOTTOM ROW: QUICK ACTIONS */}
+              <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-[#1E1B2E]">Quick Actions</span>
+                  <span className="text-xs text-[#64748B]">Platform Shortcuts</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('new-analysis')}
+                    className="p-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs group"
+                  >
+                    <PlusCircle className="w-5 h-5 text-[#5028E0] group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold text-[#1E1B2E]">New Analysis</span>
+                    <span className="text-[10px] text-[#64748B]">Startup or Codebase</span>
+                  </button>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead>
-                        <tr className="border-b border-[#F1F2F6] text-[#94A3B8] font-semibold pb-2">
-                          <th className="pb-2.5 font-medium">Startup</th>
-                          <th className="pb-2.5 font-medium">Type</th>
-                          <th className="pb-2.5 font-medium">Industry</th>
-                          <th className="pb-2.5 font-medium">Score</th>
-                          <th className="pb-2.5 font-medium">Recommendation</th>
-                          <th className="pb-2.5 font-medium text-right">Date</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#F1F2F6]">
-                        {analyses.map((a) => (
-                          <tr
-                            key={a.id}
-                            onClick={() => selectAnalysis(a)}
-                            className={`hover:bg-[#F8F9FE] cursor-pointer transition-colors ${
-                              a.id === activeAnalysis.id ? 'bg-[#EEECFC]/30' : ''
-                            }`}
-                          >
-                            <td className="py-3 font-semibold text-[#1E1B2E] flex items-center gap-2">
-                              {a.title === 'Airbnb' ? (
-                                <div className="w-5 h-5 rounded bg-[#FF5A5F] text-white flex items-center justify-center text-[10px] font-bold">
-                                  <AirbnbIcon className="w-3.5 h-3.5" />
-                                </div>
-                              ) : (
-                                <div className="w-5 h-5 rounded bg-[#5028E0] text-white flex items-center justify-center text-[10px] font-bold">
-                                  {a.title.charAt(0)}
-                                </div>
-                              )}
-                              <span>{a.title}</span>
-                            </td>
-                            <td className="py-3 text-[#64748B]">
-                              {a.mode === 'project' ? 'Project → Startup' : 'Startup Evaluation'}
-                            </td>
-                            <td className="py-3 text-[#64748B]">{a.industry}</td>
-                            <td className="py-3 font-bold text-[#10B981]">{a.overallScore}</td>
-                            <td className="py-3">
-                              <span
-                                className={`rounded px-2 py-0.5 text-[10px] font-bold ${
-                                  a.recommendation === 'INVEST'
-                                    ? 'bg-[#ECFDF5] text-[#059669]'
-                                    : a.recommendation === 'MAYBE'
-                                    ? 'bg-[#FEF6E7] text-[#D97706]'
-                                    : 'bg-[#FEF2F2] text-[#DC2626]'
-                                }`}
-                              >
-                                {a.recommendation}
-                              </span>
-                            </td>
-                            <td className="py-3 text-right text-[#94A3B8] font-mono">
-                              {a.createdAt.split('T')[0]}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentTab('documents')}
+                    className="p-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs group"
+                  >
+                    <UploadCloud className="w-5 h-5 text-[#5028E0] group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold text-[#1E1B2E]">Upload Docs</span>
+                    <span className="text-[10px] text-[#64748B]">Decks & Financials</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentTab('gmail')}
+                    className="p-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs group"
+                  >
+                    <Mail className="w-5 h-5 text-[#5028E0] group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold text-[#1E1B2E]">Connect Gmail</span>
+                    <span className="text-[10px] text-[#64748B]">Inbound Ingestion</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentTab('reports')}
+                    className="p-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs group"
+                  >
+                    <FileSpreadsheet className="w-5 h-5 text-[#5028E0] group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold text-[#1E1B2E]">Export Reports</span>
+                    <span className="text-[10px] text-[#64748B]">PDF, PPT, Excel, Link</span>
+                  </button>
                 </div>
 
-                {/* Quick Actions (4 cols) */}
-                <div className="lg:col-span-4 rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-4 flex flex-col justify-between">
-                  <div>
-                    <span className="font-bold text-sm text-[#1E1B2E] block">Quick Actions</span>
-                    <div className="grid grid-cols-2 gap-2.5 pt-3">
-                      <button
-                        type="button"
-                        onClick={() => navigateTo('new-analysis')}
-                        className="p-3 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs"
-                      >
-                        <PlusCircle className="w-5 h-5 text-[#5028E0]" />
-                        <span className="text-xs font-semibold text-[#1E1B2E]">New Analysis</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setCurrentTab('documents')}
-                        className="p-3 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs"
-                      >
-                        <UploadCloud className="w-5 h-5 text-[#5028E0]" />
-                        <span className="text-xs font-semibold text-[#1E1B2E]">Upload Docs</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setCurrentTab('gmail')}
-                        className="p-3 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs"
-                      >
-                        <Mail className="w-5 h-5 text-[#5028E0]" />
-                        <span className="text-xs font-semibold text-[#1E1B2E]">Connect Gmail</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setCurrentTab('reports')}
-                        className="p-3 rounded-xl border border-[#E2E8F0] bg-white hover:border-[#5028E0] hover:bg-[#F8F9FE] transition-colors flex flex-col items-center text-center gap-1.5 cursor-pointer shadow-2xs"
-                      >
-                        <FileSpreadsheet className="w-5 h-5 text-[#5028E0]" />
-                        <span className="text-xs font-semibold text-[#1E1B2E]">View Reports</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#F1F2F6] flex items-center justify-between text-[11px] text-[#94A3B8]">
-                    <span>VentureLens Analyst v2.4</span>
-                    <a href="#" className="text-[#5028E0] hover:underline flex items-center gap-1">
-                      <span>Landing Page</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
+                <div className="pt-2 border-t border-[#F1F2F6] flex items-center justify-between text-[11px] text-[#94A3B8]">
+                  <span>VentureLens Analyst v2.4</span>
+                  <a href="#" className="text-[#5028E0] hover:underline flex items-center gap-1">
+                    <span>Landing Page</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               </div>
             </div>
