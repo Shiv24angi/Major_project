@@ -20,7 +20,7 @@ import { analyzeGithubRepo } from '../services/agent6Service';
 import { fetchAndNormalize } from '../services/agent2Service';
 import { evaluateStartup } from '../services/agent3Service';
 import { generateInsightsAndRecommendations } from '../services/agent4Service';
-import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation } from '../services/supabaseService';
+import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation, supabase } from '../services/supabaseService';
 
 interface PipelineStep {
   id: string;
@@ -148,7 +148,13 @@ export default function ProcessingPage() {
 
         if (mode === 'project') {
           // Verify or trigger Agent 6 GitHub diligence
-          const repoUrl = analysis?.codeDetails?.githubUrl || analysis?.website;
+          let repoUrl = analysis?.codeDetails?.githubUrl || analysis?.website;
+          if (!repoUrl) {
+            try {
+              const { data: aRow } = await supabase.from('analyses').select('website, code_details').eq('id', analysisId).maybeSingle();
+              if (aRow) repoUrl = aRow.code_details?.githubUrl || aRow.website;
+            } catch (_) {}
+          }
           if (repoUrl) {
             await analyzeGithubRepo(repoUrl, analysisId).catch((e) => console.warn('Agent 6 diligence error:', e));
           }

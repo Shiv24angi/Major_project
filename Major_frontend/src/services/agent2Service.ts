@@ -249,8 +249,10 @@ export async function fetchAndNormalize(
   analysisId: string,
   startupName?: string
 ): Promise<NormalizedStartupDataset | null> {
-  // 1. Try FastAPI backend if online
+  // 1. Try FastAPI backend if online (with 2.5s timeout)
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
     const res = await fetch(`${AGENT2_API_BASE}/api/v1/agent2/fetch-and-normalize`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -259,10 +261,12 @@ export async function fetchAndNormalize(
         startup_name: startupName,
         save_to_database: true,
       }),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (res.ok) return await res.json();
   } catch (_) {
-    console.info('[Agent 2 Service] Backend offline; running direct Supabase normalization engine.');
+    console.info('[Agent 2 Service] Backend offline/timeout; running direct Supabase normalization engine.');
   }
 
   // 2. Direct Supabase normalization engine (Guaranteed to work in deployment)

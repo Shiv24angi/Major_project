@@ -60,6 +60,22 @@ export interface Agent3ScoringOutput {
 
 // 1. Market Scorer (20%)
 function scoreMarket(data: Partial<NormalizedStartupDataset>): DimensionBreakdown {
+  if (data.stage === 'Concept / Empty Repository' || data.technical_information?.code_maturity_rating === 'unverified') {
+    return {
+      name: 'Market',
+      score: 35,
+      weight: 0.20,
+      weighted_score: 7.0,
+      status: 'weak',
+      rationale: 'Theoretical market potential without validated commercial product or user demand.',
+      positive_signals: [],
+      risk_factors: [
+        'Unverified addressable market demand for uninitialized repository',
+        'No product deployment to capture target customer segments',
+      ],
+    };
+  }
+
   const mkt = data.market_information || {};
   const biz = data.business_information || {};
 
@@ -151,6 +167,28 @@ function scoreProduct(data: Partial<NormalizedStartupDataset>): DimensionBreakdo
   const stack = tech.tech_stack_standardized || [];
   const readiness = (proj.commercialization_readiness || 'moderate').toLowerCase();
 
+  const isUnverifiedOrEmpty =
+    maturity === 'unverified' ||
+    (tech.files_audited_count ?? 0) === 0 ||
+    data.stage === 'Concept / Empty Repository';
+
+  if (isUnverifiedOrEmpty) {
+    return {
+      name: 'Product',
+      score: 20,
+      weight: 0.20,
+      weighted_score: 4.0,
+      status: 'weak',
+      rationale: 'Zero codebase files or architectural modules detected; repository is empty or uninitialized.',
+      positive_signals: [],
+      risk_factors: [
+        'Repository contains 0 source code files or build manifests (empty repository)',
+        'Cannot verify AST, architecture, tech stack, modularity, or test suites',
+        'Requires functional code commits before technical diligence can be validated',
+      ],
+    };
+  }
+
   const positives: string[] = [];
   const risks: string[] = [];
 
@@ -224,6 +262,22 @@ function scoreProduct(data: Partial<NormalizedStartupDataset>): DimensionBreakdo
 
 // 3. Team Scorer (20%)
 function scoreTeam(data: Partial<NormalizedStartupDataset>): DimensionBreakdown {
+  if (data.stage === 'Concept / Empty Repository' || data.technical_information?.code_maturity_rating === 'unverified') {
+    return {
+      name: 'Team',
+      score: 45,
+      weight: 0.20,
+      weighted_score: 9.0,
+      status: 'weak',
+      rationale: 'Early maintainer profile; team bandwidth and technical execution history unverified.',
+      positive_signals: ['GitHub account maintainer verified'],
+      risk_factors: [
+        'Single maintainer profile without documented team background',
+        'No proven commit track record or code delivery history',
+      ],
+    };
+  }
+
   const team = data.team_information || ({} as any);
   const founders = team.founders || [];
   const hasTech = team.technical_founder_present ?? true;
@@ -303,6 +357,22 @@ function scoreTeam(data: Partial<NormalizedStartupDataset>): DimensionBreakdown 
 
 // 4. Financial Scorer (15%)
 function scoreFinancial(data: Partial<NormalizedStartupDataset>): DimensionBreakdown {
+  if (data.stage === 'Concept / Empty Repository' || data.technical_information?.code_maturity_rating === 'unverified') {
+    return {
+      name: 'Financial',
+      score: 25,
+      weight: 0.15,
+      weighted_score: 3.75,
+      status: 'weak',
+      rationale: 'Pre-revenue concept stage with zero financial history or revenue model.',
+      positive_signals: [],
+      risk_factors: [
+        'Pre-revenue stage: 0 ARR or commercial transactions recorded',
+        'Absence of established unit economics or financial runway model',
+      ],
+    };
+  }
+
   const fin = data.financial_information || ({} as any);
 
   const arr = fin.annual_recurring_revenue || 0;
@@ -401,6 +471,22 @@ function scoreFinancial(data: Partial<NormalizedStartupDataset>): DimensionBreak
 
 // 5. Traction Scorer (15%)
 function scoreTraction(data: Partial<NormalizedStartupDataset>): DimensionBreakdown {
+  if (data.stage === 'Concept / Empty Repository' || data.technical_information?.code_maturity_rating === 'unverified') {
+    return {
+      name: 'Traction',
+      score: 18,
+      weight: 0.15,
+      weighted_score: 2.7,
+      status: 'weak',
+      rationale: 'Zero active customers, user adoption, or repository star velocity.',
+      positive_signals: [],
+      risk_factors: [
+        'Zero active customers or pilot users detected',
+        'Repository has no active developer engagement or commit frequency',
+      ],
+    };
+  }
+
   const trac = data.traction_information || ({} as any);
   const fin = data.financial_information || ({} as any);
   const proj = data.project_information || ({} as any);
@@ -489,6 +575,23 @@ function scoreTraction(data: Partial<NormalizedStartupDataset>): DimensionBreakd
 
 // 6. Risk Resilience Scorer (10%)
 function scoreRisk(data: Partial<NormalizedStartupDataset>): DimensionBreakdown {
+  if (data.stage === 'Concept / Empty Repository' || data.technical_information?.code_maturity_rating === 'unverified') {
+    return {
+      name: 'Risk',
+      score: 25,
+      weight: 0.10,
+      weighted_score: 2.5,
+      status: 'weak',
+      rationale: 'Critical execution risk: absence of working codebase, architecture, or MVP files.',
+      positive_signals: [],
+      risk_factors: [
+        'Absence of source code files in repository (empty repository)',
+        'Zero verifiable technical defensibility or proprietary moat',
+        'High commercial execution risk without working software foundation',
+      ],
+    };
+  }
+
   const conflicts = data.conflicts || [];
   const validations = data.validation_results || [];
   const fin = data.financial_information || ({} as any);
@@ -748,7 +851,9 @@ export async function runClientScoring(
     recommendationLabel = 'Below Target Threshold; High Execution Risk';
   }
 
-  const confidenceScore = dataset.overall_confidence_score ?? 0.85;
+  const confidenceScore = (overallScore < 45 || dataset.stage === 'Concept / Empty Repository')
+    ? 0.35
+    : (dataset.overall_confidence_score ?? 0.85);
   const confidence = confidenceScore >= 0.80 ? 'High' : confidenceScore >= 0.65 ? 'Moderate' : 'Low';
 
   // 5. Positive drivers & risks
@@ -765,15 +870,17 @@ export async function runClientScoring(
   ].slice(0, 5);
 
   const scoringSummary =
-    `Calibrated diligence evaluation for ${resolvedName} in ` +
-    `${dataset.startup_profile?.primary_industry || 'Enterprise Technology'}. ` +
-    `Overall score ${overallScore}/100 yields an AI recommendation to ${recommendation}.`;
+    overallScore < 45
+      ? `Diligence failed for ${resolvedName}: repository is empty or uninitialized (0 source files). Immediate recommendation: ${recommendation}.`
+      : `Calibrated diligence evaluation for ${resolvedName} in ` +
+        `${dataset.startup_profile?.primary_industry || 'Enterprise Technology'}. ` +
+        `Overall score ${overallScore}/100 yields an AI recommendation to ${recommendation}.`;
 
   const output: Agent3ScoringOutput = {
     id: `score_${analysisId}`,
     analysis_id: analysisId,
     startup_name: resolvedName,
-    mode: 'startup',
+    mode: (dataset.startup_profile?.stage?.includes('Project') || dataset.startup_profile?.stage?.includes('Empty') || dataset.stage?.includes('Empty')) ? 'project' : 'startup',
     overall_score: overallScore,
     market_score: marketDim.score,
     product_score: productDim.score,

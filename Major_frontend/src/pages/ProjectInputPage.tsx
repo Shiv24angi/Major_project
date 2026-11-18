@@ -99,70 +99,22 @@ export default function ProjectInputPage() {
 
     setErrors([]);
     setIsSubmitting(true);
-    setSubmitStatus('Initializing codebase architecture analysis...');
+    setSubmitStatus('Initializing evaluation pipeline...');
 
-    // Attempt live code diligence call first
-    try {
-      setSubmitStatus('Evaluating repository structure, AST, and dependencies...');
-      const liveRes = await analyzeGithubRepo(trimmedGithub);
-
-      if (liveRes.success && liveRes.payload) {
-        const liveRecord = convertAgent6PayloadToAnalysisRecord(
-          liveRes.payload,
-          projectName.trim(),
-          projectDescription.trim()
-        );
-
-        // Pre-fetch live Tavily research on GitHub, LinkedIn, and Web for the project
-        fetchRelatedEcosystemProjects(
-          liveRecord.title,
-          liveRecord.thesis || liveRecord.tagline,
-          liveRecord.codeDetails?.techStack
-        )
-          .then((items) => {
-            liveRecord.relatedProjects = items;
-            addAnalysis(liveRecord);
-          })
-          .catch((err) => console.warn('[Tavily] Background project research error:', err));
-
-        syncAnalysisToSupabase(liveRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
-
-        // Upload attached documents into project's dedicated folder in Supabase Storage
-        files.forEach((item) => {
-          if (item.fileObj) {
-            uploadDocumentToSupabaseStorage(item.fileObj, projectName, liveRecord.id, item.category)
-              .then((res) => {
-                if (res.success) {
-                  console.log(`[Supabase] File '${item.name}' stored in folder '${res.folder}':`, res.storageUrl);
-                }
-              })
-              .catch((err) => console.warn(`[Supabase] Upload error for ${item.name}:`, err));
-          }
-        });
-
-        addAnalysis(liveRecord);
-        navigateTo('processing', { id: liveRecord.id, mode: 'project' });
-        return;
-      }
-    } catch (apiErr) {
-      console.warn('[ProjectInputPage] Agent 6 live analysis call error:', apiErr);
-    } finally {
-      setIsSubmitting(false);
-    }
-
-    // Extract repository name from GitHub URL for fallback
+    // Extract repository name from GitHub URL
     const repoParts = trimmedGithub.replace(/\/$/, '').split('/');
-    const repoOwner = repoParts[repoParts.length - 2];
-    const repoName = repoParts[repoParts.length - 1];
+    const repoOwner = repoParts[repoParts.length - 2] || 'Developer';
+    const repoName = repoParts[repoParts.length - 1] || 'Project';
+    const analysisId = `eval_proj_${repoName.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${Date.now()}`;
 
     const documentsList: AnalysisDocument[] = [
       {
         id: `github_${Date.now()}`,
         name: `${repoOwner}/${repoName} (GitHub Repository)`,
         type: 'Source Repository',
-        size: '18 Files Read',
-        status: 'indexed',
-        chunks: 34,
+        size: 'Pending Audit',
+        status: 'pending',
+        chunks: 0,
         uploadDate: new Date().toISOString().split('T')[0],
       },
       ...files.map((f) => ({
@@ -176,8 +128,6 @@ export default function ProjectInputPage() {
       })),
     ];
 
-    const analysisId = `eval_proj_${repoName.toLowerCase()}_${Date.now()}`;
-
     const newRecord: AnalysisRecord = {
       id: analysisId,
       title: projectName.trim(),
@@ -189,35 +139,31 @@ export default function ProjectInputPage() {
       createdAt: new Date().toISOString(),
       status: 'processing',
       isDemo: false,
-      overallScore: 81,
+      overallScore: 50,
       recommendation: 'MONITOR',
       confidence: 'Moderate',
-      thesis: `High technical execution observed in codebase architecture with verifiable modular separation. Strong developer problem statement. Transition to commercial startup requires establishing pricing tiers and developer acquisition channels.`,
+      thesis: `Technical diligence in progress for ${projectName.trim()}. Evaluating repository architecture, dependencies, and code maturity...`,
       scores: {
-        market: 78,
-        product: 86,
-        team: 75,
-        financial: 68,
-        traction: 72,
-        risk: 84,
+        market: 50,
+        product: 50,
+        team: 50,
+        financial: 50,
+        traction: 50,
+        risk: 50,
       },
       keyInsights: {
         strengths: [
-          `Technical diligence verified functional modular architecture across ${repoParts[repoParts.length - 1]}`,
-          `High test suite coverage and structured schema definitions in repository files`,
-          `Solves clear developer friction: ${projectDescription.trim().slice(0, 100)}`,
+          `Evaluating repository structure for ${repoParts[repoParts.length - 1]}`,
+          `Solves developer problem: ${projectDescription.trim().slice(0, 100)}`,
         ],
         risks: [
-          'Unclear monetization layer between open-source project and enterprise SaaS offerings',
-          'Absence of automated telemetry to measure end-user retention or API usage frequency',
+          'Codebase evaluation and dependency auditing pending',
         ],
         opportunities: [
-          'Introduce managed cloud-hosted tier with automated SLAs',
-          'Expand developer ecosystem via CLI plugins and community integrations',
+          'Commercial transition roadmap under evaluation',
         ],
         nextSteps: [
-          'Publish benchmark comparison against alternative closed-source tooling',
-          'Deploy hosted landing page with self-serve developer signup',
+          'Complete multi-agent technical diligence audit',
         ],
       },
       dueDiligenceQuestions: [
@@ -228,62 +174,34 @@ export default function ProjectInputPage() {
           whyItMatters: 'Protects commercial revenue from cloud provider commoditization.',
           suggestedValidation: 'Examine product licensing matrix and open-core feature roadmap.',
         },
-        {
-          id: 'q2',
-          question: 'What is the developer onboarding friction and time-to-first-API-call?',
-          category: 'Product Velocity',
-          whyItMatters: 'High setup friction dampens organic developer adoption velocity.',
-          suggestedValidation: 'Conduct interactive onboarding audit using quickstart documentation.',
-        },
       ],
       documents: documentsList,
       codeDetails: {
         githubUrl: trimmedGithub,
-        techStack: ['TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'RESTful API'],
-        features: [
-          'Modular service architecture',
-          'Automated validation and schema checks',
-          'Database migration hooks',
-          'OpenAPI / Swagger documentation',
-        ],
-        technicalStrengths: [
-          'Clean separation of concerns across service layers',
-          'Evidence-verified API route error handling',
-        ],
-        technicalConcerns: [
-          'Rate limiting and distributed concurrency safeguards should be formalized for production loads',
-        ],
-        filesDiscovered: 86,
-        filesRead: 14,
+        techStack: [],
+        features: [],
+        technicalStrengths: [],
+        technicalConcerns: [],
+        filesDiscovered: 0,
+        filesRead: 0,
       },
-      fundingMatches: [
-        {
-          id: 'fund_proj_1',
-          investorName: 'Marcus Vance',
-          firm: 'DevSeed Capital',
-          stage: 'Pre-Seed / Seed',
-          focusSectors: ['Developer Tools', 'Open Source Software', 'Infrastructure'],
-          checkSize: '$250K - $1M',
-          matchScore: 92,
-          rationale: 'Backs technical founders spinning out open-source projects into venture-backed businesses.',
-        },
-      ],
+      fundingMatches: [],
       relatedProjects: [],
       chatHistory: [
         {
           id: 'c1',
           role: 'assistant',
-          text: `Analysis complete for ${projectName}. Evaluated repository architecture, dependencies, and technical maturity.`,
+          text: `Analysis pipeline initiated for ${projectName}. Multi-agent evaluation in progress.`,
           timestamp: 'Just now',
         },
       ],
     };
 
-    // Pre-fetch live Tavily research for this project
+    // Pre-fetch ecosystem research in background
     fetchRelatedEcosystemProjects(
       newRecord.title,
       projectDescription.trim(),
-      ['TypeScript', 'Node.js', 'PostgreSQL', 'Docker']
+      ['TypeScript', 'Software Development']
     )
       .then((items) => {
         newRecord.relatedProjects = items;
@@ -291,6 +209,8 @@ export default function ProjectInputPage() {
       })
       .catch((err) => console.warn('[Tavily] Fallback research error:', err));
 
+    // Save initial record to localStorage and Supabase
+    addAnalysis(newRecord);
     syncAnalysisToSupabase(newRecord).catch((err) => console.warn('[Supabase] Sync failed:', err));
 
     // Upload attached documents into project's dedicated folder in Supabase Storage
@@ -306,8 +226,12 @@ export default function ProjectInputPage() {
       }
     });
 
-    addAnalysis(newRecord);
-    navigateTo('processing', { id: analysisId, mode: 'project' });
+    // Navigate immediately to processing page where the 5-stage pipeline runs with live UI progress
+    setSubmitStatus('Redirecting to analysis pipeline...');
+    setTimeout(() => {
+      setIsSubmitting(false);
+      navigateTo('processing', { id: analysisId, mode: 'project' });
+    }, 250);
   };
 
   return (

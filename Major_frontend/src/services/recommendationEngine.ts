@@ -185,61 +185,92 @@ export async function runClientRecommendations(
       `present conditional risks (Overall Score: ${overallScore}/100). We recommend requesting pilot conversion data and auditing ` +
       `unit economics over the next two fiscal quarters.`;
   } else {
-    thesis =
-      `Diligence assessment for ${resolvedName} reveals significant early-stage execution risks and limited defensibility ` +
-      `(Overall Score: ${overallScore}/100). High customer acquisition friction and short runway (${runwayText}) make this opportunity ` +
-      `sub-threshold for current fund mandates.`;
+    if (overallScore < 40 || sp.stage === 'Concept / Empty Repository') {
+      thesis =
+        `Technical and commercial diligence failed for ${resolvedName} (Overall Score: ${overallScore}/100). ` +
+        `The repository contains 0 verifiable source code files, build manifests, or architectural modules. ` +
+        `Because there is no functional codebase or working MVP to evaluate, this project is rated PASS and cannot be recommended for investment until an initial working commit is deployed.`;
+    } else {
+      thesis =
+        `Diligence assessment for ${resolvedName} reveals significant early-stage execution risks and limited defensibility ` +
+        `(Overall Score: ${overallScore}/100). High customer acquisition friction and short runway (${runwayText}) make this opportunity ` +
+        `sub-threshold for current fund mandates.`;
+    }
   }
 
   // 5. Dynamic Strengths
   const strengths: string[] = [];
-  if (scores.market >= 80) strengths.push(`Expansive addressable market tailwinds validated (${tamText})`);
-  if (scores.product >= 80) strengths.push(`High architectural maturity and production codebase validation`);
-  if (scores.team >= 80) strengths.push(`Complementary founder expertise with verified technical execution bandwidth`);
-  if (scores.financial >= 75) strengths.push(`Healthy unit economics and disciplined burn rate (${runwayText})`);
-  if (scores.traction >= 75) strengths.push(`Verified market adoption and positive revenue trajectory (${arrText})`);
-  if (strengths.length < 3) {
-    strengths.push(
-      `Verified core problem-solution fit documented in pitch deck and architectural scaffolding`,
-      `Established initial domain moat in ${industry}`
-    );
+  if (overallScore < 40 || sp.stage === 'Concept / Empty Repository') {
+    strengths.push(`Repository registered on GitHub under ${resolvedName}`);
+  } else {
+    if (scores.market >= 80) strengths.push(`Expansive addressable market tailwinds validated (${tamText})`);
+    if (scores.product >= 80) strengths.push(`High architectural maturity and production codebase validation`);
+    if (scores.team >= 80) strengths.push(`Complementary founder expertise with verified technical execution bandwidth`);
+    if (scores.financial >= 75) strengths.push(`Healthy unit economics and disciplined burn rate (${runwayText})`);
+    if (scores.traction >= 75) strengths.push(`Verified market adoption and positive revenue trajectory (${arrText})`);
+    if (strengths.length < 3) {
+      strengths.push(
+        `Verified core problem-solution fit documented in pitch deck and architectural scaffolding`,
+        `Established initial domain moat in ${industry}`
+      );
+    }
   }
 
   // 6. Dynamic Risks & Concerns
   const risks: string[] = [];
-  if (scores.risk < 75 || fi.runway_months < 12) {
-    risks.push(`Capital runway sensitivity (${runway ? `${runway.toFixed(0)}m` : '< 12m'}); timely financing milestone critical`);
-  }
-  if (scores.market < 75 || (bi.competitors && bi.competitors.length > 3)) {
-    risks.push(`Competitive density with established market incumbents in ${industry}`);
-  }
-  if (scores.financial < 75) {
-    risks.push(`Customer acquisition payback period requires longitudinal cohort verification`);
-  }
-  if (scores.product < 75) {
-    risks.push(`Core product feature claims require independent customer audit to confirm depth`);
-  }
-  if (risks.length < 2) {
+  if (overallScore < 40 || sp.stage === 'Concept / Empty Repository') {
     risks.push(
-      `Enterprise sales cycle duration during initial multi-tenant pilot phase`,
-      `Integration density required to maintain customer retention against alternatives`
+      'Repository contains 0 source code files or architecture (empty repository)',
+      'Absence of functional MVP, test suites, or dependency manifests',
+      'Zero user traction or developer adoption validated'
     );
+  } else {
+    if (scores.risk < 75 || fi.runway_months < 12) {
+      risks.push(`Capital runway sensitivity (${runway ? `${runway.toFixed(0)}m` : '< 12m'}); timely financing milestone critical`);
+    }
+    if (scores.market < 75 || (bi.competitors && bi.competitors.length > 3)) {
+      risks.push(`Competitive density with established market incumbents in ${industry}`);
+    }
+    if (scores.financial < 75) {
+      risks.push(`Customer acquisition payback period requires longitudinal cohort verification`);
+    }
+    if (scores.product < 75) {
+      risks.push(`Core product feature claims require independent customer audit to confirm depth`);
+    }
+    if (risks.length < 2) {
+      risks.push(
+        `Enterprise sales cycle duration during initial multi-tenant pilot phase`,
+        `Integration density required to maintain customer retention against alternatives`
+      );
+    }
   }
 
   // 7. Dynamic Growth Opportunities
-  const opportunities: string[] = [
-    `Enterprise multi-year contract expansion and usage-based monetization tiers`,
-    `Strategic channel partner integrations across the ${industry} ecosystem`,
-    `Expansion into adjacent vertical workflows to boost net revenue retention (NRR)`,
-  ];
+  const opportunities: string[] = (overallScore < 40 || sp.stage === 'Concept / Empty Repository')
+    ? [
+        'Deploy initial functional MVP code commit to GitHub',
+        'Add build manifests (package.json, Dockerfile) and technical documentation',
+        'Establish CI/CD pipeline and integration test harness',
+      ]
+    : [
+        `Enterprise multi-year contract expansion and usage-based monetization tiers`,
+        `Strategic channel partner integrations across the ${industry} ecosystem`,
+        `Expansion into adjacent vertical workflows to boost net revenue retention (NRR)`,
+      ];
 
   // 8. Actionable Next Steps
-  const nextSteps: string[] = [
-    `Schedule technical deep-dive interview with lead engineering architects`,
-    `Audit month-over-month customer cohort retention waterfalls and gross margin breakdown`,
-    `Conduct blind reference calls with top 3 pilot enterprise customers`,
-    `Verify founder equity vesting agreements and clean intellectual property assignment`,
-  ];
+  const nextSteps: string[] = (overallScore < 40 || sp.stage === 'Concept / Empty Repository')
+    ? [
+        'Commit functional source code to the repository default branch',
+        'Configure CI/CD automated test verification before re-submitting for diligence',
+        'Deploy public demo or staged staging environment for investor walkthrough',
+      ]
+    : [
+        `Schedule technical deep-dive interview with lead engineering architects`,
+        `Audit month-over-month customer cohort retention waterfalls and gross margin breakdown`,
+        `Conduct blind reference calls with top 3 pilot enterprise customers`,
+        `Verify founder equity vesting agreements and clean intellectual property assignment`,
+      ];
 
   // 9. Calibrated Due Diligence Questions
   const dueDiligenceQuestions: DueDiligenceQuestion[] = [

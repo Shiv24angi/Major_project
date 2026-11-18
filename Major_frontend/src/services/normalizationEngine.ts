@@ -358,12 +358,22 @@ export async function runClientNormalization(
   ).trim();
 
   const industry = mergedA1.industry || parentAnalysis?.industry || 'Technology';
-  const stage = mergedA1.stage || parentAnalysis?.stage || 'Seed';
-  const description =
-    mergedA1.description ||
-    parentAnalysis?.thesis ||
-    parentAnalysis?.tagline ||
-    `${canonicalName} ${industry} venture evaluation.`;
+  const isProjectMode = parentAnalysis?.mode === 'project' || (!a1Data && Boolean(a6Data));
+
+  // Determine if repository is empty or unverified
+  const isEmptyRepo = Boolean(
+    a6Data?.metadata?.storage_type === 'empty_repository' ||
+    (a6Data && (a6Data.metadata?.files_read ?? 0) === 0) ||
+    (a6Data?.findings_summary?.supported_count === 0 && (a6Data?.metadata?.files_read ?? 0) === 0)
+  );
+
+  const stage = isEmptyRepo
+    ? 'Concept / Empty Repository'
+    : (mergedA1.stage || parentAnalysis?.stage || (isProjectMode ? 'Project → Startup Transition' : 'Seed'));
+
+  const description = isEmptyRepo
+    ? `The repository ${a6Data?.github_url || canonicalName} currently contains 0 source code files or architectural definitions. Pre-MVP concept stage with no working codebase.`
+    : (mergedA1.description || parentAnalysis?.thesis || parentAnalysis?.tagline || `${canonicalName} ${industry} venture evaluation.`);
 
   // 5. Resolve Sector Profile & Variation
   const sector = getSectorProfile(industry);
@@ -384,23 +394,40 @@ export async function runClientNormalization(
   if (!arrVal && mrrVal) arrVal = mrrVal * 12;
   if (!mrrVal && arrVal) mrrVal = Math.round(arrVal / 12);
 
-  // Dynamic industry-grounded baseline if pitch deck does not state them
-  if (arrVal === null) {
-    arrVal = Math.round((800_000 + variation * 1_400_000) / 25_000) * 25_000;
+  let ltvCacVal = Number((sector.ltvCacBase * (0.88 + variation * 0.25)).toFixed(1));
+
+  if (isEmptyRepo) {
+    arrVal = 0;
+    mrrVal = 0;
+    burnParsed.value = 0;
+    runwayParsed = null;
+    grossMarginParsed = 0;
+    ltvCacVal = 0;
+  } else if (isProjectMode) {
+    // Project mode is pre-revenue unless stated
+    arrVal = arrVal || 0;
+    mrrVal = mrrVal || 0;
+    if (burnParsed.value === null) burnParsed.value = Math.round(15_000 + variation * 10_000);
+    if (runwayParsed === null) runwayParsed = Math.round(12 + variation * 6);
+    if (grossMarginParsed === null) grossMarginParsed = 70.0;
+  } else {
+    // Mode A: Startup with pitch deck
+    if (arrVal === null) {
+      arrVal = Math.round((800_000 + variation * 1_400_000) / 25_000) * 25_000;
+    }
+    if (mrrVal === null) {
+      mrrVal = Math.round(arrVal / 12);
+    }
+    if (burnParsed.value === null) {
+      burnParsed.value = Math.round(sector.burnBase * (0.85 + variation * 0.3));
+    }
+    if (runwayParsed === null) {
+      runwayParsed = Math.round(14 + variation * 10);
+    }
+    if (grossMarginParsed === null) {
+      grossMarginParsed = Number((sector.marginBase * (0.94 + variation * 0.12)).toFixed(1));
+    }
   }
-  if (mrrVal === null) {
-    mrrVal = Math.round(arrVal / 12);
-  }
-  if (burnParsed.value === null) {
-    burnParsed.value = Math.round(sector.burnBase * (0.85 + variation * 0.3));
-  }
-  if (runwayParsed === null) {
-    runwayParsed = Math.round(14 + variation * 10);
-  }
-  if (grossMarginParsed === null) {
-    grossMarginParsed = Number((sector.marginBase * (0.94 + variation * 0.12)).toFixed(1));
-  }
-  const ltvCacVal = Number((sector.ltvCacBase * (0.88 + variation * 0.25)).toFixed(1));
 
   // 7. Parse & Normalize Market Sizing
   const rawMkt = mergedA1.market_size || {};
@@ -408,31 +435,54 @@ export async function runClientNormalization(
   const samParsed = parseCurrencyAmount(rawMkt.sam);
   const somParsed = parseCurrencyAmount(rawMkt.som);
 
-  const tamVal = tamParsed.value || Math.round(sector.tamBase * (0.8 + variation * 0.4));
-  const samVal = samParsed.value || Math.round(tamVal * 0.25);
-  const somVal = somParsed.value || Math.round(samVal * 0.2);
-  const cagrVal = rawMkt.cagr
-    ? parsePercentage(rawMkt.cagr) || sector.cagrBase
-    : Number((sector.cagrBase * (0.9 + variation * 0.2)).toFixed(1));
+  let tamVal = 0;
+  let samVal = 0;
+  let somVal = 0;
+  let cagrVal = 0;
+
+  if (isEmptyRepo) {
+    tamVal = 0;
+    samVal = 0;
+    somVal = 0;
+    cagrVal = 0;
+  } else if (isProjectMode) {
+    tamVal = tamParsed.value || Math.round(sector.tamBase * (0.3 + variation * 0.2));
+    samVal = samParsed.value || Math.round(tamVal * 0.2);
+    somVal = somParsed.value || Math.round(samVal * 0.15);
+    cagrVal = Number((sector.cagrBase * (0.85 + variation * 0.2)).toFixed(1));
+  } else {
+    tamVal = tamParsed.value || Math.round(sector.tamBase * (0.8 + variation * 0.4));
+    samVal = samParsed.value || Math.round(tamVal * 0.25);
+    somVal = somParsed.value || Math.round(samVal * 0.2);
+    cagrVal = rawMkt.cagr
+      ? parsePercentage(rawMkt.cagr) || sector.cagrBase
+      : Number((sector.cagrBase * (0.9 + variation * 0.2)).toFixed(1));
+  }
 
   // 8. Parse & Normalize Technical Information (Agent 6)
-  const rawTech = (
-    a6Data?.raw_analysis?.technology_stack ||
-    parentAnalysis?.code_details?.techStack ||
-    ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Docker']
-  );
+  const rawTech = isEmptyRepo
+    ? []
+    : (
+        a6Data?.raw_analysis?.technology_stack ||
+        parentAnalysis?.code_details?.techStack ||
+        ['Software Codebase']
+      );
   const standardizedTech = canonicalizeTechStack(rawTech);
 
   const findingsList = a6Data?.findings || [];
-  const supportedClaims = findingsList
-    .filter((f: any) => f.status === 'supported')
-    .map((f: any) => f.claim || f.feature || '');
+  const supportedClaims = isEmptyRepo
+    ? []
+    : findingsList
+        .filter((f: any) => f.status === 'supported')
+        .map((f: any) => f.claim || f.feature || '');
 
-  // 9. Deduplicate Competitors with Sector Incumbents
-  const rawCompetitors = [
-    ...(mergedA1.competitors || []),
-    ...sector.defaultCompetitors.slice(0, 3),
-  ];
+  // 9. Deduplicate Competitors
+  const rawCompetitors = isEmptyRepo
+    ? []
+    : [
+        ...(mergedA1.competitors || []),
+        ...sector.defaultCompetitors.slice(0, 3),
+      ];
   const uniqueCompetitors = Array.from(
     new Set(rawCompetitors.map((c: any) => String(c).trim()))
   ).filter(Boolean);
@@ -458,12 +508,12 @@ export async function runClientNormalization(
   const parsedFounders = (mergedA1.founders && mergedA1.founders.length > 0)
     ? mergedA1.founders
     : [{ name: `${canonicalName} Leadership Team`, role: 'Executive Founders' }];
-  const teamSizeVal = Math.max(parsedFounders.length, Math.round(3 + variation * 5));
+  const teamSizeVal = isEmptyRepo ? 1 : Math.max(parsedFounders.length, Math.round(2 + variation * 4));
 
   // 12. Traction Information
-  const activeCustVal = Math.round(sector.activeCustomersBase * (0.75 + variation * 0.5));
-  const momGrowthVal = Number((sector.growthMoMBase * (0.85 + variation * 0.3)).toFixed(1));
-  const churnVal = Number((sector.churnBase * (0.85 + variation * 0.3)).toFixed(1));
+  const activeCustVal = isEmptyRepo ? 0 : isProjectMode ? Math.round(5 + variation * 15) : Math.round(sector.activeCustomersBase * (0.75 + variation * 0.5));
+  const momGrowthVal = isEmptyRepo ? 0 : Number((sector.growthMoMBase * (0.85 + variation * 0.3)).toFixed(1));
+  const churnVal = isEmptyRepo ? 0 : Number((sector.churnBase * (0.85 + variation * 0.3)).toFixed(1));
 
   // 13. Assemble Master Unified Dataset
   const payload: NormalizedDatasetOutput = {
@@ -474,7 +524,7 @@ export async function runClientNormalization(
     primary_industry: industry,
     stage: stage,
     normalization_status: 'completed',
-    overall_confidence_score: 0.88,
+    overall_confidence_score: isEmptyRepo ? 0.40 : 0.88,
     startup_profile: {
       canonical_name: canonicalName,
       tagline: parentAnalysis?.tagline || `${canonicalName} Platform`,
@@ -489,11 +539,19 @@ export async function runClientNormalization(
       business_model: mergedA1.business_model || `${industry} Subscription & Licensing`,
       monetization_structure: [mergedA1.business_model || 'Enterprise Subscription / Usage'],
       competitors: uniqueCompetitors,
-      risk_factors: mergedA1.risks || [
-        `Market competition from incumbent players in ${industry}`,
-        'Customer onboarding friction during pilot stage',
-      ],
-      key_differentiators: ['Proprietary workflow automation', 'Verified codebase architecture'],
+      risk_factors: isEmptyRepo
+        ? [
+            'Repository contains 0 source files (empty repository)',
+            'No working prototype or MVP available for technical audit',
+            'Pre-revenue with 0 active users',
+          ]
+        : (mergedA1.risks || [
+            `Market competition from incumbent players in ${industry}`,
+            'Customer onboarding friction during pilot stage',
+          ]),
+      key_differentiators: isEmptyRepo
+        ? ['Repository created on GitHub']
+        : ['Proprietary workflow automation', 'Verified codebase architecture'],
     },
     financial_information: {
       currency: arrParsed.currency || 'USD',
@@ -503,7 +561,7 @@ export async function runClientNormalization(
       runway_months: runwayParsed,
       gross_margin_percentage: grossMarginParsed,
       ltv_cac_ratio: ltvCacVal,
-      capital_efficiency_status: runwayParsed >= 12 ? 'healthy' : 'moderate',
+      capital_efficiency_status: (runwayParsed && runwayParsed >= 12) ? 'healthy' : 'moderate',
     },
     team_information: {
       founders: parsedFounders,
@@ -520,18 +578,18 @@ export async function runClientNormalization(
       sam_usd: samVal,
       som_usd: somVal,
       cagr_percentage: cagrVal,
-      sizing_confidence: 0.86,
+      sizing_confidence: isEmptyRepo ? 0.15 : 0.86,
     },
     technical_information: {
       tech_stack_standardized: standardizedTech,
-      code_maturity_rating: supportedClaims.length >= 2 ? 'high' : 'moderate',
+      code_maturity_rating: isEmptyRepo ? 'unverified' : supportedClaims.length >= 2 ? 'high' : 'moderate',
       supported_feature_claims: supportedClaims,
-      files_audited_count: a6Data?.metadata?.files_read || 16,
+      files_audited_count: isEmptyRepo ? 0 : (a6Data?.metadata?.files_read || 16),
       agent6_verified: Boolean(a6Data),
     },
     project_information: {
       is_open_source: Boolean(a6Data),
-      commercialization_readiness: 'high',
+      commercialization_readiness: isEmptyRepo ? 'low' : isProjectMode ? 'moderate' : 'high',
     },
     external_research: {},
     normalized_metrics: [
