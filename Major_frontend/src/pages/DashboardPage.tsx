@@ -48,6 +48,7 @@ import {
   Share2,
   LogOut,
   User,
+  FileDown,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -84,6 +85,7 @@ import {
   fetchAnalysesFromSupabase,
   saveChatMessageToSupabase,
   fetchChatMessagesFromSupabase,
+  supabase,
   type Agent1EvaluationRecord,
 } from '../services/supabaseService';
 import { queryVentureAiChat, getSessionPitchDeck, getSessionRepositoryInfo } from '../services/aiChatService';
@@ -280,6 +282,61 @@ export default function DashboardPage() {
     const loaded = getStoredAnalyses();
     setAnalyses(loaded);
 
+    const initialParams = getRouteParams();
+    const targetParamId = initialParams.id;
+
+    if (targetParamId) {
+      const found = loaded.find((a) => a.id === targetParamId);
+      if (found) {
+        setActiveAnalysis(found);
+        setActiveAnalysisId(found.id);
+      } else {
+        const active = getActiveAnalysis();
+        setActiveAnalysis(active);
+        // Also attempt direct query for this specific ID from Supabase
+        supabase
+          .from('analyses')
+          .select('*')
+          .eq('id', targetParamId)
+          .maybeSingle()
+          .then(({ data }) => {
+            if (data) {
+              const formatted: AnalysisRecord = {
+                id: data.id,
+                title: data.title || 'Startup Evaluation',
+                mode: data.mode || 'startup',
+                tagline: data.tagline || '',
+                industry: data.industry || 'Technology',
+                website: data.website || '',
+                stage: data.stage || 'Seed',
+                createdAt: data.created_at || new Date().toISOString(),
+                status: data.status || 'completed',
+                isDemo: false,
+                overallScore: data.overall_score || 80,
+                recommendation: data.recommendation || 'MONITOR',
+                confidence: data.confidence || 'Moderate',
+                thesis: data.thesis || '',
+                scores: data.scores || { market: 80, product: 80, team: 80, financial: 75, traction: 70, risk: 75 },
+                keyInsights: data.key_insights || { strengths: [], risks: [], opportunities: [], nextSteps: [] },
+                dueDiligenceQuestions: data.due_diligence_questions || [],
+                documents: data.documents || [],
+                codeDetails: data.code_details,
+                fundingMatches: data.funding_matches || [],
+                chatHistory: data.chat_history || [],
+              };
+              addAnalysis(formatted);
+              setActiveAnalysis(formatted);
+              setActiveAnalysisId(formatted.id);
+              setAnalyses((prev) => [formatted, ...prev.filter((p) => p.id !== formatted.id)]);
+            }
+          })
+          .catch((err) => console.warn('[DashboardPage] Direct Supabase lookup error:', err));
+      }
+    } else {
+      const active = getActiveAnalysis();
+      setActiveAnalysis(active);
+    }
+
     // Fetch live analyses directly from Supabase database
     fetchAnalysesFromSupabase().then((dbAnalyses) => {
       if (dbAnalyses && dbAnalyses.length > 0) {
@@ -291,25 +348,49 @@ export default function DashboardPage() {
           return merged;
         });
 
-        // Auto-select latest real non-demo startup (e.g. Grow / ArangoDB) if current is demo or unset
-        const currentActiveId = getActiveAnalysisId();
-        const nonDemo = dbAnalyses.filter((a) => !a.isDemo);
-        if (nonDemo.length > 0) {
-          const matchingReal = nonDemo.find((a) => a.id === currentActiveId);
-          if (matchingReal) {
-            setActiveAnalysis(matchingReal);
-          } else if (
-            !currentActiveId ||
-            currentActiveId === 'eval_airbnb_01' ||
-            currentActiveId === 'eval_ecoverse_01'
-          ) {
-            const latestReal = nonDemo[nonDemo.length - 1];
-            setActiveAnalysis(latestReal);
-            setActiveAnalysisId(latestReal.id);
+        // Priority 1: Match route param id if passed in URL
+        const currentRouteParams = getRouteParams();
+        const preferredId = currentRouteParams.id || getActiveAnalysisId();
+        const matchedTarget = dbAnalyses.find((a) => a.id === preferredId);
+
+        if (matchedTarget) {
+          setActiveAnalysis(matchedTarget);
+          setActiveAnalysisId(matchedTarget.id);
+        } else {
+          // Priority 2: Auto-select latest real non-demo startup (e.g. Grow / ArangoDB) if current is demo or unset
+          const nonDemo = dbAnalyses.filter((a) => !a.isDemo);
+          if (nonDemo.length > 0) {
+            const currentActiveId = getActiveAnalysisId();
+            const matchingReal = nonDemo.find((a) => a.id === currentActiveId);
+            if (matchingReal) {
+              setActiveAnalysis(matchingReal);
+            } else if (
+              !currentActiveId ||
+              currentActiveId === 'eval_airbnb_01' ||
+              currentActiveId === 'eval_ecoverse_01'
+            ) {
+              const latestReal = nonDemo[nonDemo.length - 1];
+              setActiveAnalysis(latestReal);
+              setActiveAnalysisId(latestReal.id);
+            }
           }
         }
       }
     }).catch((err) => console.warn('[DashboardPage] Supabase fetch warning:', err));
+
+    // Listen for hash parameter changes (e.g. user clicks another startup link or navigates with ?id=...)
+    const handleHashParamChange = () => {
+      const routeParams = getRouteParams();
+      if (routeParams.id) {
+        const stored = getStoredAnalyses();
+        const found = stored.find((a) => a.id === routeParams.id);
+        if (found) {
+          setActiveAnalysis(found);
+          setActiveAnalysisId(found.id);
+        }
+      }
+    };
+    window.addEventListener('hashchange', handleHashParamChange);
 
     // Initial check and periodic polling of Agent 1 (8001), Agent 6 (8000), Agent 3 (8004), Agent 4 (8005), Agent-Research (8002)
     checkAgent1Health().then((res) => setAgent1Online(res.online));
@@ -325,22 +406,10 @@ export default function DashboardPage() {
       checkResearchHealth().then((res) => setResearchOnline(res.online));
     }, 8000);
 
-    const params = getRouteParams();
-    if (params.id) {
-      const found = loaded.find((a) => a.id === params.id);
-      if (found) {
-        setActiveAnalysis(found);
-        setActiveAnalysisId(found.id);
-      } else {
-        const active = getActiveAnalysis();
-        setActiveAnalysis(active);
-      }
-    } else {
-      const active = getActiveAnalysis();
-      setActiveAnalysis(active);
-    }
-
-    return () => clearInterval(healthInterval);
+    return () => {
+      window.removeEventListener('hashchange', handleHashParamChange);
+      clearInterval(healthInterval);
+    };
   }, []);
 
   // Sync Agent 1 evaluation from Supabase whenever active venture changes
@@ -521,8 +590,9 @@ export default function DashboardPage() {
   if (!activeAnalysis) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#F8F9FE]">
-        <div className="text-center font-medium text-sm text-[#64748B]">
-          Loading VentureLens Intelligence Engine...
+        <div className="text-center font-medium text-sm text-[#64748B] flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-[#5028E0] border-t-transparent animate-spin" />
+          <span>Loading VentureLens Intelligence Engine...</span>
         </div>
       </div>
     );
@@ -535,25 +605,32 @@ export default function DashboardPage() {
   // Active external research data (Tasks 5–9: Market, Competitors, Financials, News)
   const currentResearchData: ExternalResearchData | null = activeAnalysis ? getOrGenerateResearchData(activeAnalysis) : null;
 
-  // Dimension scores mapping for the 6 cards under the hero
+  // Safeguarded dimension scores mapping for the 6 cards under the hero
+  const mScore = activeAnalysis.scores?.market ?? 75;
+  const pScore = activeAnalysis.scores?.product ?? 75;
+  const tScore = activeAnalysis.scores?.team ?? 75;
+  const fScore = activeAnalysis.scores?.financial ?? 70;
+  const trScore = activeAnalysis.scores?.traction ?? 70;
+  const rScore = activeAnalysis.scores?.risk ?? 75;
+
   const scoreDimensions = [
-    { label: 'Market Score', val: activeAnalysis.scores.market, color: 'bg-[#10B981]' },
-    { label: 'Product Score', val: activeAnalysis.scores.product, color: 'bg-[#10B981]' },
-    { label: 'Team Score', val: activeAnalysis.scores.team, color: 'bg-[#10B981]' },
+    { label: 'Market Score', val: mScore, color: 'bg-[#10B981]' },
+    { label: 'Product Score', val: pScore, color: 'bg-[#10B981]' },
+    { label: 'Team Score', val: tScore, color: 'bg-[#10B981]' },
     {
       label: 'Financial Score',
-      val: activeAnalysis.scores.financial,
-      color: activeAnalysis.scores.financial >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
+      val: fScore,
+      color: fScore >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
     },
     {
       label: 'Traction Score',
-      val: activeAnalysis.scores.traction,
-      color: activeAnalysis.scores.traction >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
+      val: trScore,
+      color: trScore >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
     },
     {
       label: 'Risk Score',
-      val: activeAnalysis.scores.risk,
-      color: activeAnalysis.scores.risk >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
+      val: rScore,
+      color: rScore >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]',
     },
   ];
 
@@ -2917,12 +2994,12 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-3">
-                {activeAnalysis.documents.length === 0 ? (
+                {(activeAnalysis.documents || []).length === 0 ? (
                   <div className="p-8 text-center text-xs text-[#64748B] bg-[#F8F9FE] rounded-xl border border-[#EAEBF2]">
                     No documents uploaded yet for this venture. Upload a pitch deck or financial model to store in Supabase.
                   </div>
                 ) : (
-                  activeAnalysis.documents.map((d) => (
+                  (activeAnalysis.documents || []).map((d) => (
                     <div
                       key={d.id}
                       className="flex items-center justify-between p-4 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] text-xs"
@@ -2982,7 +3059,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-4">
-                {activeAnalysis.dueDiligenceQuestions.map((q, i) => (
+                {(activeAnalysis.dueDiligenceQuestions || []).map((q, i) => (
                   <div
                     key={q.id}
                     className="p-4.5 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] space-y-2 text-xs"
@@ -3257,7 +3334,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {activeAnalysis.fundingMatches.map((f) => (
+                  {(activeAnalysis.fundingMatches || []).map((f) => (
                     <div
                       key={f.id}
                       className="p-5 rounded-xl border border-[#EAEBF2] bg-[#F8F9FE] space-y-3"
@@ -3385,7 +3462,7 @@ export default function DashboardPage() {
 
               {/* Chat History Container */}
               <div className="h-[460px] overflow-y-auto space-y-3.5 p-4 bg-[#F8F9FE] rounded-xl border border-[#EAEBF2]">
-                {activeAnalysis.chatHistory.map((m) => (
+                {(activeAnalysis.chatHistory || []).map((m) => (
                   <div
                     key={m.id}
                     className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}

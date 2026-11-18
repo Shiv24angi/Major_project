@@ -20,6 +20,7 @@ import AuthPage from './pages/AuthPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from 'sonner';
 import { initSupabaseDatabase } from './services/supabaseService';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   useEffect(() => {
@@ -103,31 +104,33 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="flex flex-col bg-[#F5F5F5]">
-          <PresetHashRouter
-            routes={{
-              '': <HomePage />,
-              auth: <AuthPage />,
-              login: <AuthPage />,
-              signup: <AuthPage />,
-              'new-analysis': <NewAnalysisModePage />,
-              'analyze-startup': <StartupInputPage />,
-              'analyze-project': <ProjectInputPage />,
-              'processing': <ProcessingPage />,
-              'dashboard': <DashboardPage />,
-              'my-analyses': <DashboardPage />,
-              'documents': <DashboardPage />,
-              'reports': <DashboardPage />,
-              network: <NetworkPage />,
-              ecosystem: <EcosystemPage />,
-              rewards: <RewardsPage />,
-              help: <HelpPage />,
-              news: <NewsPage />,
-              wallet: <WalletPage />,
-            }}
-          />
-          <Toaster position="top-right" richColors />
-        </div>
+        <ErrorBoundary>
+          <div className="flex flex-col bg-[#F5F5F5]">
+            <PresetHashRouter
+              routes={{
+                '': <HomePage />,
+                auth: <AuthPage />,
+                login: <AuthPage />,
+                signup: <AuthPage />,
+                'new-analysis': <NewAnalysisModePage />,
+                'analyze-startup': <StartupInputPage />,
+                'analyze-project': <ProjectInputPage />,
+                'processing': <ProcessingPage />,
+                'dashboard': <DashboardPage />,
+                'my-analyses': <DashboardPage />,
+                'documents': <DashboardPage />,
+                'reports': <DashboardPage />,
+                network: <NetworkPage />,
+                ecosystem: <EcosystemPage />,
+                rewards: <RewardsPage />,
+                help: <HelpPage />,
+                news: <NewsPage />,
+                wallet: <WalletPage />,
+              }}
+            />
+            <Toaster position="top-right" richColors />
+          </div>
+        </ErrorBoundary>
       </BrowserRouter>
     </AuthProvider>
   );
