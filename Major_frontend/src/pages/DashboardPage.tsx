@@ -46,7 +46,10 @@ import {
   TrendingDown,
   RefreshCw,
   Share2,
+  LogOut,
+  User,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import {
   getStoredAnalyses,
   getActiveAnalysis,
@@ -159,6 +162,47 @@ export default function DashboardPage() {
   const [chatInput, setChatInput] = useState('');
   const [isChatThinking, setIsChatThinking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // User Authentication & Profile Dropdown
+  const { user, profile, signOut } = useAuth();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const displayName =
+    profile?.name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.user_metadata?.user_name ||
+    user?.email?.split('@')[0] ||
+    'Vansh Aggarwal';
+
+  const userEmail = user?.email || profile?.email || 'vansh27102005@gmail.com';
+  const userRole = profile?.role
+    ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1)
+    : 'Investor';
+
+  const getInitials = (name?: string, email?: string) => {
+    if (name) {
+      const parts = name.trim().split(' ').filter(Boolean);
+      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      return name.slice(0, 2).toUpperCase();
+    }
+    if (email) return email.slice(0, 2).toUpperCase();
+    return 'VA';
+  };
+
+  const userInitials = getInitials(displayName, userEmail);
 
   // Auto-scroll chat window when new message arrives or model starts thinking
   useEffect(() => {
@@ -820,18 +864,149 @@ export default function DashboardPage() {
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#5028E0] ring-2 ring-white" />
             </button>
 
-            {/* User Profile Badge */}
-            <div className="flex items-center gap-3 pl-2 border-l border-[#EAEBF2]">
-              <div className="w-9 h-9 rounded-full bg-[#1E1B4B] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                VA
-              </div>
-              <div className="hidden sm:block text-left">
-                <span className="block text-xs font-bold text-[#1E1B2E] leading-tight">
-                  Vansh Aggarwal
-                </span>
-                <span className="block text-[11px] text-[#64748B] leading-tight">Investor</span>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#94A3B8] hidden sm:block" />
+            {/* User Profile Badge & Interactive Dropdown */}
+            <div className="relative pl-2 border-l border-[#EAEBF2]" ref={userDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setUserDropdownOpen((prev) => !prev)}
+                className="flex items-center gap-3 p-1 rounded-xl hover:bg-[#F8F9FE] transition-colors cursor-pointer text-left group"
+                aria-label="User account menu"
+                aria-expanded={userDropdownOpen}
+              >
+                {profile?.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={displayName}
+                    className="w-9 h-9 rounded-full object-cover border border-[#EAEBF2] shadow-xs"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-[#1E1B4B] text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:bg-[#5028E0] transition-colors">
+                    {userInitials}
+                  </div>
+                )}
+                <div className="hidden sm:block text-left">
+                  <span className="block text-xs font-bold text-[#1E1B2E] leading-tight">
+                    {displayName}
+                  </span>
+                  <span className="block text-[11px] text-[#64748B] leading-tight">{userRole}</span>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-[#94A3B8] hidden sm:block transition-transform duration-200 ${
+                    userDropdownOpen ? 'rotate-180 text-[#1E1B2E]' : ''
+                  }`}
+                />
+              </button>
+
+              {/* USER PROFILE DROPDOWN */}
+              {userDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 rounded-2xl border border-[#EAEBF2] bg-white p-2 shadow-2xl z-50 animate-fadeIn">
+                  {/* User Profile Header */}
+                  <div className="px-3.5 py-3 border-b border-[#F1F2F6] bg-[#FAFBFD] rounded-xl mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      {profile?.avatarUrl ? (
+                        <img
+                          src={profile.avatarUrl}
+                          alt={displayName}
+                          className="w-10 h-10 rounded-full object-cover border border-[#EAEBF2]"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-[#1E1B4B] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                          {userInitials}
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-[#1E1B2E] truncate">
+                          {displayName}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] truncate mt-0.5">
+                          {userEmail}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2.5 flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#5028E0] bg-[#EEECFB] px-2 py-0.5 rounded-full border border-[#DCD6FA]">
+                        <Crown className="w-3 h-3" />
+                        {userRole}
+                      </span>
+                      <span className="text-[10px] font-medium text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full border border-[#A7F3D0]">
+                        Active Session
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="py-1 space-y-0.5 text-xs font-medium text-[#334155]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        setCurrentTab('dashboard');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors text-left cursor-pointer"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-[#64748B]" />
+                      <span>Investment Overview</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        setCurrentTab('my-analyses');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors text-left cursor-pointer"
+                    >
+                      <Folder className="w-4 h-4 text-[#64748B]" />
+                      <span>My Diligence Records</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        navigateTo('new-analysis');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors text-left cursor-pointer"
+                    >
+                      <PlusCircle className="w-4 h-4 text-[#5028E0]" />
+                      <span className="text-[#5028E0] font-semibold">Start New Analysis</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        navigateTo('');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F8F9FE] hover:text-[#1E1B2E] transition-colors text-left cursor-pointer"
+                    >
+                      <Globe className="w-4 h-4 text-[#64748B]" />
+                      <span>Back to Landing Page</span>
+                    </button>
+                  </div>
+
+                  {/* Sign Out Button */}
+                  <div className="pt-1.5 mt-1 border-t border-[#F1F2F6]">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setUserDropdownOpen(false);
+                        try {
+                          await signOut();
+                          toast.success('Signed out successfully');
+                        } catch (err: any) {
+                          toast.error(err?.message || 'Error signing out');
+                        }
+                        navigateTo('login');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] rounded-xl transition-colors text-left cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 text-[#DC2626]" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
