@@ -749,6 +749,142 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   const isAirbnb = title.toLowerCase().includes('airbnb');
   const isEcoVerse = title.toLowerCase().includes('ecoverse');
   const isNovaFlow = title.toLowerCase().includes('novaflow');
+  const isPinterest = title.toLowerCase().includes('pinterest') || title.toLowerCase().includes('pintrest') || industry.toLowerCase().includes('visual discovery');
+
+  if (isPinterest) {
+    return {
+      market: {
+        tam: '$650.0 Billion',
+        sam: '$180.0 Billion',
+        som: '$45.0 Billion',
+        cagr: '14.8%',
+        marketDrivers: [
+          'Global transition towards visual search, AI computer vision, and social commerce',
+          'High buyer intent: over 50% of monthly active users are Gen Z, with 90% ready to shop',
+          'Automated ad campaign efficiency: Pinterest Performance+ AI delivering 20%+ lower CPA',
+        ],
+        headwinds: [
+          'Macro volatility in global digital advertising budgets across brand and retail sectors',
+          'Competition for consumer attention from short-form video platforms (TikTok, Instagram Reels)',
+          'Monetization disparity between US/Canada ($8.38 ARPU) and Rest of World ($0.27 ARPU)',
+        ],
+        icp: 'Global retail advertisers, direct-to-consumer (DTC) brands, and merchants seeking high-intent commercial shoppers.',
+        marketAttractivenessScore: 92,
+        tamMethodology: 'Global digital advertising and commercial visual commerce triangulation.',
+      },
+      competitors: {
+        directCompetitors: [
+          {
+            name: 'Instagram (Meta)',
+            website: 'https://instagram.com',
+            funding: 'Public (Meta Platforms - $1.6T+)',
+            strengths: 'Massive global user base (2B+ MAU), dominant Reels feed, integrated Meta ad infrastructure',
+            weaknesses: 'Passive entertainment and social clout feed rather than intentional planning/shopping sanctuary',
+            threatLevel: 'High',
+          },
+          {
+            name: 'TikTok (ByteDance)',
+            website: 'https://tiktok.com',
+            funding: 'Private (ByteDance - $250B+)',
+            strengths: 'Addictive algorithmic video feed, rapid TikTok Shop transaction adoption',
+            weaknesses: 'Geopolitical regulatory scrutiny, impulsive impulse-buys rather than deliberate life project planning',
+            threatLevel: 'High',
+          },
+          {
+            name: 'Google Lens & Images',
+            website: 'https://lens.google.com',
+            funding: 'Public (Alphabet - $2T+)',
+            strengths: 'Unrivaled web-scale image indexing, Android visual search integration',
+            weaknesses: 'Utility query tool without personal taste curation, moodboarding, or creator-driven discovery',
+            threatLevel: 'Medium',
+          },
+        ],
+        featureMatrix: [
+          {
+            feature: '400B+ Proprietary Visual Taste Graph',
+            us: true,
+            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': false },
+          },
+          {
+            feature: 'Positive Sanctuary / Zero Outrage Environment',
+            us: true,
+            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': true },
+          },
+          {
+            feature: 'Planning Tomorrow (Future Project Curation)',
+            us: true,
+            competitors: { 'Instagram (Meta)': false, 'TikTok (ByteDance)': false, 'Google Lens & Images': false },
+          },
+          {
+            feature: 'Automated Performance+ AI Ad Optimization',
+            us: true,
+            competitors: { 'Instagram (Meta)': true, 'TikTok (ByteDance)': true, 'Google Lens & Images': true },
+          },
+        ],
+        moatScore: 94,
+        moatSummary: 'Unmatched 400B+ visual pin taste graph, 661M high-intent commercial planners, and positive sanctuary brand equity.',
+      },
+      financials: {
+        totalRaised: '$1.5 Billion (Public: NYSE: PINS)',
+        lastValuation: '$24.0 Billion Market Cap',
+        arrMultiple: '5.7x P/S',
+        burnRate: 'Profitable ($1.25B Annual Free Cash Flow)',
+        runwayMonths: 999,
+        financialHealthScore: 96,
+        rounds: [
+          {
+            round: 'IPO (NYSE: PINS)',
+            amount: '$1.4 Billion',
+            date: '2019-04-18',
+            leadInvestors: ['Goldman Sachs', 'J.P. Morgan'],
+          },
+          {
+            round: 'Series G',
+            amount: '$150 Million',
+            date: '2017-06-06',
+            leadInvestors: ['Wellington Management'],
+          },
+          {
+            round: 'Series F',
+            amount: '$367 Million',
+            date: '2015-03-16',
+            leadInvestors: ['Bessemer Venture Partners', 'Andreessen Horowitz'],
+          },
+        ],
+        capitalEfficiencyVerdict: 'World-class unit economics: $4.22B annual revenue with $1.25B free cash flow (+85% YoY).',
+      },
+      news: {
+        momentumScore: 90,
+        sentimentSummary: 'Strong user expansion to 661M MAUs, record Gen Z growth, and high ad adoption with Performance+ AI.',
+        events: [
+          {
+            date: '2026-02-12',
+            headline: 'Pinterest reports record 661M global monthly users and projects $4.22B in revenue',
+            source: 'Wall Street Journal',
+            url: 'https://wsj.com/market-data/pins-earnings',
+            impact: 'positive',
+            summary: 'Gen Z users surpassed 50% of total cohort, cementing visual discovery as the primary commerce starting point.',
+          },
+          {
+            date: '2025-10-05',
+            headline: 'Pinterest Performance+ AI suite reduces advertiser cost-per-acquisition by over 20%',
+            source: 'Adweek',
+            url: 'https://adweek.com/pinterest-performance-plus',
+            impact: 'positive',
+            summary: 'Automated campaign tools allow retailers to turn catalogs directly into shoppable deep-linked checkout pins.',
+          },
+          {
+            date: '2025-06-20',
+            headline: 'Pinterest expands global partnership with Amazon Advertising and Google for international monetization',
+            source: 'Reuters',
+            url: 'https://reuters.com/business/pinterest-ad-partnership',
+            impact: 'positive',
+            summary: 'Third-party demand partnerships target expanding international ARPU beyond core US/Canada markets.',
+          },
+        ],
+      },
+    };
+  }
 
   if (isAirbnb) {
     return {
@@ -1133,25 +1269,30 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   // Dynamic fallback for custom user-created startups or projects
   const score = analysis.overallScore || 78;
   const isProject = analysis.mode === 'project';
+  const isConsumer = /social|consumer|marketplace|discovery|ecommerce|retail|media|creator/i.test(industry);
 
   return {
     market: {
-      tam: isProject ? '$18.5 Billion' : '$24.0 Billion',
-      sam: isProject ? '$4.2 Billion' : '$5.8 Billion',
-      som: isProject ? '$650 Million' : '$850 Million',
-      cagr: '21.5%',
+      tam: isProject ? '$18.5 Billion' : isConsumer ? '$120.0 Billion' : '$24.0 Billion',
+      sam: isProject ? '$4.2 Billion' : isConsumer ? '$32.0 Billion' : '$5.8 Billion',
+      som: isProject ? '$650 Million' : isConsumer ? '$4.5 Billion' : '$850 Million',
+      cagr: isConsumer ? '16.5%' : '21.5%',
       marketDrivers: [
-        `Accelerating enterprise automation and digital transformation across ${industry}`,
-        'Growing demand for transparent, explainable decision-making tools',
+        `Accelerating digital engagement and modern user workflows across ${industry}`,
+        isConsumer ? 'High consumer purchase intent and creator-led commerce monetization' : 'Growing demand for transparent, explainable decision-making tools',
         'Cost efficiency mandates forcing replacement of legacy manual workflows',
       ],
       headwinds: [
-        'Prolonged enterprise sales cycles and IT security compliance scrutiny',
+        isConsumer ? 'Consumer retention headwinds and algorithmic feed competition' : 'Prolonged enterprise sales cycles and IT security compliance scrutiny',
         'Competitive feature releases by well-funded category incumbents',
       ],
-      icp: `Mid-market to enterprise technology teams operating in ${industry}.`,
+      icp: isConsumer
+        ? `Consumers, merchants, and digital brands engaging in ${industry}.`
+        : `Mid-market to enterprise technology teams operating in ${industry}.`,
       marketAttractivenessScore: Math.min(94, Math.max(65, score + 4)),
-      tamMethodology: 'Bottom-up triangulation combining enterprise SaaS seat pricing and industry customer density.',
+      tamMethodology: isConsumer
+        ? 'Bottom-up consumer transaction frequency and digital advertising spend modeling.'
+        : 'Bottom-up triangulation combining enterprise SaaS seat pricing and industry customer density.',
     },
     competitors: {
       directCompetitors: [
