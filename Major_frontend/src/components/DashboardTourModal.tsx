@@ -262,13 +262,18 @@ export default function DashboardTourModal({ isOpen, onClose, onNavigateTab }: P
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div
+      data-lenis-prevent
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+    >
       <div
-        className="relative w-full max-w-2xl bg-white rounded-3xl border border-[#EAEBF2] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+        data-lenis-prevent
+        className="relative w-full max-w-2xl bg-white rounded-3xl border border-[#EAEBF2] shadow-2xl overflow-hidden flex flex-col max-h-[88vh]"
         onClick={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-[#F1F2F6]">
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-[#F1F2F6] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#EEECFC] text-[#5028E0] flex items-center justify-center shadow-xs">
               <Compass className="w-4 h-4 animate-spin-slow" />
@@ -292,7 +297,7 @@ export default function DashboardTourModal({ isOpen, onClose, onNavigateTab }: P
         </div>
 
         {/* Step Progress Bar & Dots */}
-        <div className="px-6 py-2.5 bg-[#F8F9FE] border-b border-[#EAEBF2] flex items-center justify-between gap-3">
+        <div className="px-6 py-2.5 bg-[#F8F9FE] border-b border-[#EAEBF2] flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-1.5 flex-1">
             {TOUR_STEPS.map((s, idx) => (
               <button
@@ -315,8 +320,13 @@ export default function DashboardTourModal({ isOpen, onClose, onNavigateTab }: P
           </span>
         </div>
 
-        {/* Content Body (Scrollable) */}
-        <div className="p-6 overflow-y-auto space-y-5">
+        {/* Content Body (Smoothly Scrollable with Mouse Wheel & Trackpad) */}
+        <div
+          data-lenis-prevent
+          className="p-6 overflow-y-auto space-y-5 flex-1 min-h-0 overscroll-contain select-text"
+          style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+          onWheel={(e) => e.stopPropagation()}
+        >
           {/* Main Card Headline */}
           <div className="flex items-start gap-4">
             <div

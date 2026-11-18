@@ -640,7 +640,10 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#F8F9FE] text-[#1E1B2E] antialiased">
+    <div
+      data-lenis-prevent
+      className="flex h-screen w-full overflow-hidden bg-[#F8F9FE] text-[#1E1B2E] antialiased"
+    >
       {/* Mobile Sidebar Overlay Backdrop */}
       {sidebarOpen && (
         <div
@@ -1018,7 +1021,8 @@ export default function DashboardPage() {
         {/* MAIN BODY CONTENT - SCROLLS INDEPENDENTLY */}
         <main
           data-lenis-prevent
-          className="flex-1 overflow-y-auto p-6 lg:p-8 max-w-[90rem] w-full mx-auto space-y-6"
+          className="flex-1 overflow-y-auto p-6 lg:p-8 max-w-[90rem] w-full mx-auto space-y-6 overscroll-contain"
+          style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
         >
           {/* TAB 1: DASHBOARD OVERVIEW (EXACT SCREENSHOT LAYOUT) */}
           {currentTab === 'dashboard' && (
@@ -1053,82 +1057,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* 4 SUMMARY METRIC CARDS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Analyses Completed */}
-                <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center shrink-0">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-[#64748B] block">
-                      Analyses Completed
-                    </span>
-                    <span className="text-2xl font-bold text-[#1E1B2E] block leading-tight">
-                      12
-                    </span>
-                    <span className="text-[11px] font-medium text-[#10B981] flex items-center gap-0.5 mt-0.5">
-                      ↑ +3 this month
-                    </span>
-                  </div>
-                </div>
-
-                {/* Startups Evaluated */}
-                <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
-                    <Building2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-[#64748B] block">
-                      Startups Evaluated
-                    </span>
-                    <span className="text-2xl font-bold text-[#1E1B2E] block leading-tight">
-                      12
-                    </span>
-                    <span className="text-[11px] font-medium text-[#10B981] flex items-center gap-0.5 mt-0.5">
-                      ↑ +3 this month
-                    </span>
-                  </div>
-                </div>
-
-                {/* Reports Generated */}
-                <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center shrink-0">
-                    <FileSpreadsheet className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-[#64748B] block">
-                      Reports Generated
-                    </span>
-                    <span className="text-2xl font-bold text-[#1E1B2E] block leading-tight">
-                      10
-                    </span>
-                    <span className="text-[11px] font-medium text-[#10B981] flex items-center gap-0.5 mt-0.5">
-                      ↑ +2 this month
-                    </span>
-                  </div>
-                </div>
-
-                {/* Documents Analyzed */}
-                <div className="rounded-2xl border border-[#EAEBF2] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center shrink-0">
-                    <Database className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-semibold text-[#64748B] block">
-                      Documents Analyzed
-                    </span>
-                    <span className="text-2xl font-bold text-[#1E1B2E] block leading-tight">
-                      48
-                    </span>
-                    <span className="text-[11px] font-medium text-[#10B981] flex items-center gap-0.5 mt-0.5">
-                      ↑ +12 this month
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* RECENT ANALYSIS HERO SHOWCASE (AIRBNB CARD) */}
+              {/* RECENT ANALYSIS HERO SHOWCASE */}
               <div className="rounded-2xl border border-[#EAEBF2] bg-white p-6 shadow-[0_1px_4px_rgba(0,0,0,0.03)] space-y-6">
                 {/* Header Row */}
                 <div className="flex items-center justify-between">

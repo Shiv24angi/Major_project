@@ -66,27 +66,39 @@ export default function App() {
       }
     };
 
-    // Scroll to top on page route navigation
-    const handleHashChange = () => {
+    // Synchronize Lenis state: Pause Lenis on fixed app/dashboard layouts so native mouse wheel scrolling works effortlessly everywhere
+    const fixedRoutes = [
+      'auth',
+      'login',
+      'signup',
+      'new-analysis',
+      'analyze-startup',
+      'analyze-project',
+      'processing',
+      'dashboard',
+      'my-analyses',
+      'documents',
+      'reports',
+    ];
+
+    const syncLenisMode = () => {
       const path = getPresetRoutePath();
-      // If it's a page route and not an anchor
-      if (
-        [
-          'auth',
-          'login',
-          'signup',
-          'new-analysis',
-          'analyze-startup',
-          'analyze-project',
-          'processing',
-          'dashboard',
-          'my-analyses',
-          'documents',
-          'reports',
-        ].includes(path)
-      ) {
+      if (fixedRoutes.includes(path)) {
+        lenis.stop();
         window.scrollTo(0, 0);
-        lenis.scrollTo(0, { immediate: true });
+      } else {
+        lenis.start();
+      }
+    };
+
+    syncLenisMode();
+
+    // Scroll to top and sync Lenis on route navigation
+    const handleHashChange = () => {
+      syncLenisMode();
+      const path = getPresetRoutePath();
+      if (fixedRoutes.includes(path)) {
+        window.scrollTo(0, 0);
       }
     };
 
