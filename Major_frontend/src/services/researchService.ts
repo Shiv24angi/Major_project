@@ -24,16 +24,22 @@ const TAVILY_KEY = (
 const GEMINI_KEY = (
   (import.meta.env.VITE_GEMINI_API_KEY as string) ||
   (import.meta.env.GEMINI_API_KEY as string) ||
+  (typeof window !== 'undefined'
+    ? (window as any).__VENTURELENS_GEMINI_KEY__ || localStorage.getItem('venturelens_gemini_key')
+    : '') ||
   ''
 ).trim();
 
 const FALLBACK_MODELS = [
+  'gemini-3-flash-preview',
+  'gemini-3.5-flash',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash-lite',
+  'gemini-3.7-flash',
   (import.meta.env.VITE_GEMINI_MODEL as string) ||
   (import.meta.env.GEMINI_MODEL as string) ||
   'gemini-2.5-flash',
   'gemini-flash-latest',
-  'gemini-2.5-flash-lite',
-  'gemini-2.5-pro',
 ];
 
 export interface ResearchHealthResponse {

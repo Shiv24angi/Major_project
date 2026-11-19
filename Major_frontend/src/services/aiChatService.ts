@@ -9,10 +9,14 @@ import type { AnalysisRecord, ChatMessage } from './analysisStorage';
 import type { Agent1EvaluationRecord } from './supabaseService';
 import { AGENT6_API_BASE } from './agent6Service';
 
-const RAW_GEMINI_KEY =
-  (import.meta.env.GEMINI_API_KEY as string) ||
+const RAW_GEMINI_KEY = (
   (import.meta.env.VITE_GEMINI_API_KEY as string) ||
-  '';
+  (import.meta.env.GEMINI_API_KEY as string) ||
+  (typeof window !== 'undefined'
+    ? (window as any).__VENTURELENS_GEMINI_KEY__ || localStorage.getItem('venturelens_gemini_key')
+    : '') ||
+  ''
+).trim();
 
 export function isGeminiKeyValid(key?: string): boolean {
   if (!key) return false;
@@ -22,12 +26,15 @@ export function isGeminiKeyValid(key?: string): boolean {
 }
 
 const FALLBACK_MODELS = [
+  'gemini-3-flash-preview',
+  'gemini-3.5-flash',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash-lite',
+  'gemini-3.7-flash',
   (import.meta.env.VITE_GEMINI_MODEL as string) ||
     (import.meta.env.GEMINI_MODEL as string) ||
     'gemini-2.5-flash',
   'gemini-flash-latest',
-  'gemini-2.5-flash-lite',
-  'gemini-2.5-pro',
 ];
 
 export interface SessionDocumentInfo {
@@ -624,11 +631,7 @@ export function synthesizeRepositoryResponse(
       `\n\nYou can ask specific questions about the tech stack, verified code claims, architecture, or scaling risks.`;
   }
 
-  // Append informative note if Google API key is missing or invalid format
-  if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified Agent 6 AST Code Diligence for \`${repoName}\`. To enable live Gemini LLM multi-turn reasoning, add your Google AI Studio API key to \`Major_frontend/.env\` or Vercel environment variables as \`GEMINI_API_KEY\`.*`;
-  }
-
+  // Grounded in verified Agent 6 AST Code Diligence
   return body;
 }
 
@@ -678,10 +681,6 @@ export function synthesizeStartupDiligenceResponse(
       `• **Thesis:** ${merged.description || analysis.thesis || 'Proprietary platform'}\n` +
       `• **Traction:** ${merged.traction || 'Disclosed in attached deck'}\n` +
       `• **Attached Document:** ${docInfo?.name || 'Verified Session Dossier'}`;
-  }
-
-  if (!isGeminiKeyValid(RAW_GEMINI_KEY)) {
-    body += `\n\n---\n*💡 Grounded in verified session intelligence for \`${companyTitle}\`. To enable live Gemini LLM multi-turn reasoning, configure your Google AI Studio API key in \`Major_frontend/.env\` or Vercel environment variables as \`GEMINI_API_KEY\`.*`;
   }
 
   return body;
@@ -744,9 +743,10 @@ async function callGeminiDirect(
       }
 
       const data = await res.json();
-      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (reply && reply.trim()) {
-        return reply.trim();
+      const resParts = data?.candidates?.[0]?.content?.parts || [];
+      const reply = resParts.map((p: any) => p.text || '').filter(Boolean).join('\n').trim();
+      if (reply) {
+        return reply;
       }
     } catch (err) {
       console.warn(`[Gemini Chat] Model ${model} request error:`, err);
