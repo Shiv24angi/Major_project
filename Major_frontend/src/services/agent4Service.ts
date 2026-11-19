@@ -84,7 +84,29 @@ export async function getAgent4Recommendations(analysisId: string): Promise<Agen
       .limit(1)
       .maybeSingle();
 
-    if (!error && data) return data as any;
+    if (!error && data) {
+      const parseArr = (val: any): string[] => {
+        if (!val) return [];
+        if (Array.isArray(val)) return val.map((x) => String(x).trim()).filter(Boolean);
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) return parsed.map((x) => String(x).trim()).filter(Boolean);
+        } catch {}
+        return [];
+      };
+
+      const key_insights = {
+        strengths: parseArr(data.key_strengths),
+        risks: parseArr(data.risks_and_concerns),
+        opportunities: parseArr(data.growth_opportunities),
+        nextSteps: parseArr(data.actionable_next_steps),
+      };
+
+      return {
+        ...data,
+        key_insights,
+      } as any;
+    }
   } catch (_) {}
 
   return null;

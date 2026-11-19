@@ -803,16 +803,21 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
 
   const isGrowth = stage.includes('series a') || stage.includes('series b') || stage.includes('growth') || (rawArr >= 5_000_000 && rawArr < 50_000_000);
 
+  // Detect specific scaled ventures
+  const isOpenAI = title.toLowerCase().includes('openai');
+  const isSwiggy = title.toLowerCase().includes('swiggy') || title.toLowerCase().includes('instamart');
+  const isPinterest = title.toLowerCase().includes('pinterest') || title.toLowerCase().includes('pins');
+
   // Sector classification
   const indLower = (industry + ' ' + title).toLowerCase();
   let sectorCategory: 'food_delivery' | 'visual_social' | 'ecommerce' | 'fintech' | 'climate' | 'logistics' | 'health' | 'ai_dev' | 'enterprise_saas' = 'enterprise_saas';
 
-  if (indLower.includes('food') || indLower.includes('delivery') || indLower.includes('quick commerce') || indLower.includes('instamart') || indLower.includes('swiggy') || indLower.includes('zomato') || indLower.includes('zepto') || indLower.includes('hyperlocal') || indLower.includes('grocery') || indLower.includes('dining')) {
+  if (isOpenAI || indLower.includes('ai') || indLower.includes('artificial intelligence') || indLower.includes('machine learning') || indLower.includes('deeptech') || indLower.includes('llm') || indLower.includes('infra') || indLower.includes('developer')) {
+    sectorCategory = 'ai_dev';
+  } else if (isSwiggy || indLower.includes('food') || indLower.includes('delivery') || indLower.includes('quick commerce') || indLower.includes('instamart') || indLower.includes('zomato') || indLower.includes('zepto') || indLower.includes('hyperlocal') || indLower.includes('grocery') || indLower.includes('dining')) {
     sectorCategory = 'food_delivery';
-  } else if (indLower.includes('visual') || indLower.includes('social') || indLower.includes('media') || indLower.includes('creator') || indLower.includes('pinterest')) {
+  } else if (isPinterest || indLower.includes('visual') || indLower.includes('social') || indLower.includes('media') || indLower.includes('creator')) {
     sectorCategory = 'visual_social';
-  } else if (indLower.includes('e-commerce') || indLower.includes('commerce') || indLower.includes('retail') || indLower.includes('dtc') || indLower.includes('airbnb')) {
-    sectorCategory = 'ecommerce';
   } else if (indLower.includes('fintech') || indLower.includes('payment') || indLower.includes('bank') || indLower.includes('crypto')) {
     sectorCategory = 'fintech';
   } else if (indLower.includes('climate') || indLower.includes('energy') || indLower.includes('carbon') || indLower.includes('clean') || indLower.includes('ecoverse')) {
@@ -821,8 +826,8 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
     sectorCategory = 'logistics';
   } else if (indLower.includes('health') || indLower.includes('bio') || indLower.includes('med')) {
     sectorCategory = 'health';
-  } else if (indLower.includes('ai') || indLower.includes('developer') || indLower.includes('data') || indLower.includes('infra') || indLower.includes('openai')) {
-    sectorCategory = 'ai_dev';
+  } else if (indLower.includes('e-commerce') || indLower.includes('dtc') || indLower.includes('retail')) {
+    sectorCategory = 'ecommerce';
   }
 
   // Market Sizing
@@ -830,6 +835,23 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   let sam = isProject ? '$4.2 Billion' : isPublicOrEnterprise ? '$65.0 Billion' : isGrowth ? '$12.0 Billion' : '$3.2 Billion';
   let som = isProject ? '$650 Million' : isPublicOrEnterprise ? '$15.0 Billion' : isGrowth ? '$2.5 Billion' : '$650 Million';
   let cagr = '21.5%';
+
+  if (isOpenAI) {
+    tam = '$1.3 Trillion';
+    sam = '$450.0 Billion';
+    som = '$65.0 Billion';
+    cagr = '36.8%';
+  } else if (isSwiggy) {
+    tam = '₹7.3 Trillion ($88B+)';
+    sam = '₹2.2 Trillion ($26B+)';
+    som = '₹328.0 Billion ($4B+)';
+    cagr = '24.5%';
+  } else if (isPinterest) {
+    tam = '$650.0 Billion';
+    sam = '$180.0 Billion';
+    som = '$45.0 Billion';
+    cagr = '14.8%';
+  } else
 
   if (normMI?.tam_usd) {
     const rawTam = normMI.tam_usd;
@@ -1036,6 +1058,52 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
         threatLevel: 'High' as const,
       },
     ];
+  } else if (isOpenAI || sectorCategory === 'ai_dev') {
+    icp = 'Fortune 500 enterprises, AI application builders, frontier research labs, and over 1.2 billion knowledge workers globally.';
+    marketDrivers = [
+      'Rapid enterprise transition towards autonomous multi-step reasoning agents and coding models (Codex, GPT-4o, o1/o3)',
+      'Explosive growth in consumer subscription tiers (50M+ Plus & Pro subscribers) and conversational search',
+      'Rapid enterprise adoption with over 92% of Fortune 500 deploying frontier AI APIs',
+    ];
+    headwinds = [
+      'Astronomical multi-billion-dollar training cluster and data center compute expenditures',
+      'Fierce competitive pressure from Google DeepMind (Gemini), Anthropic (Claude), Meta (Llama), and xAI',
+      'Regulatory, copyright, and safety compliance scrutiny across global jurisdictions',
+    ];
+    directCompetitors = [
+      {
+        name: 'Anthropic (Claude)',
+        website: 'https://anthropic.com',
+        funding: 'Series D ($60B Valuation)',
+        strengths: 'Frontier reasoning benchmark performance (Claude 3.7 Sonnet) and constitutional safety architecture',
+        weaknesses: 'Developer API focus with smaller consumer footprint than ChatGPT',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'Google DeepMind (Gemini)',
+        website: 'https://deepmind.google',
+        funding: 'Subsidiary of Alphabet ($2T+)',
+        strengths: 'World-scale multimodal TPUs, vast search integration, and deep enterprise Android distribution',
+        weaknesses: 'Consumer mindshare fragmented across Google ecosystem products',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'Meta AI (Llama)',
+        website: 'https://ai.meta.com',
+        funding: 'Open Source / Meta Platforms ($1.6T+)',
+        strengths: 'Leading open-weights model ecosystem and zero licensing cost for enterprise developers',
+        weaknesses: 'Infrastructure and inference compute costs borne entirely by deployers',
+        threatLevel: 'High' as const,
+      },
+      {
+        name: 'xAI (Grok)',
+        website: 'https://x.ai',
+        funding: 'Series B ($50B Valuation)',
+        strengths: 'Colossus 100k+ GPU cluster training speed and real-time social data access',
+        weaknesses: 'Early enterprise tooling maturity and enterprise sales footprint',
+        threatLevel: 'Medium' as const,
+      },
+    ];
   } else if (sectorCategory === 'ecommerce') {
     icp = 'Independent DTC merchants, multichannel retail brands, and global consumers.';
     marketDrivers = [
@@ -1065,7 +1133,6 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
         threatLevel: 'High' as const,
       },
     ];
-  } else if (title.toLowerCase().includes('openai')) {
     directCompetitors = [
       {
         name: 'Anthropic (Claude)',
