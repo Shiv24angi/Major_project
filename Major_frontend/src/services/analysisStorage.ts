@@ -766,7 +766,8 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   const normMI = parseJsonSafe<any>(normData?.market_information, {});
   const normSP = parseJsonSafe<any>(normData?.startup_profile, {});
 
-  const title = (normSP?.canonical_name || normData?.canonical_name || analysis.title || 'Target Startup').trim();
+  const rawTitle = (normSP?.canonical_name || normData?.canonical_name || analysis.title || 'Target Startup').trim();
+  const title = rawTitle.replace(/(.)\1{2,}/gi, '$1$1').trim();
   const industry = normSP?.primary_industry || normData?.primary_industry || analysis.industry || 'Technology & Software';
   const stage = (normSP?.stage || normData?.stage || analysis.stage || 'Seed').toLowerCase();
   const score = analysis.overallScore || 78;
@@ -777,8 +778,8 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   const isPublicOrEnterprise =
     stage.includes('public') ||
     stage.includes('enterprise') ||
-    stage.includes('growth') ||
     stage.includes('late stage') ||
+    stage.includes('mega-cap') ||
     stage.includes('unicorn') ||
     stage.includes('listed') ||
     stage.includes('ipo') ||
@@ -797,9 +798,9 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
     title.toLowerCase().includes('uber') ||
     title.toLowerCase().includes('stripe') ||
     title.toLowerCase().includes('openai') ||
-    rawArr > 50_000_000;
+    rawArr >= 50_000_000;
 
-  const isGrowth = stage.includes('series a') || stage.includes('series b');
+  const isGrowth = stage.includes('series a') || stage.includes('series b') || stage.includes('growth') || (rawArr >= 5_000_000 && rawArr < 50_000_000);
 
   // Sector classification
   const indLower = (industry + ' ' + title).toLowerCase();
@@ -809,13 +810,13 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
     sectorCategory = 'food_delivery';
   } else if (indLower.includes('visual') || indLower.includes('social') || indLower.includes('media') || indLower.includes('creator') || indLower.includes('pinterest')) {
     sectorCategory = 'visual_social';
-  } else if (indLower.includes('e-commerce') || indLower.includes('commerce') || indLower.includes('retail') || indLower.includes('marketplace') || indLower.includes('airbnb')) {
+  } else if (indLower.includes('e-commerce') || indLower.includes('commerce') || indLower.includes('retail') || indLower.includes('dtc') || indLower.includes('airbnb')) {
     sectorCategory = 'ecommerce';
   } else if (indLower.includes('fintech') || indLower.includes('payment') || indLower.includes('bank') || indLower.includes('crypto')) {
     sectorCategory = 'fintech';
   } else if (indLower.includes('climate') || indLower.includes('energy') || indLower.includes('carbon') || indLower.includes('clean') || indLower.includes('ecoverse')) {
     sectorCategory = 'climate';
-  } else if (indLower.includes('logistics') || indLower.includes('supply') || indLower.includes('freight') || indLower.includes('travel') || indLower.includes('novaflow')) {
+  } else if (indLower.includes('logistics') || indLower.includes('supply') || indLower.includes('freight') || indLower.includes('shipping') || indLower.includes('novaflow')) {
     sectorCategory = 'logistics';
   } else if (indLower.includes('health') || indLower.includes('bio') || indLower.includes('med')) {
     sectorCategory = 'health';
@@ -824,9 +825,9 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   }
 
   // Market Sizing
-  let tam = isProject ? '$18.5 Billion' : '$24.0 Billion';
-  let sam = isProject ? '$4.2 Billion' : '$5.8 Billion';
-  let som = isProject ? '$650 Million' : '$850 Million';
+  let tam = isProject ? '$18.5 Billion' : isPublicOrEnterprise ? '$250.0 Billion' : isGrowth ? '$45.0 Billion' : '$12.0 Billion';
+  let sam = isProject ? '$4.2 Billion' : isPublicOrEnterprise ? '$65.0 Billion' : isGrowth ? '$12.0 Billion' : '$3.2 Billion';
+  let som = isProject ? '$650 Million' : isPublicOrEnterprise ? '$15.0 Billion' : isGrowth ? '$2.5 Billion' : '$650 Million';
   let cagr = '21.5%';
 
   if (normMI?.tam_usd) {
@@ -865,10 +866,16 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
       som = '$28.0 Billion';
       cagr = '17.2%';
     }
+  } else if (rawArr > 0) {
+    const estimatedTamUsd = Math.max(rawArr * 50, 4_000_000_000);
+    tam = estimatedTamUsd >= 1e12 ? `$${(estimatedTamUsd / 1e12).toFixed(1)} Trillion` : `$${(estimatedTamUsd / 1e9).toFixed(1)} Billion`;
+    sam = `$${((estimatedTamUsd * 0.25) / 1e9).toFixed(1)} Billion`;
+    som = `$${Math.round((estimatedTamUsd * 0.05) / 1e6)} Million`;
+    cagr = '22.5%';
   } else if (sectorCategory === 'food_delivery') {
-    tam = '$28.0 Billion';
-    sam = '$7.2 Billion';
-    som = '$1.1 Billion';
+    tam = '$48.0 Billion';
+    sam = '$12.0 Billion';
+    som = '$2.1 Billion';
     cagr = '28.5%';
   } else if (isGrowth) {
     tam = '$65.0 Billion';
@@ -1123,16 +1130,18 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
 
   // Financial intelligence calculation grounded in real normalized data
   const isINR = (normFI?.currency || '').toUpperCase() === 'INR' || title.toLowerCase().includes('swiggy') || title.toLowerCase().includes('zomato');
+  
+  // Dynamic financial calculation from normalized revenue
   let totalRaised = isPublicOrEnterprise ? '$1.5 Billion (Public)' : isGrowth ? '$25.0 Million' : '$2.5 Million';
   let lastValuation = isPublicOrEnterprise ? '$24.0 Billion Market Cap' : isGrowth ? '$120.0 Million' : '$15.0 Million';
   let arrMultiple = isPublicOrEnterprise ? '4.2x P/S' : '8.5x';
   let burnRate = isPublicOrEnterprise ? 'Adjusted EBITDA Break-Even / Positive Operating Cashflow' : '$55K / mo';
-  let runwayMonths = isPublicOrEnterprise ? 999 : 24;
+  let runwayMonths = isPublicOrEnterprise ? 999 : (normFI?.runway_months || 24);
   let financialHealthScore = isPublicOrEnterprise ? 92 : 84;
   let rounds = [
     {
-      round: isPublicOrEnterprise ? 'Public Offering' : 'Series Seed',
-      amount: isPublicOrEnterprise ? '$1.4 Billion' : '$2.0 Million',
+      round: isPublicOrEnterprise ? 'Public Offering' : isGrowth ? 'Series A / Growth' : 'Series Seed',
+      amount: isPublicOrEnterprise ? '$1.4 Billion' : isGrowth ? '$15.0 Million' : '$2.0 Million',
       date: 'Recent',
       leadInvestors: ['Institutional Growth Investors'],
     },
@@ -1140,6 +1149,12 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
   let capitalEfficiencyVerdict = isPublicOrEnterprise
     ? 'World-class unit economics with high operating leverage and strong cash generation.'
     : 'Disciplined capital expenditure with 18+ month runway buffer.';
+
+  if (normFI?.monthly_burn_rate) {
+    burnRate = normFI.monthly_burn_rate >= 1_000_000
+      ? `$${(normFI.monthly_burn_rate / 1e6).toFixed(1)}M / mo`
+      : `$${Math.round(normFI.monthly_burn_rate / 1000)}K / mo`;
+  }
 
   if (title.toLowerCase().includes('openai') || rawArr >= 10_000_000_000) {
     totalRaised = '$13.0B+ Raised / $122B Compute War Chest';
@@ -1173,11 +1188,30 @@ export function getOrGenerateResearchData(analysis: AnalysisRecord): ExternalRes
       },
     ];
     capitalEfficiencyVerdict = 'Robust balance sheet with ₹15,000 Cr+ liquid cash reserves, expanding delivery unit economics, and high operating leverage.';
-  } else if (normFI?.annual_recurring_revenue && !isPublicOrEnterprise) {
+  } else if (rawArr > 0 && !isPublicOrEnterprise) {
     if (isINR) {
-      const arrCr = normFI.annual_recurring_revenue / 100_000_000;
+      const arrCr = rawArr / 100_000_000;
       totalRaised = `₹${(arrCr * 1.5).toFixed(1)} Cr`;
       lastValuation = `₹${(arrCr * 8).toFixed(1)} Cr`;
+    } else {
+      if (rawArr >= 1_000_000_000) {
+        totalRaised = `$${((rawArr * 0.4) / 1e9).toFixed(1)} Billion`;
+        lastValuation = `$${((rawArr * 10) / 1e9).toFixed(1)} Billion`;
+        arrMultiple = '10.0x';
+      } else if (rawArr >= 1_000_000) {
+        const arrM = rawArr / 1_000_000;
+        totalRaised = `$${(arrM * 1.8).toFixed(1)} Million`;
+        lastValuation = `$${(arrM * 9.5).toFixed(1)} Million`;
+        arrMultiple = '9.5x';
+        rounds = [
+          {
+            round: arrM > 5 ? 'Series B' : arrM > 2 ? 'Series A' : 'Seed Extension',
+            amount: `$${(arrM * 1.2).toFixed(1)} Million`,
+            date: 'Recent',
+            leadInvestors: ['Institutional Venture Syndicate'],
+          },
+        ];
+      }
     }
   }
 

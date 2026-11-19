@@ -25,6 +25,7 @@ import { fetchAndNormalize } from '../services/agent2Service';
 import { evaluateStartup } from '../services/agent3Service';
 import { generateInsightsAndRecommendations } from '../services/agent4Service';
 import { getAgent1EvaluationByAnalysisId, saveAgent1Evaluation, supabase } from '../services/supabaseService';
+import { runFullDiligenceResearch } from '../services/researchService';
 import {
   exportAnalysisToPDF,
   exportAnalysisToPPT,
@@ -171,16 +172,24 @@ export default function ProcessingPage() {
         } else {
           // Startup mode: verify Agent 1 evaluation exists in Supabase
           let existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
-          // Wait up to 24 seconds for deep document intelligence to complete
-          for (
-            let poll = 0;
-            poll < 12 &&
-            (!existingA1 ||
-              (Array.isArray(existingA1.uploaded_files) &&
-                existingA1.uploaded_files.length === 0 &&
-                !existingA1.merged_analysis?.traction));
-            poll++
-          ) {
+          // Wait up to 80 seconds for deep document intelligence to complete on Render/backend
+          for (let poll = 0; poll < 40; poll++) {
+            if (
+              existingA1 &&
+              existingA1.status === 'completed' &&
+              ((Array.isArray(existingA1.uploaded_files) && existingA1.uploaded_files.length > 0) ||
+                existingA1.merged_analysis?.financials ||
+                existingA1.merged_analysis?.market_size)
+            ) {
+              break;
+            }
+            setStatusMessage(
+              poll < 8
+                ? `Ingesting & parsing pitch deck slides (${poll * 2}s)...`
+                : poll < 20
+                ? `Extracting financials, market sizing, and claims (${poll * 2}s)...`
+                : `Synthesizing document intelligence & cross-validating (${poll * 2}s)...`
+            );
             await new Promise((r) => setTimeout(r, 2000));
             if (isCancelled) return;
             existingA1 = await getAgent1EvaluationByAnalysisId(analysisId);
@@ -188,28 +197,7 @@ export default function ProcessingPage() {
 
           const companyTitle = analysis?.title || targetTitle || 'Startup Evaluation';
           if (!existingA1) {
-            const ind = analysis?.industry || 'Technology';
-            await saveAgent1Evaluation({
-              id: `a1_eval_${analysisId}`,
-              analysis_id: analysisId,
-              company_name: companyTitle,
-              status: 'completed',
-              uploaded_files: [],
-              document_analyses: [
-                {
-                  startup_name: companyTitle,
-                  industry: ind,
-                },
-              ],
-              merged_analysis: {
-                startup_name: companyTitle,
-                description: analysis?.thesis || `${companyTitle} ${ind} venture evaluation.`,
-                industry: ind,
-                founders: [{ name: `${companyTitle} Leadership`, role: 'Founders' }],
-              },
-              contradictions: [],
-              validation_errors: [],
-            }).catch((e) => console.warn('Agent 1 save warning:', e));
+            console.info('[ProcessingPage] Remote parsing took >80s; preserving analysis state.');
           }
         }
 
@@ -289,13 +277,48 @@ export default function ProcessingPage() {
           if (isCancelled) return;
         }
 
-        // Step 5: Diligence Deliverables & Report Generation (Agent 5)
+        // Step 5: External Intelligence Diligence & Web Research Synthesis
         if (steps.length > 4) {
           setCurrentStepIndex(4);
-          setStatusMessage(steps[4].statusText);
+          setStatusMessage('Synthesizing live external market intelligence & web verification...');
 
-          // Prepare export deliverables
-          await new Promise((r) => setTimeout(r, 1200));
+          try {
+            const currentRec = getAnalysisById(analysisId);
+            if (currentRec) {
+              const targetName = currentRec.normalizedData?.canonical_name || currentRec.title || targetTitle;
+              const normBI = currentRec.normalizedData?.business_information;
+              const normFI = currentRec.normalizedData?.financial_information;
+              const knownCompetitors = normBI?.competitors || [];
+              const claimedArr = normFI?.annual_recurring_revenue
+                ? normFI.currency === 'INR'
+                  ? `₹${(normFI.annual_recurring_revenue / 100_000_000).toFixed(0)} Cr`
+                  : `$${(normFI.annual_recurring_revenue / 1_000_000).toFixed(1)}M`
+                : undefined;
+
+              const freshResearch = await runFullDiligenceResearch({
+                startupName: targetName,
+                industry: currentRec.normalizedData?.primary_industry || currentRec.industry || 'Technology',
+                projectDescription: currentRec.thesis || currentRec.tagline || targetName,
+                website: currentRec.normalizedData?.startup_profile?.website || currentRec.website,
+                currentStage: currentRec.normalizedData?.stage || currentRec.stage,
+                knownCompetitors,
+                claimedArr,
+                analysisId,
+              });
+
+              if (freshResearch) {
+                const updatedWithResearch = {
+                  ...currentRec,
+                  researchData: freshResearch,
+                };
+                addAnalysis(updatedWithResearch);
+              }
+            }
+          } catch (rErr) {
+            console.warn('[ProcessingPage] External research synthesis warning:', rErr);
+          }
+
+          await new Promise((r) => setTimeout(r, 800));
           if (isCancelled) return;
         }
 

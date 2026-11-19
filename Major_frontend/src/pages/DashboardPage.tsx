@@ -527,9 +527,41 @@ export default function DashboardPage() {
       if (!isMounted || !rec) return;
       setActiveAnalysis((prev) => {
         if (!prev || prev.id !== activeAnalysis.id) return prev;
+        const currentThesis = rec.investment_thesis || prev.thesis;
+        
+        // Auto-heal stale thesis if corrupted by legacy seed race condition
+        if (
+          currentThesis &&
+          (currentThesis.includes('$1.2M') || currentThesis.includes('1.2M ARR') || currentThesis.includes('Seed')) &&
+          (prev.title.toLowerCase().includes('openai') ||
+            prev.title.toLowerCase().includes('swiggy') ||
+            prev.title.toLowerCase().includes('pinterest') ||
+            (prev.normalizedData?.stage && !prev.normalizedData.stage.toLowerCase().includes('seed')))
+        ) {
+          import('../services/recommendationEngine').then(({ generateInsightsAndRecommendations }) => {
+            generateInsightsAndRecommendations(prev.id, prev.title).then((healedRec) => {
+              if (healedRec && isMounted) {
+                setActiveAnalysis((curr) => {
+                  if (!curr || curr.id !== prev.id) return curr;
+                  const healed = {
+                    ...curr,
+                    thesis: healedRec.investment_thesis || curr.thesis,
+                    recommendation: (healedRec.recommendation as any) || curr.recommendation,
+                    overallScore: healedRec.overall_score || curr.overallScore,
+                    scores: healedRec.dimension_scores ? { ...curr.scores, ...healedRec.dimension_scores } : curr.scores,
+                    keyInsights: healedRec.key_insights || curr.keyInsights,
+                  };
+                  addAnalysis(healed);
+                  return healed;
+                });
+              }
+            });
+          });
+        }
+
         return {
           ...prev,
-          thesis: rec.investment_thesis || prev.thesis,
+          thesis: currentThesis,
           recommendation: (rec.recommendation as any) || prev.recommendation,
           confidence: (rec.confidence as any) || prev.confidence,
           overallScore: rec.overall_score || prev.overallScore,

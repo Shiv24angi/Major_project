@@ -299,12 +299,18 @@ export async function analyzeDocumentsWithAgent1(
       const syncRes = await saveAgent1Evaluation(evalRecord);
       data.supabase_synced = syncRes.success;
 
-      // 2b. Automatically trigger Agent 2 Normalization to update public.normalized_startup_profiles
+      // 2b. Automatically trigger full pipeline (Agent 2 -> Agent 3 -> Agent 4) to update Supabase
       try {
         const { fetchAndNormalize } = await import('./agent2Service');
         await fetchAndNormalize(finalAnalysisId, compName);
+
+        const { evaluateStartup } = await import('./scoringEngine');
+        await evaluateStartup(finalAnalysisId, compName);
+
+        const { generateInsightsAndRecommendations } = await import('./recommendationEngine');
+        await generateInsightsAndRecommendations(finalAnalysisId, compName);
       } catch (normErr) {
-        console.warn('[Agent 1 Service] Auto Agent 2 normalization trigger warning:', normErr);
+        console.warn('[Agent 1 Service] Auto pipeline trigger warning:', normErr);
       }
     } catch (dbErr) {
       console.warn('[Agent 1 Service] Supabase database sync warning:', dbErr);

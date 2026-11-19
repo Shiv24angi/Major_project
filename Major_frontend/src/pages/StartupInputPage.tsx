@@ -57,6 +57,7 @@ export default function StartupInputPage() {
   const [founderInfo, setFounderInfo] = useState('');
   const [pitchDeck, setPitchDeck] = useState<File | null>(null);
   const [isPitchDragging, setIsPitchDragging] = useState(false);
+  const [isFinDragging, setIsFinDragging] = useState(false);
 
   // Files state
   const [files, setFiles] = useState<UploadedFileItem[]>([]);
@@ -578,24 +579,70 @@ export default function StartupInputPage() {
                 onChange={(e) => handleGenericFileUpload(e, 'Financial Model / P&L')}
               />
 
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-black/10 bg-[#FAFAFA] p-5">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsFinDragging(true);
+                }}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsFinDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsFinDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsFinDragging(false);
+                  const droppedFiles = e.dataTransfer.files;
+                  if (droppedFiles && droppedFiles.length > 0) {
+                    const newItems: UploadedFileItem[] = Array.from(droppedFiles).map((f, i) => ({
+                      id: `doc_${Date.now()}_${i}`,
+                      name: f.name,
+                      category: 'Financial Model / P&L',
+                      size: formatFileSize(f.size),
+                      type: f.type || 'Document',
+                      fileObj: f,
+                    }));
+                    setFiles((prev) => [...prev, ...newItems]);
+                  }
+                }}
+                onClick={() => financialsInputRef.current?.click()}
+                className={`flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border-2 border-dashed p-5 transition-all cursor-pointer ${
+                  isFinDragging
+                    ? 'border-[#5028E0] bg-[#F5F3FF] ring-4 ring-[#5028E0]/15 scale-[1.01]'
+                    : 'border-black/15 bg-[#FAFAFA] hover:border-black/40 hover:bg-[#F0F1F5]'
+                }`}
+              >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2B2644] text-white">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                      isFinDragging ? 'bg-[#5028E0] text-white' : 'bg-[#2B2644] text-white'
+                    }`}
+                  >
                     <DollarSign className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-black">Upload Financial Documents</p>
+                    <p className="text-sm font-semibold text-black">
+                      {isFinDragging ? 'Drop financial documents here!' : 'Click to browse or drag & drop Financial Documents'}
+                    </p>
                     <p className="text-xs text-black/50">
-                      Cap tables, financial model spreadsheets, or audited reports
+                      Cap tables, financial model spreadsheets (.xlsx, .csv, .pdf)
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => financialsInputRef.current?.click()}
-                  className="rounded-full border border-black/20 bg-white px-5 py-2 text-xs font-semibold text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
+                  className={`rounded-full px-5 py-2 text-xs font-semibold pointer-events-none transition-colors ${
+                    isFinDragging ? 'bg-[#5028E0] text-white' : 'border border-black/20 bg-white text-black'
+                  }`}
                 >
-                  Upload Financial Documents
+                  {isFinDragging ? 'Drop to Add' : 'Upload Financials'}
                 </button>
               </div>
             </div>
