@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   PlusCircle,
@@ -887,7 +887,7 @@ export default function DashboardPage() {
   const currentResearchData: ExternalResearchData | null = activeAnalysis ? getOrGenerateResearchData(activeAnalysis) : null;
 
   // Real, dynamic, sanitized Key Insights resolver (completely eliminates mock $1.2M ARR, 17 months runway, $43.4B TAM)
-  const sanitizedKeyInsights = useMemo(() => {
+  const sanitizedKeyInsights = (() => {
     const raw = activeAnalysis?.keyInsights || { strengths: [], risks: [], opportunities: [], nextSteps: [] };
     const rawStrengths = Array.isArray(raw.strengths) ? raw.strengths : [];
     const rawRisks = Array.isArray(raw.risks) ? raw.risks : [];
@@ -1026,7 +1026,7 @@ export default function DashboardPage() {
         'Verify founder equity vesting agreements and clean intellectual property assignment',
       ],
     };
-  }, [activeAnalysis, currentResearchData]);
+  })();
 
   // Safeguarded dimension scores mapping for the 6 cards under the hero
   const mScore = activeAnalysis.scores?.market ?? 75;
