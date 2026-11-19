@@ -140,12 +140,9 @@ function AirbnbIcon({ className = 'w-6 h-6' }: { className?: string }) {
   );
 }
 
-// Clean Formatted Message Component (strips raw markdown symbols like ### and ** and renders clean typography)
+// Clean Formatted Message Component (renders markdown headings, lists, badges, and responsive tables)
 function FormattedChatMessage({ text }: { text: string }) {
   if (!text) return null;
-
-  const lines = text.split('\n');
-  const elements: React.ReactNode[] = [];
 
   const parseInline = (str: string): React.ReactNode => {
     if (!str) return '';
@@ -182,58 +179,179 @@ function FormattedChatMessage({ text }: { text: string }) {
     return parts.length > 0 ? parts : str;
   };
 
-  lines.forEach((rawLine, idx) => {
-    const line = rawLine.trim();
-    if (!line) return;
+  const renderBadge = (cellText: string): React.ReactNode | null => {
+    const trimmed = cellText.trim();
+    if (trimmed === 'High' || trimmed === 'High Threat') {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]">
+          {trimmed}
+        </span>
+      );
+    }
+    if (trimmed === 'Moderate' || trimmed === 'Low/Moderate' || trimmed === 'Medium') {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A]">
+          {trimmed}
+        </span>
+      );
+    }
+    if (trimmed === 'Low' || trimmed === 'Low Threat') {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+          {trimmed}
+        </span>
+      );
+    }
+    return null;
+  };
 
-    // Horizontal divider
-    if (line === '---' || line === '___' || line === '***') {
-      elements.push(<div key={`hr-${idx}`} className="border-t border-[#EAEBF2] my-2" />);
-      return;
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const line = rawLine.trim();
+
+    if (!line) {
+      i++;
+      continue;
     }
 
-    // Markdown headers (###, ##, #) -> clean bold title
+    // 1. Markdown Table detection (| Col 1 | Col 2 |)
+    if (line.startsWith('|') && line.endsWith('|') && i + 1 < lines.length) {
+      const nextLine = lines[i + 1].trim();
+      const isSep = nextLine.startsWith('|') && nextLine.includes('---');
+      if (isSep) {
+        const headers = line
+          .split('|')
+          .slice(1, -1)
+          .map((c) => c.trim());
+        const rows: string[][] = [];
+        i += 2; // skip header and separator
+        while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+          const cells = lines[i]
+            .trim()
+            .split('|')
+            .slice(1, -1)
+            .map((c) => c.trim());
+          rows.push(cells);
+          i++;
+        }
+
+        elements.push(
+          <div
+            key={`table-${i}`}
+            className="overflow-x-auto my-3 rounded-xl border border-[#EAEBF2] bg-white shadow-2xs"
+          >
+            <table className="min-w-full text-left text-xs divide-y divide-[#EAEBF2]">
+              <thead className="bg-[#F8F9FE] text-[11px] font-bold text-[#475569]">
+                <tr>
+                  {headers.map((h, hIdx) => (
+                    <th
+                      key={hIdx}
+                      className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[#475569] whitespace-nowrap"
+                    >
+                      {parseInline(h)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#F1F2F6]">
+                {rows.map((row, rIdx) => (
+                  <tr
+                    key={rIdx}
+                    className={
+                      rIdx % 2 === 0
+                        ? 'bg-white'
+                        : 'bg-[#FAFAFD] hover:bg-[#F4F1FD]/50 transition-colors'
+                    }
+                  >
+                    {row.map((cell, cIdx) => {
+                      const badge = renderBadge(cell);
+                      return (
+                        <td
+                          key={cIdx}
+                          className="px-3.5 py-2.5 text-[#1E1B2E] align-top text-xs leading-relaxed"
+                        >
+                          {badge || parseInline(cell)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        continue;
+      }
+    }
+
+    // 2. Horizontal divider
+    if (line === '---' || line === '___' || line === '***') {
+      elements.push(<div key={`hr-${i}`} className="border-t border-[#EAEBF2] my-2.5" />);
+      i++;
+      continue;
+    }
+
+    // 3. Markdown headers (###, ##, #)
     if (line.startsWith('#')) {
       const cleanHeader = line.replace(/^#+\s*/, '');
       elements.push(
-        <div key={`h-${idx}`} className="font-bold text-xs text-[#1E1B2E] mt-2 mb-1">
+        <div key={`h-${i}`} className="font-bold text-xs text-[#1E1B2E] mt-2.5 mb-1 flex items-center gap-1.5">
           {parseInline(cleanHeader)}
         </div>
       );
-      return;
+      i++;
+      continue;
     }
 
-    // Bullet points (•, -, *) -> clean purple dot with formatted text
+    // 4. Bullet points (•, -, *)
     if (line.startsWith('•') || line.startsWith('- ') || line.startsWith('* ')) {
       const cleanBullet = line.replace(/^[•\-*]\s*/, '');
       elements.push(
-        <div key={`b-${idx}`} className="flex items-start gap-2 my-0.5">
+        <div key={`b-${i}`} className="flex items-start gap-2 my-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#5028E0] mt-1.5 shrink-0" />
           <span className="text-xs text-[#1E1B2E] leading-relaxed">{parseInline(cleanBullet)}</span>
         </div>
       );
-      return;
+      i++;
+      continue;
     }
 
-    // Numbered lists (1., 2.)
+    // 5. Numbered lists (1., 2.)
     const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
     if (numMatch) {
       elements.push(
-        <div key={`num-${idx}`} className="flex items-start gap-2 my-0.5">
+        <div key={`num-${i}`} className="flex items-start gap-2 my-1">
           <span className="text-xs font-bold text-[#5028E0] shrink-0 mt-0.5">{numMatch[1]}.</span>
           <span className="text-xs text-[#1E1B2E] leading-relaxed">{parseInline(numMatch[2])}</span>
         </div>
       );
-      return;
+      i++;
+      continue;
     }
 
-    // Regular line / paragraph
+    // 6. Section title line (e.g. "Competitive Ecosystem Matrix" without # preceding a table)
+    if (i + 1 < lines.length && lines[i + 1].trim().startsWith('|') && !line.includes('|')) {
+      elements.push(
+        <div key={`title-${i}`} className="font-bold text-xs text-[#1E1B2E] mt-3 mb-1">
+          {parseInline(line)}
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // 7. Regular paragraph line
     elements.push(
-      <p key={`p-${idx}`} className="text-xs text-[#1E1B2E] leading-relaxed my-0.5">
+      <p key={`p-${i}`} className="text-xs text-[#1E1B2E] leading-relaxed my-1">
         {parseInline(line)}
       </p>
     );
-  });
+    i++;
+  }
 
   return <div className="space-y-1">{elements}</div>;
 }
@@ -4044,7 +4162,10 @@ export default function DashboardPage() {
                     <span className="text-[11px] font-semibold text-[#64748B]">Suggested Diligence Inquiries:</span>
                     <span className="text-[10px] text-[#94A3B8] hidden sm:inline">Click any prompt to ask instantly</span>
                   </div>
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  <div
+                    className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
                     {(activeRepoInfo
                       ? [
                           'What is the tech stack & architecture?',
