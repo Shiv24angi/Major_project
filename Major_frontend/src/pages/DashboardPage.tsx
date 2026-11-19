@@ -60,6 +60,7 @@ import {
   setActiveAnalysisId,
   updateAnalysisChat,
   updateAnalysisRelatedProjects,
+  updateAnalysisMarketNews,
   saveAnalyses,
   addAnalysis,
   getOrGenerateResearchData,
@@ -69,7 +70,9 @@ import {
 import { checkResearchHealth, runFullDiligenceResearch } from '../services/researchService';
 import {
   fetchRelatedEcosystemProjects,
+  fetchStartupMarketImpactNews,
   type RelatedProjectItem,
+  type MarketImpactNewsItem,
 } from '../services/tavilyService';
 import { toast } from 'sonner';
 import { getRouteParams, navigateTo } from '../shared/preset-site-routing';
@@ -328,53 +331,90 @@ export default function DashboardPage() {
   // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Tavily AI Research & Ecosystem State (GitHub, LinkedIn, Web)
+  // Research State: Mode B Ecosystem (GitHub, LinkedIn, Web) & Mode A Market Impact News
   const [tavilyProjects, setTavilyProjects] = useState<RelatedProjectItem[]>([]);
+  const [marketNewsItems, setMarketNewsItems] = useState<MarketImpactNewsItem[]>([]);
   const [isResearching, setIsResearching] = useState<boolean>(false);
   const [researchFilter, setResearchFilter] = useState<'all' | 'github' | 'linkedin' | 'web'>('all');
+  const [marketNewsFilter, setMarketNewsFilter] = useState<'all' | 'regulatory' | 'funding' | 'partnership' | 'product' | 'market'>('all');
   const [researchSearchText, setResearchSearchText] = useState<string>('');
 
-  // Auto-fetch Tavily research on funding discovery tab or load cached
+  // Auto-fetch research on funding discovery tab or load cached
   useEffect(() => {
     if (!activeAnalysis) return;
 
-    if (activeAnalysis.relatedProjects && activeAnalysis.relatedProjects.length > 0) {
-      setTavilyProjects(activeAnalysis.relatedProjects);
-      return;
-    }
+    const isStartupMode = activeAnalysis.mode !== 'project';
 
-    if (currentTab === 'funding') {
-      setIsResearching(true);
-      fetchRelatedEcosystemProjects(
-        activeAnalysis.title,
-        activeAnalysis.thesis || activeAnalysis.tagline,
-        activeAnalysis.codeDetails?.techStack
-      )
-        .then((items) => {
-          setTavilyProjects(items);
-          updateAnalysisRelatedProjects(activeAnalysis.id, items);
-        })
-        .finally(() => {
-          setIsResearching(false);
-        });
+    if (isStartupMode) {
+      if (activeAnalysis.marketNews && activeAnalysis.marketNews.length > 0) {
+        setMarketNewsItems(activeAnalysis.marketNews);
+        return;
+      }
+
+      if (currentTab === 'funding') {
+        setIsResearching(true);
+        const targetName = activeAnalysis.normalizedData?.canonical_name || activeAnalysis.title;
+        const targetIndustry = activeAnalysis.normalizedData?.primary_industry || activeAnalysis.industry;
+        fetchStartupMarketImpactNews(targetName, undefined, targetIndustry)
+          .then((items) => {
+            setMarketNewsItems(items);
+            updateAnalysisMarketNews(activeAnalysis.id, items);
+          })
+          .finally(() => {
+            setIsResearching(false);
+          });
+      }
+    } else {
+      if (activeAnalysis.relatedProjects && activeAnalysis.relatedProjects.length > 0) {
+        setTavilyProjects(activeAnalysis.relatedProjects);
+        return;
+      }
+
+      if (currentTab === 'funding') {
+        setIsResearching(true);
+        fetchRelatedEcosystemProjects(
+          activeAnalysis.title,
+          activeAnalysis.thesis || activeAnalysis.tagline,
+          activeAnalysis.codeDetails?.techStack
+        )
+          .then((items) => {
+            setTavilyProjects(items);
+            updateAnalysisRelatedProjects(activeAnalysis.id, items);
+          })
+          .finally(() => {
+            setIsResearching(false);
+          });
+      }
     }
   }, [activeAnalysis?.id, currentTab]);
 
   const handleManualResearch = async (customQuery?: string) => {
     if (!activeAnalysis) return;
     setIsResearching(true);
-    const query = customQuery?.trim() || activeAnalysis.title;
+    const isStartupMode = activeAnalysis.mode !== 'project';
+    const targetName = activeAnalysis.normalizedData?.canonical_name || activeAnalysis.title;
+    const targetIndustry = activeAnalysis.normalizedData?.primary_industry || activeAnalysis.industry;
+
     try {
-      const items = await fetchRelatedEcosystemProjects(
-        query,
-        activeAnalysis.thesis || activeAnalysis.tagline,
-        activeAnalysis.codeDetails?.techStack
-      );
-      setTavilyProjects(items);
-      updateAnalysisRelatedProjects(activeAnalysis.id, items);
-      toast.success(`Discovered ${items.length} related projects via Tavily AI`);
+      if (isStartupMode) {
+        const query = customQuery?.trim() || '';
+        const items = await fetchStartupMarketImpactNews(targetName, query, targetIndustry);
+        setMarketNewsItems(items);
+        updateAnalysisMarketNews(activeAnalysis.id, items);
+        toast.success(`Discovered ${items.length} verified market impact catalysts with AI search`);
+      } else {
+        const query = customQuery?.trim() || activeAnalysis.title;
+        const items = await fetchRelatedEcosystemProjects(
+          query,
+          activeAnalysis.thesis || activeAnalysis.tagline,
+          activeAnalysis.codeDetails?.techStack
+        );
+        setTavilyProjects(items);
+        updateAnalysisRelatedProjects(activeAnalysis.id, items);
+        toast.success(`Discovered ${items.length} related projects via Tavily AI`);
+      }
     } catch (e) {
-      toast.error('Tavily research failed');
+      toast.error('AI market research failed');
     } finally {
       setIsResearching(false);
     }
@@ -925,7 +965,11 @@ export default function DashboardPage() {
               { id: 'new-analysis', label: 'New Analysis', icon: PlusCircle, isAction: true },
               { id: 'my-analyses', label: 'My Analyses', icon: Folder },
               { id: 'documents', label: 'Documents', icon: FileText },
-              { id: 'funding', label: 'Funding Discovery', icon: CircleDollarSign },
+              {
+                id: 'funding',
+                label: activeAnalysis?.mode === 'project' ? 'Ecosystem Discovery' : 'Market Impact News',
+                icon: activeAnalysis?.mode === 'project' ? GitBranch : Newspaper,
+              },
               { id: 'chatbot', label: 'AI Chatbot', icon: MessageSquare },
               { id: 'questions', label: 'Due-Diligence Questions', icon: HelpCircle },
               { id: 'reports', label: 'Reports', icon: FileSpreadsheet },
@@ -3093,239 +3137,546 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* TAB 7: FUNDING DISCOVERY & TAVILY ECOSYSTEM RESEARCH */}
+          {/* TAB 7: FUNDING DISCOVERY / MARKET IMPACT NEWS */}
           {currentTab === 'funding' && (
             <div className="space-y-6">
-              {/* HEADER BANNER */}
-              <div className="rounded-2xl border border-[#EAEBF2] bg-white p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold mb-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Tavily AI Research Engine • Live Connected</span>
-                  </div>
-                  <h2 className="text-xl font-bold text-[#1E1B2E]">
-                    Ecosystem Discovery & Market Landscape
-                  </h2>
-                  <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
-                    Real-time research on existing projects across GitHub repositories, LinkedIn profiles, and commercial competitors for <strong className="text-[#1E1B2E] font-semibold">{activeAnalysis.title}</strong>.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleManualResearch(researchSearchText)}
-                    disabled={isResearching}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] transition-all disabled:opacity-60 cursor-pointer shadow-xs"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isResearching ? 'animate-spin' : ''}`} />
-                    <span>{isResearching ? 'Researching Live...' : 'Refresh Research'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentTab('dashboard')}
-                    className="text-xs font-semibold text-[#5028E0] hover:underline px-2 py-1"
-                  >
-                    ← Back to Dashboard
-                  </button>
-                </div>
-              </div>
-
-              {/* SEARCH & CATEGORY FILTER CONTROLS */}
-              <div className="rounded-2xl border border-[#EAEBF2] bg-white p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                {/* Search Bar */}
-                <div className="relative flex-1 max-w-md">
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={researchSearchText}
-                    onChange={(e) => setResearchSearchText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleManualResearch(researchSearchText);
-                    }}
-                    placeholder={`Search existing repos, founders, or competitors...`}
-                    className="w-full pl-9 pr-20 py-2 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleManualResearch(researchSearchText)}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-black text-white text-[11px] font-medium hover:bg-gray-800 transition-colors cursor-pointer"
-                  >
-                    Search
-                  </button>
-                </div>
-
-                {/* Filter Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                  <button
-                    type="button"
-                    onClick={() => setResearchFilter('all')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      researchFilter === 'all'
-                        ? 'bg-[#5028E0] text-white shadow-xs'
-                        : 'bg-[#F8F9FE] text-[#64748B] hover:bg-[#EEECFC] hover:text-[#5028E0]'
-                    }`}
-                  >
-                    <span>All Sources</span>
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
-                      {tavilyProjects.length}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setResearchFilter('github')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      researchFilter === 'github'
-                        ? 'bg-[#181717] text-white shadow-xs'
-                        : 'bg-[#F8F9FE] text-[#64748B] hover:bg-gray-100 hover:text-black'
-                    }`}
-                  >
-                    <GitBranch className="w-3.5 h-3.5" />
-                    <span>GitHub</span>
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
-                      {tavilyProjects.filter((p) => p.category === 'github').length}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setResearchFilter('linkedin')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      researchFilter === 'linkedin'
-                        ? 'bg-[#0A66C2] text-white shadow-xs'
-                        : 'bg-[#F8F9FE] text-[#64748B] hover:bg-blue-50 hover:text-[#0A66C2]'
-                    }`}
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                    <span>LinkedIn</span>
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
-                      {tavilyProjects.filter((p) => p.category === 'linkedin').length}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setResearchFilter('web')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      researchFilter === 'web'
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-[#F8F9FE] text-[#64748B] hover:bg-emerald-50 hover:text-emerald-700'
-                    }`}
-                  >
-                    <Globe className="w-3.5 h-3.5" />
-                    <span>Web & Market</span>
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
-                      {tavilyProjects.filter((p) => p.category === 'web').length}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* TAVILY RESEARCH RESULTS GRID */}
-              {isResearching ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="p-5 rounded-2xl border border-[#EAEBF2] bg-white animate-pulse space-y-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="h-5 w-24 bg-gray-200 rounded-full" />
-                        <div className="h-4 w-12 bg-gray-200 rounded" />
+              {activeAnalysis.mode !== 'project' ? (
+                /* ========================================================================= */
+                /* MODE A: STARTUP MARKET IMPACT NEWS & STRATEGIC CATALYSTS                  */
+                /* ========================================================================= */
+                <>
+                  {/* HEADER BANNER */}
+                  <div className="rounded-2xl border border-[#EAEBF2] bg-white p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold mb-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Real-Time Market Impact Intelligence • Live Connected</span>
                       </div>
-                      <div className="h-4 w-3/4 bg-gray-200 rounded" />
-                      <div className="h-12 w-full bg-gray-100 rounded" />
-                      <div className="h-8 w-full bg-gray-200 rounded-xl" />
+                      <h2 className="text-xl font-bold text-[#1E1B2E]">
+                        Market Impact Intelligence & Key Catalysts
+                      </h2>
+                      <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
+                        Live verified news, regulatory filings, valuation milestones, and commercial partnerships directly affecting the market value and future viability of <strong className="text-[#1E1B2E] font-semibold">{activeAnalysis.title}</strong>.
+                      </p>
                     </div>
-                  ))}
-                </div>
-              ) : tavilyProjects.filter((p) => (researchFilter === 'all' ? true : p.category === researchFilter)).length === 0 ? (
-                <div className="text-center py-12 rounded-2xl border border-[#EAEBF2] bg-white p-8">
-                  <div className="w-12 h-12 rounded-full bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center mx-auto mb-3">
-                    <Search className="w-6 h-6" />
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch(researchSearchText)}
+                        disabled={isResearching}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] transition-all disabled:opacity-60 cursor-pointer shadow-xs"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isResearching ? 'animate-spin' : ''}`} />
+                        <span>{isResearching ? 'Analyzing Intelligence...' : 'Refresh Research'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('dashboard')}
+                        className="text-xs font-semibold text-[#5028E0] hover:underline px-2 py-1"
+                      >
+                        ← Back to Dashboard
+                      </button>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-base text-[#1E1B2E]">No Projects Discovered In This Filter</h3>
-                  <p className="text-xs text-[#64748B] max-w-sm mx-auto mt-1 mb-4">
-                    Switch to another category or trigger real-time Tavily search to analyze the web ecosystem.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => handleManualResearch()}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] cursor-pointer"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Run Tavily Research</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {tavilyProjects
-                    .filter((p) => (researchFilter === 'all' ? true : p.category === researchFilter))
-                    .map((project) => {
-                      const isGithub = project.category === 'github';
-                      const isLinkedin = project.category === 'linkedin';
 
-                      return (
-                        <div
-                          key={project.id}
-                          className="p-5 rounded-2xl border border-[#EAEBF2] bg-white hover:border-[#DDD6FE] hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+                  {/* SEARCH & CATEGORY FILTER CONTROLS */}
+                  <div className="rounded-2xl border border-[#EAEBF2] bg-white p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={researchSearchText}
+                        onChange={(e) => setResearchSearchText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleManualResearch(researchSearchText);
+                        }}
+                        placeholder={`Search news, regulatory actions, funding, or partnerships...`}
+                        className="w-full pl-9 pr-24 py-2 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors"
+                      />
+                      {researchSearchText && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setResearchSearchText('');
+                            handleManualResearch('');
+                          }}
+                          className="absolute right-16 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
                         >
-                          <div>
-                            {/* Card Category & Relevance Pill */}
-                            <div className="flex items-center justify-between mb-2.5">
-                              {isGithub ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#181717] text-white">
-                                  <GitBranch className="w-3 h-3" />
-                                  <span>GitHub Project</span>
-                                </span>
-                              ) : isLinkedin ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#0A66C2] text-white">
-                                  <Share2 className="w-3 h-3" />
-                                  <span>LinkedIn Network</span>
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
-                                  <Globe className="w-3 h-3" />
-                                  <span>Web Competitor</span>
-                                </span>
-                              )}
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch(researchSearchText)}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#5028E0] text-white text-[11px] font-medium hover:bg-[#4320BD] transition-colors cursor-pointer"
+                      >
+                        AI Search
+                      </button>
+                    </div>
 
-                              <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
-                                {project.score}% match
-                              </span>
-                            </div>
+                    {/* Filter Pills */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                      <button
+                        type="button"
+                        onClick={() => setMarketNewsFilter('all')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          marketNewsFilter === 'all'
+                            ? 'bg-[#5028E0] text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-[#EEECFC] hover:text-[#5028E0]'
+                        }`}
+                      >
+                        <span>All Catalysts</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {marketNewsItems.length}
+                        </span>
+                      </button>
 
-                            {/* Project Title */}
-                            <h3 className="font-bold text-sm text-[#1E1B2E] group-hover:text-[#5028E0] transition-colors line-clamp-2 leading-snug">
-                              {project.title}
-                            </h3>
+                      <button
+                        type="button"
+                        onClick={() => setMarketNewsFilter('funding')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          marketNewsFilter === 'funding'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-emerald-50 hover:text-emerald-700'
+                        }`}
+                      >
+                        <CircleDollarSign className="w-3.5 h-3.5" />
+                        <span>Funding & Valuation</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {marketNewsItems.filter((n) => n.category === 'funding').length}
+                        </span>
+                      </button>
 
-                            {/* Snippet / Description */}
-                            <p className="text-xs text-[#64748B] mt-2 line-clamp-3 leading-relaxed">
-                              {project.snippet}
-                            </p>
+                      <button
+                        type="button"
+                        onClick={() => setMarketNewsFilter('regulatory')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          marketNewsFilter === 'regulatory'
+                            ? 'bg-rose-600 text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-rose-50 hover:text-rose-700'
+                        }`}
+                      >
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        <span>Regulatory & Legal</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {marketNewsItems.filter((n) => n.category === 'regulatory').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setMarketNewsFilter('partnership')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          marketNewsFilter === 'partnership'
+                            ? 'bg-sky-600 text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-sky-50 hover:text-sky-700'
+                        }`}
+                      >
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span>Partnerships</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {marketNewsItems.filter((n) => n.category === 'partnership').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setMarketNewsFilter('product')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          marketNewsFilter === 'product'
+                            ? 'bg-purple-600 text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-purple-50 hover:text-purple-700'
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Product Milestones</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {marketNewsItems.filter((n) => n.category === 'product').length}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* MARKET NEWS RESULTS GRID */}
+                  {isResearching ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div
+                          key={i}
+                          className="p-5 rounded-2xl border border-[#EAEBF2] bg-white animate-pulse space-y-3"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="h-5 w-24 bg-gray-200 rounded-full" />
+                            <div className="h-4 w-12 bg-gray-200 rounded" />
                           </div>
-
-                          {/* Footer with Domain & Direct Link */}
-                          <div className="pt-3 border-t border-[#F1F2F6] flex items-center justify-between text-xs">
-                            <span className="text-[11px] text-[#94A3B8] font-mono truncate max-w-[140px]">
-                              {project.domain}
-                            </span>
-
-                            <a
-                              href={project.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs font-semibold text-[#5028E0] hover:text-[#4320BD] hover:underline"
-                            >
-                              <span>{isGithub ? 'View Repo' : isLinkedin ? 'View Profile' : 'Visit Web'}</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          </div>
+                          <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                          <div className="h-14 w-full bg-gray-100 rounded-xl" />
+                          <div className="h-4 w-1/2 bg-gray-200 rounded" />
                         </div>
-                      );
-                    })}
-                </div>
+                      ))}
+                    </div>
+                  ) : marketNewsItems.filter((n) => (marketNewsFilter === 'all' ? true : n.category === marketNewsFilter)).length === 0 ? (
+                    <div className="text-center py-12 rounded-2xl border border-[#EAEBF2] bg-white p-8">
+                      <div className="w-12 h-12 rounded-full bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center mx-auto mb-3">
+                        <Newspaper className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-bold text-base text-[#1E1B2E]">No News Catalysts Found in this Category</h3>
+                      <p className="text-xs text-[#64748B] max-w-sm mx-auto mt-1 mb-4">
+                        Switch filter categories or perform an AI-powered search across recent funding, legal, or market events.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch('')}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] cursor-pointer"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Run Comprehensive Market Research</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {marketNewsItems
+                        .filter((n) => (marketNewsFilter === 'all' ? true : n.category === marketNewsFilter))
+                        .map((item) => {
+                          const isRegulatory = item.category === 'regulatory';
+                          const isFunding = item.category === 'funding';
+                          const isPartnership = item.category === 'partnership';
+                          const isProduct = item.category === 'product';
+
+                          const isPositive = item.impact === 'positive';
+                          const isNegative = item.impact === 'negative';
+
+                          return (
+                            <div
+                              key={item.id}
+                              className="p-5 rounded-2xl border border-[#EAEBF2] bg-white hover:border-[#DDD6FE] hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+                            >
+                              <div>
+                                {/* Category & Impact Pills */}
+                                <div className="flex items-center justify-between mb-2.5">
+                                  {isRegulatory ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                      <ShieldAlert className="w-3 h-3 text-rose-600" />
+                                      <span>Regulatory & Legal</span>
+                                    </span>
+                                  ) : isFunding ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                      <CircleDollarSign className="w-3 h-3 text-emerald-600" />
+                                      <span>Funding & Valuation</span>
+                                    </span>
+                                  ) : isPartnership ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">
+                                      <Building2 className="w-3 h-3 text-sky-600" />
+                                      <span>Partnership</span>
+                                    </span>
+                                  ) : isProduct ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                                      <Sparkles className="w-3 h-3 text-purple-600" />
+                                      <span>Product Milestone</span>
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                      <Globe className="w-3 h-3 text-amber-600" />
+                                      <span>Market Catalyst</span>
+                                    </span>
+                                  )}
+
+                                  {isPositive ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                      <TrendingUp className="w-3 h-3" />
+                                      <span>Positive Catalyst</span>
+                                    </span>
+                                  ) : isNegative ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                                      <AlertTriangle className="w-3 h-3" />
+                                      <span>Risk / Headwind</span>
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                                      <span>Strategic Move</span>
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Headline */}
+                                <h3 className="font-bold text-sm text-[#1E1B2E] group-hover:text-[#5028E0] transition-colors line-clamp-2 leading-snug">
+                                  {item.title}
+                                </h3>
+
+                                {/* Market Value & Future Impact Box */}
+                                <div className="mt-3 p-3 rounded-xl bg-[#F8F9FE] border border-[#EAEBF2] text-xs space-y-1">
+                                  <div className="flex items-center gap-1.5 font-bold text-[#1E1B2E] text-[11px]">
+                                    <TrendingUp className="w-3.5 h-3.5 text-[#5028E0]" />
+                                    <span>Market Value & Future Impact:</span>
+                                  </div>
+                                  <p className="text-[#475569] text-[11px] leading-relaxed">
+                                    {item.impactAnalysis}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Footer with Source & Direct Link */}
+                              <div className="pt-3 border-t border-[#F1F2F6] flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1.5 text-[11px] text-[#94A3B8]">
+                                  <span className="font-semibold text-[#64748B]">{item.source}</span>
+                                  <span>•</span>
+                                  <span>{item.publishedDate || 'Recent'}</span>
+                                </div>
+
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#5028E0] hover:text-[#4320BD] hover:underline"
+                                >
+                                  <span>Read Source</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* ========================================================================= */
+                /* MODE B: CODE / REPOSITORY ECOSYSTEM DISCOVERY (GITHUB & LINKEDIN)         */
+                /* ========================================================================= */
+                <>
+                  {/* HEADER BANNER */}
+                  <div className="rounded-2xl border border-[#EAEBF2] bg-white p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold mb-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Tavily AI Research Engine • Live Connected</span>
+                      </div>
+                      <h2 className="text-xl font-bold text-[#1E1B2E]">
+                        Ecosystem Discovery & Market Landscape
+                      </h2>
+                      <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
+                        Real-time research on existing projects across GitHub repositories, LinkedIn profiles, and commercial competitors for <strong className="text-[#1E1B2E] font-semibold">{activeAnalysis.title}</strong>.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch(researchSearchText)}
+                        disabled={isResearching}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] transition-all disabled:opacity-60 cursor-pointer shadow-xs"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isResearching ? 'animate-spin' : ''}`} />
+                        <span>{isResearching ? 'Researching Live...' : 'Refresh Research'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('dashboard')}
+                        className="text-xs font-semibold text-[#5028E0] hover:underline px-2 py-1"
+                      >
+                        ← Back to Dashboard
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* SEARCH & CATEGORY FILTER CONTROLS */}
+                  <div className="rounded-2xl border border-[#EAEBF2] bg-white p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={researchSearchText}
+                        onChange={(e) => setResearchSearchText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleManualResearch(researchSearchText);
+                        }}
+                        placeholder={`Search existing repos, founders, or competitors...`}
+                        className="w-full pl-9 pr-20 py-2 bg-[#F8F9FE] border border-[#E2E8F0] rounded-xl text-xs text-[#1E1B2E] placeholder-[#94A3B8] focus:bg-white focus:outline-none focus:border-[#5028E0] transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch(researchSearchText)}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-black text-white text-[11px] font-medium hover:bg-gray-800 transition-colors cursor-pointer"
+                      >
+                        Search
+                      </button>
+                    </div>
+
+                    {/* Filter Pills */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                      <button
+                        type="button"
+                        onClick={() => setResearchFilter('all')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          researchFilter === 'all'
+                            ? 'bg-[#5028E0] text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-[#EEECFC] hover:text-[#5028E0]'
+                        }`}
+                      >
+                        <span>All Sources</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {tavilyProjects.length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setResearchFilter('github')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          researchFilter === 'github'
+                            ? 'bg-[#181717] text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-gray-100 hover:text-black'
+                        }`}
+                      >
+                        <GitBranch className="w-3.5 h-3.5" />
+                        <span>GitHub</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {tavilyProjects.filter((p) => p.category === 'github').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setResearchFilter('linkedin')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          researchFilter === 'linkedin'
+                            ? 'bg-[#0A66C2] text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-blue-50 hover:text-[#0A66C2]'
+                        }`}
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                        <span>LinkedIn</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {tavilyProjects.filter((p) => p.category === 'linkedin').length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setResearchFilter('web')}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          researchFilter === 'web'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-[#F8F9FE] text-[#64748B] hover:bg-emerald-50 hover:text-emerald-700'
+                        }`}
+                      >
+                        <Globe className="w-3.5 h-3.5" />
+                        <span>Web & Market</span>
+                        <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10">
+                          {tavilyProjects.filter((p) => p.category === 'web').length}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* TAVILY RESEARCH RESULTS GRID */}
+                  {isResearching ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div
+                          key={i}
+                          className="p-5 rounded-2xl border border-[#EAEBF2] bg-white animate-pulse space-y-3"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="h-5 w-24 bg-gray-200 rounded-full" />
+                            <div className="h-4 w-12 bg-gray-200 rounded" />
+                          </div>
+                          <div className="h-4 w-3/4 bg-gray-200 rounded" />
+                          <div className="h-12 w-full bg-gray-100 rounded" />
+                          <div className="h-8 w-full bg-gray-200 rounded-xl" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : tavilyProjects.filter((p) => (researchFilter === 'all' ? true : p.category === researchFilter)).length === 0 ? (
+                    <div className="text-center py-12 rounded-2xl border border-[#EAEBF2] bg-white p-8">
+                      <div className="w-12 h-12 rounded-full bg-[#F4F1FD] text-[#5028E0] flex items-center justify-center mx-auto mb-3">
+                        <Search className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-bold text-base text-[#1E1B2E]">No Projects Discovered In This Filter</h3>
+                      <p className="text-xs text-[#64748B] max-w-sm mx-auto mt-1 mb-4">
+                        Switch to another category or trigger real-time Tavily search to analyze the web ecosystem.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleManualResearch()}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5028E0] text-white text-xs font-semibold hover:bg-[#4320BD] cursor-pointer"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Run Tavily Research</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tavilyProjects
+                        .filter((p) => (researchFilter === 'all' ? true : p.category === researchFilter))
+                        .map((project) => {
+                          const isGithub = project.category === 'github';
+                          const isLinkedin = project.category === 'linkedin';
+
+                          return (
+                            <div
+                              key={project.id}
+                              className="p-5 rounded-2xl border border-[#EAEBF2] bg-white hover:border-[#DDD6FE] hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+                            >
+                              <div>
+                                {/* Card Category & Relevance Pill */}
+                                <div className="flex items-center justify-between mb-2.5">
+                                  {isGithub ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#181717] text-white">
+                                      <GitBranch className="w-3 h-3" />
+                                      <span>GitHub Project</span>
+                                    </span>
+                                  ) : isLinkedin ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#0A66C2] text-white">
+                                      <Share2 className="w-3 h-3" />
+                                      <span>LinkedIn Network</span>
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                                      <Globe className="w-3 h-3" />
+                                      <span>Web Competitor</span>
+                                    </span>
+                                  )}
+
+                                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                                    {project.score}% match
+                                  </span>
+                                </div>
+
+                                {/* Project Title */}
+                                <h3 className="font-bold text-sm text-[#1E1B2E] group-hover:text-[#5028E0] transition-colors line-clamp-2 leading-snug">
+                                  {project.title}
+                                </h3>
+
+                                {/* Snippet / Description */}
+                                <p className="text-xs text-[#64748B] mt-2 line-clamp-3 leading-relaxed">
+                                  {project.snippet}
+                                </p>
+                              </div>
+
+                              {/* Footer with Domain & Direct Link */}
+                              <div className="pt-3 border-t border-[#F1F2F6] flex items-center justify-between text-xs">
+                                <span className="text-[11px] text-[#94A3B8] font-mono truncate max-w-[140px]">
+                                  {project.domain}
+                                </span>
+
+                                <a
+                                  href={project.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#5028E0] hover:text-[#4320BD] hover:underline"
+                                >
+                                  <span>{isGithub ? 'View Repo' : isLinkedin ? 'View Profile' : 'Visit Web'}</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </>
               )}
 
               {/* SECTION 2: MATCHED INVESTORS & SYNDICATES */}

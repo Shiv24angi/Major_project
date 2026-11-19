@@ -155,6 +155,7 @@ export interface AnalysisRecord {
   agent6Data?: any;
   fundingMatches: FundingOpportunity[];
   relatedProjects?: RelatedProjectItem[];
+  marketNews?: any[];
   chatHistory: ChatMessage[];
   researchData?: ExternalResearchData;
   normalizedData?: any;
@@ -1284,6 +1285,15 @@ export function updateAnalysisRelatedProjects(analysisId: string, projects: Rela
   const target = analyses.find((a) => a.id === analysisId);
   if (target) {
     target.relatedProjects = projects;
+    saveAnalyses(analyses);
+  }
+}
+
+export function updateAnalysisMarketNews(analysisId: string, news: any[]): void {
+  const analyses = getStoredAnalyses();
+  const target = analyses.find((a) => a.id === analysisId);
+  if (target) {
+    target.marketNews = news;
     saveAnalyses(analyses);
   }
 }
