@@ -137,6 +137,104 @@ function AirbnbIcon({ className = 'w-6 h-6' }: { className?: string }) {
   );
 }
 
+// Clean Formatted Message Component (strips raw markdown symbols like ### and ** and renders clean typography)
+function FormattedChatMessage({ text }: { text: string }) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+
+  const parseInline = (str: string): React.ReactNode => {
+    if (!str) return '';
+    const regex = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIdx = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(str)) !== null) {
+      if (match.index > lastIdx) {
+        parts.push(str.slice(lastIdx, match.index));
+      }
+      const token = match[0];
+      if (token.startsWith('**') && token.endsWith('**')) {
+        parts.push(
+          <strong key={match.index} className="font-semibold text-[#1E1B2E]">
+            {token.slice(2, -2)}
+          </strong>
+        );
+      } else if (token.startsWith('`') && token.endsWith('`')) {
+        parts.push(
+          <code key={match.index} className="px-1 py-0.5 rounded bg-[#F4F1FD] font-mono text-[11px] text-[#5028E0]">
+            {token.slice(1, -1)}
+          </code>
+        );
+      }
+      lastIdx = match.index + token.length;
+    }
+
+    if (lastIdx < str.length) {
+      parts.push(str.slice(lastIdx));
+    }
+
+    return parts.length > 0 ? parts : str;
+  };
+
+  lines.forEach((rawLine, idx) => {
+    const line = rawLine.trim();
+    if (!line) return;
+
+    // Horizontal divider
+    if (line === '---' || line === '___' || line === '***') {
+      elements.push(<div key={`hr-${idx}`} className="border-t border-[#EAEBF2] my-2" />);
+      return;
+    }
+
+    // Markdown headers (###, ##, #) -> clean bold title
+    if (line.startsWith('#')) {
+      const cleanHeader = line.replace(/^#+\s*/, '');
+      elements.push(
+        <div key={`h-${idx}`} className="font-bold text-xs text-[#1E1B2E] mt-2 mb-1">
+          {parseInline(cleanHeader)}
+        </div>
+      );
+      return;
+    }
+
+    // Bullet points (•, -, *) -> clean purple dot with formatted text
+    if (line.startsWith('•') || line.startsWith('- ') || line.startsWith('* ')) {
+      const cleanBullet = line.replace(/^[•\-*]\s*/, '');
+      elements.push(
+        <div key={`b-${idx}`} className="flex items-start gap-2 my-0.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#5028E0] mt-1.5 shrink-0" />
+          <span className="text-xs text-[#1E1B2E] leading-relaxed">{parseInline(cleanBullet)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Numbered lists (1., 2.)
+    const numMatch = line.match(/^(\d+)\.\s+(.*)$/);
+    if (numMatch) {
+      elements.push(
+        <div key={`num-${idx}`} className="flex items-start gap-2 my-0.5">
+          <span className="text-xs font-bold text-[#5028E0] shrink-0 mt-0.5">{numMatch[1]}.</span>
+          <span className="text-xs text-[#1E1B2E] leading-relaxed">{parseInline(numMatch[2])}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Regular line / paragraph
+    elements.push(
+      <p key={`p-${idx}`} className="text-xs text-[#1E1B2E] leading-relaxed my-0.5">
+        {parseInline(line)}
+      </p>
+    );
+  });
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
 export default function DashboardPage() {
   const [analyses, setAnalyses] = useState<AnalysisRecord[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisRecord | null>(null);
@@ -3368,9 +3466,7 @@ export default function DashboardPage() {
                             <Sparkles className="w-3 h-3 text-[#5028E0]" />
                             <span>VentureLens Analyst</span>
                           </div>
-                          <div className="whitespace-pre-wrap leading-relaxed text-[#1E1B2E] text-xs">
-                            {m.text}
-                          </div>
+                          <FormattedChatMessage text={m.text} />
                         </div>
                       ) : (
                         <p className="leading-relaxed whitespace-pre-wrap text-xs">{m.text}</p>

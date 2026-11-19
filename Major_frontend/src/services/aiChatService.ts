@@ -657,30 +657,30 @@ export function synthesizeStartupDiligenceResponse(
         .map((f: any) =>
           typeof f === 'string'
             ? f
-            : `• **${f.name || 'Founder'}** (${f.role || 'Executive'}${f.background ? ` - ${f.background}` : ''})`
+            : `• ${f.name || 'Founder'} (${f.role || 'Executive'}${f.background ? ` - ${f.background}` : ''})`
         )
         .join('\n');
     }
-    body = `### Founding Team for ${companyTitle}\n\n${founders}`;
+    body = `Founding Team for ${companyTitle}\n\n${founders}`;
   } else if (q.includes('revenue') || q.includes('financial') || q.includes('arr') || q.includes('mrr') || q.includes('burn')) {
     const fin = merged.financials || {};
-    body = `### Financial Disclosures for ${companyTitle}\n\n` +
-      `• **Revenue:** ${fin.revenue || 'Not explicitly detailed in uploaded slides'}\n` +
-      `• **ARR / MRR:** ${fin.arr || fin.mrr || 'Not specified'}\n` +
-      `• **Runway / Burn:** ${fin.runway ? `Runway: ${fin.runway}` : ''} ${fin.burn_rate ? `| Burn: ${fin.burn_rate}` : 'Disclosed during investor calls'}\n` +
-      `• **Business Model:** ${merged.business_model || analysis.tagline || 'Subscription SaaS'}`;
+    body = `Financial Disclosures for ${companyTitle}\n\n` +
+      `• Revenue: ${fin.revenue || 'Not explicitly detailed in uploaded slides'}\n` +
+      `• ARR / MRR: ${fin.arr || fin.mrr || 'Not specified'}\n` +
+      `• Runway / Burn: ${fin.runway ? `Runway: ${fin.runway}` : ''} ${fin.burn_rate ? `| Burn: ${fin.burn_rate}` : 'Disclosed during investor calls'}\n` +
+      `• Business Model: ${merged.business_model || analysis.tagline || 'Subscription SaaS'}`;
   } else if (q.includes('risk') || q.includes('red flag') || q.includes('concern')) {
     const risks = (merged.risks && merged.risks.length > 0 ? merged.risks : analysis.keyInsights?.risks) || [];
-    body = `### Investment Risks & Red Flags for ${companyTitle}\n\n` +
+    body = `Investment Risks & Red Flags for ${companyTitle}\n\n` +
       (risks.length > 0
-        ? risks.map((r: string, i: number) => `${i + 1}. **${r}**`).join('\n')
+        ? risks.map((r: string, i: number) => `${i + 1}. ${r}`).join('\n')
         : 'No severe red flags were flagged in the verified materials.');
   } else {
-    body = `### Due Diligence Summary for ${companyTitle}\n\n` +
-      `• **Sector:** ${merged.industry || analysis.industry || 'Technology'}\n` +
-      `• **Thesis:** ${merged.description || analysis.thesis || 'Proprietary platform'}\n` +
-      `• **Traction:** ${merged.traction || 'Disclosed in attached deck'}\n` +
-      `• **Attached Document:** ${docInfo?.name || 'Verified Session Dossier'}`;
+    body = `Due Diligence Summary for ${companyTitle}\n\n` +
+      `• Sector: ${merged.industry || analysis.industry || 'Technology'}\n` +
+      `• Thesis: ${merged.description || analysis.thesis || 'Proprietary platform'}\n` +
+      `• Traction: ${merged.traction || 'Disclosed in attached deck'}\n` +
+      `• Attached Document: ${docInfo?.name || 'Verified Session Dossier'}`;
   }
 
   return body;
