@@ -35,6 +35,20 @@ export interface Agent4RecommendationOutput {
   created_at: string;
 }
 
+function parseJsonSafe<T>(val: any, fallback: T): T {
+  if (!val) return fallback;
+  if (typeof val === 'object') return val as T;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      return (typeof parsed === 'object' && parsed !== null) ? parsed as T : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+
 export async function runClientRecommendations(
   analysisId: string,
   startupName?: string
@@ -91,12 +105,12 @@ export async function runClientRecommendations(
     console.warn('[RecommendationEngine] Analysis record lookup warning:', err);
   }
 
-  // Extract nested JSONB fields safely
-  const sp = (normalizedRow?.startup_profile && typeof normalizedRow.startup_profile === 'object') ? normalizedRow.startup_profile : {};
-  const fi = (normalizedRow?.financial_information && typeof normalizedRow.financial_information === 'object') ? normalizedRow.financial_information : {};
-  const ti = (normalizedRow?.technical_information && typeof normalizedRow.technical_information === 'object') ? normalizedRow.technical_information : {};
-  const bi = (normalizedRow?.business_information && typeof normalizedRow.business_information === 'object') ? normalizedRow.business_information : {};
-  const mi = (normalizedRow?.market_information && typeof normalizedRow.market_information === 'object') ? normalizedRow.market_information : {};
+  // Extract nested JSONB fields safely (handles both JSON objects and JSON strings)
+  const sp = parseJsonSafe<any>(normalizedRow?.startup_profile, {});
+  const fi = parseJsonSafe<any>(normalizedRow?.financial_information, {});
+  const ti = parseJsonSafe<any>(normalizedRow?.technical_information, {});
+  const bi = parseJsonSafe<any>(normalizedRow?.business_information, {});
+  const mi = parseJsonSafe<any>(normalizedRow?.market_information, {});
 
   const resolvedName = (
     startupName ||
@@ -179,18 +193,27 @@ export async function runClientRecommendations(
   const isPublicOrEnterprise =
     (sp.stage || '').toLowerCase().includes('public') ||
     (sp.stage || '').toLowerCase().includes('enterprise') ||
+    (sp.stage || '').toLowerCase().includes('late stage') ||
+    (sp.stage || '').toLowerCase().includes('unicorn') ||
     resolvedName.toLowerCase().includes('ltd') ||
     resolvedName.toLowerCase().includes('pins') ||
     resolvedName.toLowerCase().includes('nse') ||
     resolvedName.toLowerCase().includes('bse') ||
     resolvedName.toLowerCase().includes('swiggy') ||
+    resolvedName.toLowerCase().includes('openai') ||
     resolvedName.toLowerCase().includes('pinterest') ||
     arr > 100_000_000;
 
   const runway = fi.runway_months;
   const runwayText = isPublicOrEnterprise ? 'liquid balance sheet reserves' : runway ? `${runway.toFixed(0)} months of runway` : 'stable capital baseline';
   const tam = mi.tam_usd;
-  const tamText = isPublicOrEnterprise ? '$100B+ TAM' : tam ? `$${(tam / 1e9).toFixed(1)}B TAM` : 'expanding addressable market';
+  const tamText = tam >= 1_000_000_000_000
+    ? `$${(tam / 1e12).toFixed(1)}T TAM`
+    : tam >= 1_000_000_000
+    ? `$${(tam / 1e9).toFixed(1)}B TAM`
+    : isPublicOrEnterprise
+    ? '$100B+ TAM'
+    : 'expanding addressable market';
 
   let thesis = '';
   if (rec === 'INVEST') {

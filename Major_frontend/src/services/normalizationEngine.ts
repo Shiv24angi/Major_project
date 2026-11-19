@@ -418,6 +418,18 @@ export async function runClientNormalization(
   const industry = rawInd;
   const isProjectMode = parentAnalysis?.mode === 'project' || (!a1Data && Boolean(a6Data));
 
+  // 6. Pre-parse Revenue & Valuation to accurately classify scale & stage
+  const rawFin = mergedA1.financials || {};
+  const preArrParsed = parseCurrencyAmount(rawFin.arr || rawFin.revenue);
+  const preValParsed = parseCurrencyAmount(
+    docAnalysis0.key_metrics?.['Post-Money Valuation'] ||
+    docAnalysis0.key_metrics?.['Valuation'] ||
+    mergedA1.key_metrics?.['Post-Money Valuation']
+  );
+
+  const isBillionScale = (preArrParsed.value && preArrParsed.value >= 1_000_000_000) || (preValParsed.value && preValParsed.value >= 1_000_000_000);
+  const isScaleUnicorn = (preArrParsed.value && preArrParsed.value >= 100_000_000) || (preValParsed.value && preValParsed.value >= 500_000_000);
+
   // Determine if corporate / public enterprise
   const a1Evidence = [
     ...(docAnalysis0.evidence || []),
@@ -439,8 +451,10 @@ export async function runClientNormalization(
 
   const stage = isEmptyRepo
     ? 'Concept / Empty Repository'
-    : isCorporateOrPublic
+    : isCorporateOrPublic || isBillionScale
     ? 'Public Corporation / Enterprise'
+    : isScaleUnicorn
+    ? 'Late Stage / Mega-Cap Unicorn'
     : (mergedA1.stage || parentAnalysis?.stage || (isProjectMode ? 'Project → Startup Transition' : 'Seed'));
 
   const description = isEmptyRepo
@@ -450,9 +464,6 @@ export async function runClientNormalization(
   // 5. Resolve Sector Profile & Variation
   const sector = getSectorProfile(industry);
   const variation = getDeterministicVariation(canonicalName);
-
-  // 6. Parse & Normalize Financial Metrics
-  const rawFin = mergedA1.financials || {};
   const rawKeyMetrics = mergedA1.key_metrics || {};
 
   // Check multiple revenue fields (ARR, Revenue, FY Revenue)
@@ -583,16 +594,31 @@ export async function runClientNormalization(
         .filter((f: any) => f.status === 'supported')
         .map((f: any) => f.claim || f.feature || '');
 
-  // 9. Deduplicate Competitors
+  // 9. Deduplicate & Filter Competitors (Exclude self)
+  const isSelfOpenAI = canonicalName.toLowerCase().includes('openai');
+  const aiFrontierCompetitors = ['Anthropic (Claude)', 'Google DeepMind (Gemini)', 'Meta AI (Llama)', 'Mistral AI', 'xAI (Grok)'];
   const rawCompetitors = isEmptyRepo
     ? []
+    : isSelfOpenAI
+    ? [
+        ...(mergedA1.competitors || []),
+        ...aiFrontierCompetitors,
+      ]
     : [
         ...(mergedA1.competitors || []),
         ...sector.defaultCompetitors,
       ];
+
   const uniqueCompetitors = Array.from(
     new Set(rawCompetitors.map((c: any) => String(c).trim()))
-  ).filter(Boolean);
+  )
+    .filter(Boolean)
+    .filter((comp: string) => {
+      const cLow = comp.toLowerCase();
+      const sLow = canonicalName.toLowerCase();
+      // Remove self-references like "OpenAI Enterprise" when analyzing "OpenAI"
+      return !cLow.includes(sLow) && !sLow.includes(cLow);
+    });
 
   // 10. Check for Existing Profile to update in-place
   let existingProfileId = normId;

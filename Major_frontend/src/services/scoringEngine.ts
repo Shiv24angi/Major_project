@@ -658,6 +658,20 @@ function scoreRisk(data: Partial<NormalizedStartupDataset>): DimensionBreakdown 
   };
 }
 
+function parseJsonSafe<T>(val: any, fallback: T): T {
+  if (!val) return fallback;
+  if (typeof val === 'object') return val as T;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      return (typeof parsed === 'object' && parsed !== null) ? parsed as T : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+
 /**
  * Executes full client-side scoring and persists results directly to Supabase.
  */
@@ -677,13 +691,13 @@ export async function runClientScoring(
       .maybeSingle();
 
     if (data) {
-      const sp = (data.startup_profile && typeof data.startup_profile === 'object') ? data.startup_profile : {};
-      const bi = (data.business_information && typeof data.business_information === 'object') ? data.business_information : {};
-      const fi = (data.financial_information && typeof data.financial_information === 'object') ? data.financial_information : {};
-      const ti = (data.team_information && typeof data.team_information === 'object') ? data.team_information : {};
-      const mi = (data.market_information && typeof data.market_information === 'object') ? data.market_information : {};
-      const techi = (data.technical_information && typeof data.technical_information === 'object') ? data.technical_information : {};
-      const traci = (data.traction_information && typeof data.traction_information === 'object') ? data.traction_information : {};
+      const sp = parseJsonSafe<any>(data.startup_profile, {});
+      const bi = parseJsonSafe<any>(data.business_information, {});
+      const fi = parseJsonSafe<any>(data.financial_information, {});
+      const ti = parseJsonSafe<any>(data.team_information, {});
+      const mi = parseJsonSafe<any>(data.market_information, {});
+      const techi = parseJsonSafe<any>(data.technical_information, {});
+      const traci = parseJsonSafe<any>(data.traction_information, {});
 
       dataset = {
         id: data.id,

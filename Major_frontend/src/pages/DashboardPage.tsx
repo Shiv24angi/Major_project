@@ -474,13 +474,28 @@ export default function DashboardPage() {
       if (!isMounted || !dataset) return;
       setActiveAnalysis((prev) => {
         if (!prev || prev.id !== activeAnalysis.id) return prev;
-        const canonical = dataset.canonical_name || dataset.startup_profile?.canonical_name;
-        const normStage = dataset.stage || dataset.startup_profile?.stage;
-        const normIndustry = dataset.primary_industry || dataset.startup_profile?.primary_industry;
-        const normTagline = dataset.startup_profile?.tagline && !dataset.startup_profile.tagline.includes('Enterprise SaaS / AI')
-          ? dataset.startup_profile.tagline
+        const parseJsonSafeLocal = (val: any) => {
+          if (!val) return {};
+          if (typeof val === 'object') return val;
+          try {
+            const p = JSON.parse(val);
+            return typeof p === 'object' && p !== null ? p : {};
+          } catch {
+            return {};
+          }
+        };
+
+        const sp = parseJsonSafeLocal(dataset.startup_profile);
+        const fi = parseJsonSafeLocal(dataset.financial_information);
+        const canonical = dataset.canonical_name || sp.canonical_name;
+        const rawArr = fi.annual_recurring_revenue ?? 0;
+        const isMegaScale = rawArr >= 1_000_000_000 || (canonical && canonical.toLowerCase().includes('openai'));
+        const normStage = isMegaScale ? 'Public Corporation / Enterprise' : (dataset.stage || sp.stage);
+        const normIndustry = dataset.primary_industry || sp.primary_industry;
+        const normTagline = sp.tagline && !sp.tagline.includes('Enterprise SaaS / B2B Software / AI Platform')
+          ? sp.tagline
           : prev.tagline;
-        const normWebsite = dataset.startup_profile?.website || prev.website;
+        const normWebsite = sp.website || prev.website;
 
         return {
           ...prev,
@@ -489,7 +504,13 @@ export default function DashboardPage() {
           industry: normIndustry || prev.industry,
           tagline: normTagline || prev.tagline,
           website: normWebsite || prev.website,
-          normalizedData: dataset,
+          normalizedData: {
+            ...dataset,
+            startup_profile: sp,
+            financial_information: fi,
+            business_information: parseJsonSafeLocal(dataset.business_information),
+            market_information: parseJsonSafeLocal(dataset.market_information),
+          },
         };
       });
     });
