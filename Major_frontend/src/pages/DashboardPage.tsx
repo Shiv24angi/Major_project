@@ -2634,6 +2634,7 @@ export default function DashboardPage() {
                     {/* Quick Suggestion Chips */}
                     <div className="space-y-1.5 pt-2">
                       {[
+                        'What are the competitors & market rivals?',
                         'What is the revenue & commercial model?',
                         'What are the biggest diligence risks?',
                         'Who are the founders & team background?',
@@ -3523,6 +3524,7 @@ export default function DashboardPage() {
                         'Which files and components were audited?',
                       ]
                     : [
+                        'What are the key competitors & market rivals?',
                         'What is the revenue & commercial model?',
                         'Who are the founders & leadership team?',
                         'What are the primary investment risks & red flags?',
